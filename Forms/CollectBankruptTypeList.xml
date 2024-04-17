@@ -1,0 +1,1346 @@
+<?xml version="1.0"?>
+<Form Name="CollectBankruptTypeListForm" Width="400" Height="500" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="BankruptTypeId" />
+    <Parameter Name="Title">Типы банкротства</Parameter>
+    <Parameter Name="MergeMode">False</Parameter>
+    <Parameter Name="MergeBankruptTypeIds" />
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="SelectedBankruptTypeId" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="BankruptTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="BankruptTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="BankruptTypeId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <And>
+            <Filter FilterByNullValue="False">
+              <Field NativeName="Archive" />
+              <Value>
+                <Object Name="ArchiveFilterComboBox" />
+              </Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Enabled>
+                <Parameter Name="MergeMode" />
+              </Enabled>
+              <Field NativeName="BankruptTypeId" />
+              <Value>
+                <Parameter Name="MergeBankruptTypeIds" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </And>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="BankruptTypeArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="BankruptTypeId" SendAsArray="True">
+          <Value>
+            <Object Name="BankruptTypeDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive" SendAsArray="True">
+          <Value>
+            <Object Name="BankruptTypeDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">Archive</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="BankruptTypeArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="BankruptTypeDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="BankruptTypeId" SendAsArray="True">
+          <Value>
+            <Object Name="BankruptTypeDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="BankruptTypeDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="BankruptTypeMergeSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MergeBankruptTypeIds" SendAsArray="True">
+          <Value>
+            <Parameter Name="MergeBankruptTypeIds" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="BankruptTypeId">
+          <Value>
+            <Object Name="BankruptTypeDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="BankruptTypeMergeSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="BankruptTypeDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="BankruptTypeDatabaseTable" />
+    </Condition>
+
+    <Condition Name="BankruptTypeSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="BankruptTypeSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="BankruptTypeSelectedGreaterOneCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="BankruptTypeIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="BankruptTypeAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectBankruptTypeEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+    </Command>
+
+    <Command Name="BankruptTypeEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectBankruptTypeEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="BankruptTypeId">
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BankruptTypeArchiveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="BankruptTypeArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BankruptTypeMergeSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="BankruptTypeMergeSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BankruptTypeDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранные типы банкротства?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="BankruptTypeDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="BankruptTypeDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="BankruptTypePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BankruptTypeTryDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Один или несколько типов банкротства не были удалены, т.к. используются в программе. \rЭти записи были перемещены в архив.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="BankruptTypeArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="BankruptTypeIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить типы банкротства из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить типы банкротства в архив?</Case>
+        </Switch>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="BankruptTypeTrySelectMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выбор типа банкротства</Caption>
+      <Text>Невозможно выбрать тип банкротства, т.к. запись находится в архиве.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="BankruptTypeSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="BankruptTypeDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="SelectedBankruptTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedBankruptTypeId">
+        <Object Name="BankruptTypeDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectBankruptTypeSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedBankruptTypeIdValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="BankruptTypeDatabaseTableMultiSelectValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="BankruptTypeDatabaseTable">
+        <Property Name="MultiSelect">False</Property>
+      </Object>
+    </Command>
+
+    <Command Name="BankruptTypeListMergeFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectBankruptTypeList.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="MergeMode">True</Parameter>
+        <Parameter Name="MergeBankruptTypeIds">
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">BankruptTypeId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BankruptTypeMergeMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Объединение типов банкротств</Caption>
+      <Text>
+        <String>
+          <Format>После объединения типов банкротств будет использоваться тип банкротства "{0}", а остальные типы банкротств будут удалены.\r\rПродолжить?</Format>
+          <Items>
+            <Item>
+              <Object Name="BankruptTypeDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Title</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Or>
+              <Parameter Name="SelectionMode" />
+              <Parameter Name="MergeMode" />
+            </Or>
+          </When>
+          <Then>
+            <Command Name="BankruptTypeDatabaseTableMultiSelectValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="BankruptTypeSelectRowCommand">
+          <Parameter Name="BankruptTypeId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BankruptTypeAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="BankruptTypeSelectRowCommand">
+          <Command Name="BankruptTypeAddFormShowCommand" Parameter="BankruptTypeId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BankruptTypeEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="BankruptTypeSelectRowCommand">
+          <Command Name="BankruptTypeEditFormShowCommand" Parameter="BankruptTypeId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="BankruptTypeDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="SelectionMode" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="BankruptTypeIsArchiveCondition" />
+              </When>
+              <Then>
+                <Command Name="BankruptTypeTrySelectMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="SelectBankruptTypeSequentialCommand" />
+              </Else>
+            </If>
+          </Then>
+          <ElseIf>
+            <When>
+              <Parameter Name="MergeMode" />
+            </When>
+            <Then>
+              <Command Name="BankruptTypeMergeMessageBoxCommand" />
+            </Then>
+          </ElseIf>
+          <Else>
+            <If>
+              <When>
+                <Object Name="BankruptTypeEditButton">
+                  <Property Name="Enabled" />
+                </Object>
+              </When>
+              <Then>
+                <Command Name="BankruptTypeEditFormShowCommand" />
+              </Then>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BankruptTypeDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypeDeleteSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="BankruptTypeDeleteSaveCommand" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="BankruptTypeTryDeleteMessageBoxCommand" />
+          </Then>
+        </If>
+        <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BankruptTypeArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypeArchiveSaveCommand" />
+        <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BankruptTypeMergeMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypeMergeSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BankruptTypeListMergeFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BankruptTypePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Выбор основного тип банкротства</Then>
+            </Case>
+            <Case>
+              <Parameter Name="Title" />
+            </Case>
+          </Switch>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="Все" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then />
+            </Case>
+            <Case>False</Case>
+          </Switch>
+        </Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Or>
+                <Parameter Name="SelectionMode" />
+                <Parameter Name="MergeMode" />
+              </Or>
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="BankruptTypeDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="BankruptTypeDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="BankruptTypeDatabaseTable">
+                        <Property Name="Left" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ContentPanel">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="BankruptTypeDatabaseTable">
+                      <Property Name="Left" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="BankruptTypeAddButton">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>20</Item>
+                </Minus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <MultiSelect Value="True" />
+        <SourceDataConnection Name="BankruptTypePrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+            <Alignment Value="MiddleCenter" />
+          </Column>
+          <Column Name="BankruptTypeId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Тип банкротства</Title>
+            <MinimumWidth>300</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="ArchiveColor">
+            <Expression>Archive AND {0}</Expression>
+            <Items>
+              <Item>
+                <Not>
+                  <Object Name="ArchiveFilterComboBox" />
+                </Not>
+              </Item>
+            </Items>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="BankruptTypeAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="BankruptTypeDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="BankruptTypeDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>36</Width>
+        <Height>36</Height>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить тип банкротства...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="BankruptTypeAddFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="BankruptTypeEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="BankruptTypeAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать тип банкротства...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="BankruptTypeEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="BankruptTypeIsArchiveCondition" />
+            </Not>
+            <Condition Name="BankruptTypeSelectedOneCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="BankruptTypeSelectedOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите тип банкротства для редактирования.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="BankruptTypeIsArchiveCondition" />
+              </When>
+              <Then>Для редактирования восстановите тип банкротства из архива.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="BankruptTypeMergeButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="BankruptTypeEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Объединить типы банкротств...</Hint>
+        <Image>Images\24x24\merge.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="BankruptTypeListMergeFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="BankruptTypeSelectedGreaterOneCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите в таблице типы банкротств, которые следует объединить.</DisabledText>
+        <Visible>
+          <Not>
+            <Or>
+              <Parameter Name="SelectionMode" />
+              <Parameter Name="MergeMode" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="BankruptTypeArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="BankruptTypeMergeButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="BankruptTypeMergeButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="BankruptTypeEditButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="BankruptTypeIsArchiveCondition" />
+              </When>
+              <Then>Восстановить типы банкротства из архива</Then>
+            </Case>
+            <Case>Переместить тип банкротства в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="BankruptTypeIsArchiveCondition" />
+                  <Object Name="ArchiveFilterComboBox" />
+                </Or>
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="BankruptTypeArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="BankruptTypeSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="BankruptTypeIsArchiveCondition" />
+              </When>
+              <Then>Выберите типы банкротства для восстановления из архива.</Then>
+            </Case>
+            <Case>Выберите типы банкротства для перемещения в архив.</Case>
+          </Switch>
+        </DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="BankruptTypeDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="BankruptTypeArchiveButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="BankruptTypeAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Hint>Удалить типы банкротства</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="BankruptTypeDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="BankruptTypeSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите типы банкротства для удаления.</DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Or>
+          <Parameter Name="SelectionMode" />
+          <Parameter Name="MergeMode" />
+        </Or>
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Visible>
+        <Or>
+          <Parameter Name="SelectionMode" />
+          <Parameter Name="MergeMode" />
+        </Or>
+      </Visible>
+
+      <MyObject Name="SelectButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Images\18x18\merge.png</Then>
+            </Case>
+            <Case>Images\18x18\check.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Объединить типы банкротств</Then>
+            </Case>
+            <Case>Выбрать</Case>
+          </Switch>
+        </Text>
+        <Enabled>
+          <And>
+            <Condition Name="BankruptTypeSelectedOneCondition" />
+            <Or>
+              <Parameter Name="MergeMode" />
+              <Not>
+                <Condition Name="BankruptTypeIsArchiveCondition" />
+              </Not>
+            </Or>
+          </And>
+        </Enabled>
+        <Commands>
+          <If>
+            <When>
+              <Parameter Name="MergeMode" />
+            </When>
+            <Then>
+              <Command Name="BankruptTypeMergeMessageBoxCommand" />
+            </Then>
+            <Else>
+              <Command Name="SelectBankruptTypeSequentialCommand" />
+            </Else>
+          </If>
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="BankruptTypeSelectedOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите нужный тип банкротства в таблице.</Then>
+            </Case>
+            <Case>Невозможно выбрать тип банкротства, т.к. запись находится в архиве.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

@@ -1,0 +1,754 @@
+<?xml version="1.0"?>
+<Form Name="CollectPochtaRuBatchPrintForm" Title="Загрузка документов партии 'Почта России'" Width="350" Height="270" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="FormTitle">Загрузка документов партии</Parameter>
+    <Parameter Name="BatchId" />
+    <Parameter Name="BatchName" />
+    <Parameter Name="SendingDate" />
+
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+    </FontStyles>
+  </Appearance>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="SavingAllowedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ApiCallSuccessCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApiCallSuccessVariable" />
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ApiCallErrorCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApiCallSuccessVariable" />
+        </Item>
+        <Item>False</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PrintFormTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PrintFormTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PrintTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PrintTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <!-- !CN -->
+  </Conditions>
+
+  <Commands>
+
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <!-- api -->
+    <Command Name="ApiCallSuccessVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApiCallSuccessVariable">
+        <Input Name="Value" />
+      </Object>
+    </Command>
+
+    <Command Name="ApiCallMessageVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApiCallMessageVariable">
+        <Input Name="Value" />
+      </Object>
+    </Command>
+
+    <Command Name="ApiErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Ошибка при выполнении запроса к системе "Почта России"</Caption>
+      <Text>
+        <Input />
+      </Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="ApiCallHandleResultCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="ApiCallSuccessVariableValueSetCommand">
+          <Input Name="Value">
+            <Input Name="Success" />
+          </Input>
+        </Command>
+        <Command Name="ApiCallMessageVariableValueSetCommand">
+          <Input Name="Value">
+            <Input Name="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallErrorCondition" />
+          </When>
+          <Then>
+            <Command Name="ApiErrorMessageBoxCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- DownloadBatchDocs -->
+    <Command Name="BatchDownloadDocumentsCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchDownloadDocumentsCommand" />
+      <Parameters>
+        <Parameter Name="BatchId">
+          <Parameter Name="BatchId" />
+        </Parameter>
+        <Parameter Name="PrintType">
+          <Object Name="PrintTypeComboBox" />
+        </Parameter>
+        <Parameter Name="PrintFormType">
+          <Object Name="PrintFormTypeComboBox" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchDownloadDocumentsFolderDialogShowCommand" Type="FolderDialogShowCommand" Assembly="Commands">
+      <Title>Выберите папку</Title>
+      <RootSpecialFolder>Desktop</RootSpecialFolder>
+    </Command>
+
+    <Command Name="BatchDownloadDocumentsDownloadFileCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <FileGuid>
+        <Command Name="BatchDownloadDocumentsCallCommand" Parameter="GUID" />
+      </FileGuid>
+    </Command>
+
+    <Command Name="BatchDownloadDocumentsCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="BatchDownloadDocumentsFolderDialogShowCommand" />
+        <Command Name="BatchDownloadDocumentsCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="BatchDownloadDocumentsCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="BatchDownloadDocumentsCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallSuccessCondition" />
+          </When>
+          <Then>
+            <Command Name="BatchDownloadDocumentsDownloadFileCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!--  -->
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="BatchDownloadDocumentsCommand" />
+        <If>
+          <When>
+            <Command Name="BatchDownloadDocumentsCommand" Parameter="Success" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Input Name="Close" />
+              </When>
+              <Then>
+                <Command Name="FormCloseCommand" />
+              </Then>
+            </If>
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- !CM -->
+
+  </Commands>
+
+  <Executions>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <!-- !EX -->
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="PrintFormTypeComboBox" />
+      <ConditionExpression>
+        <Condition Name="PrintFormTypeComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип печати уведомления" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="PrintTypeComboBox" />
+      <ConditionExpression>
+        <Condition Name="PrintTypeComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип печати" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="VariablePanel" Type="Panel" Assembly="BaseControls">
+      <Visible>False</Visible>
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>0</Height>
+      <Width>0</Width>
+
+      <MyObject Name="ApiCallSuccessVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+        <Value />
+      </MyObject>
+
+      <MyObject Name="ApiCallMessageVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+        <Value />
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>43</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="FormTitle" />
+        </Text>
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="BatchNamePanel" Type="Panel" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>43</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+
+        <MyObject Name="BatchNameLabel" Type="Label" Assembly="BaseControls">
+          <Top>0</Top>
+          <Left>0</Left>
+          <Width>
+            <Object Name="BatchNamePanel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Наименование партии</Text>
+        </MyObject>
+
+        <MyObject Name="BatchNameTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="False" Source="False" ValueSet="False" />
+          <ReadOnly>True</ReadOnly>
+          <Top>
+            <Object Name="BatchNameLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="BatchNameLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="BatchNameLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>
+            <Parameter Name="BatchName" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="BatchSendingDatePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Object Name="BatchNamePanel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>5</Left>
+        <Height>43</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+
+        <MyObject Name="BatchSendingDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>0</Top>
+          <Left>5</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchSendingDatePanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Дата отправки в отделение:</Text>
+        </MyObject>
+
+        <MyObject Name="BatchSendingDateTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="False" Source="False" ValueSet="False" />
+          <ReadOnly>True</ReadOnly>
+          <Top>
+            <Object Name="BatchSendingDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="BatchSendingDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="BatchSendingDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>
+            <Parameter Name="SendingDate" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PrintTypePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Object Name="BatchSendingDatePanel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>5</Left>
+        <Height>43</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+
+        <MyObject Name="PrintTypeLabel" Type="Label" Assembly="BaseControls">
+          <Top>0</Top>
+          <Left>5</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PrintTypePanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Тип печати</Text>
+        </MyObject>
+
+        <MyObject Name="PrintTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="False" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PrintTypeLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <Left>
+            <Object Name="PrintTypeLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PrintTypeLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <ValueList>
+            <Structure Type="Table">
+              <Row>
+                <Item>PAPER</Item>
+                <Item>Печать на бумаге</Item>
+              </Row>
+              <Row>
+                <Item>THERMO</Item>
+                <Item>Термопечать</Item>
+              </Row>
+            </Structure>
+          </ValueList>
+          <Value>PAPER</Value>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PrintFormTypePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Object Name="PrintTypePanel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>5</Left>
+        <Height>43</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+
+        <MyObject Name="PrintFormTypeLabel" Type="Label" Assembly="BaseControls">
+          <Top>0</Top>
+          <Left>5</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PrintFormTypePanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Тип печати уведомления</Text>
+        </MyObject>
+
+        <MyObject Name="PrintFormTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="False" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PrintFormTypeLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PrintFormTypeLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PrintFormTypeLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <Structure Type="Table">
+              <Row>
+                <Item>ONE_SIDED</Item>
+                <Item>Односторонняя</Item>
+              </Row>
+              <Row>
+                <Item>TWO_SIDED</Item>
+                <Item>Двусторонняя</Item>
+              </Row>
+            </Structure>
+          </ValueList>
+          <Value>ONE_SIDED</Value>
+        </MyObject>
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <TabIndex>1</TabIndex>
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <Text>Загрузить</Text>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\download.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand">
+            <Input Name="Close">True</Input>
+          </Command>
+        </Commands>
+        <Enabled>
+          <Condition Name="SavingAllowedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="PrintFormTypeComboBoxIsNullCondition" />
+              </When>
+              <Then>Поле "Тип печати уведомления" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="PrintTypeComboBoxIsNullCondition" />
+              </When>
+              <Then>Поле "Тип печати" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+    </MyObject>
+  </MyObjects>
+</Form>

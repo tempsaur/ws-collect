@@ -1,0 +1,5651 @@
+<?xml version="1.0"?>
+<Form Name="CollectClientPropertyEditForm" Width="1100" Height="672" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ID" />
+    <Parameter Name="PropertyType" />
+    <Parameter Name="PropertyTitle" />
+    <Parameter Name="PropertyPrice" />
+    <Parameter Name="PropertyShare" />
+    <Parameter Name="PropertyIsPledged" />
+    <Parameter Name="PropertyPledgeDate" />
+    <Parameter Name="PropertyPledgePrice" />
+    <Parameter Name="PropertyDescription" />
+    <Parameter Name="PropertyMovableModel" />
+    <Parameter Name="PropertyMovableYear" />
+    <Parameter Name="PropertyMovableBuyDate" />
+    <Parameter Name="PropertyMovableNumber" />
+    <Parameter Name="PropertyMovableColor" />
+    <Parameter Name="PropertyMovableVin" />
+    <Parameter Name="PropertyMovableBanRaiseDate" />
+    <Parameter Name="PropertyMovableBanResultDate" />
+    <Parameter Name="PropertyMovableUnBanDate" />
+    <Parameter Name="PropertyMovableBanResult" />
+    <Parameter Name="PropertyMovableArrestRaiseDate" />
+    <Parameter Name="PropertyMovableArrestResultDate" />
+    <Parameter Name="PropertyMovableUnArrestDate" />
+    <Parameter Name="PropertyMovableArrestResult" />
+    <Parameter Name="PropertyMovableWantedRaiseDate" />
+    <Parameter Name="PropertyMovableWantedResultDate" />
+    <Parameter Name="PropertyMovableUnWantedDate" />
+    <Parameter Name="PropertyMovableWantedResult" />
+    <Parameter Name="PropertyMovableSellDate" />
+    <Parameter Name="PropertyMovableSellResultId" />
+    <Parameter Name="PropertyRealAddress" />
+    <Parameter Name="PropertyRealCadastralNumber" />
+    <Parameter Name="PropertyRealCadastralPrice" />
+    <Parameter Name="PropertyRealArea" />
+    <Parameter Name="PropertyRealBanRaiseDate" />
+    <Parameter Name="PropertyRealBanResultDate" />
+    <Parameter Name="PropertyRealUnBanDate" />
+    <Parameter Name="PropertyRealBanResult" />
+    <Parameter Name="PropertyRealArrestRaiseDate" />
+    <Parameter Name="PropertyRealArrestResultDate" />
+    <Parameter Name="PropertyRealUnArrestDate" />
+    <Parameter Name="PropertyRealArrestResult" />
+    <Parameter Name="PropertyRealSellDate" />
+    <Parameter Name="PropertyRealSellResultId" />
+    <Parameter Name="PropertyCompanyInn" />
+    <Parameter Name="PropertyCompanyTitle" />
+    <Parameter Name="PropertyCompanyAddress" />
+    <Parameter Name="PropertyCompanyContact" />
+    <Parameter Name="PropertyCompanyBanRaiseDate" />
+    <Parameter Name="PropertyCompanyBanResultDate" />
+    <Parameter Name="PropertyCompanyUnBanDate" />
+    <Parameter Name="PropertyCompanyBanResult" />
+    <Parameter Name="Title">
+      <String>
+        <Format>{0} {1}</Format>
+        <Items>
+          <Item>
+            <Switch>
+              <Case>
+                <When>
+                  <Parameter Name="Edit" />
+                </When>
+                <Then>Редактирование</Then>
+              </Case>
+              <Case>Добавление</Case>
+            </Switch>
+          </Item>
+          <Item>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="PropertyTypeEqualMovableCondition" />
+                </When>
+                <Then>движимого имущества</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Condition Name="PropertyTypeEqualRealCondition" />
+                </When>
+                <Then>недвижимости</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Condition Name="PropertyTypeEqualCompanyCondition" />
+                </When>
+                <Then>доли в ООО / ИП</Then>
+              </Case>
+              <Case>имущества</Case>
+            </Switch>
+          </Item>
+        </Items>
+      </String>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="SellResultPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="SellResultSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="SellResultId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="PropertyTypeEqualMovableCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="PropertyType" />
+        </Item>
+        <Item>Движимое имущество</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="PropertyTypeEqualRealCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="PropertyType" />
+        </Item>
+        <Item>Недвижимость</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="PropertyTypeEqualCompanyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="PropertyType" />
+        </Item>
+        <Item>Доля в ООО / ИП</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="PropertyTitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PropertyTitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PropertyTypeChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="PropertyType" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PropertyCompanyInnTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PropertyCompanyInnTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PropertyCompanyInnTextBoxIsINNCondition" Type="IsINNCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PropertyCompanyInnTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="PropertyTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyTitle">
+        <Object Name="PropertyTitleTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyPriceValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyPrice">
+        <Object Name="PropertyPriceNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyShareValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyShare">
+        <Object Name="PropertyShareTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyIsPledgedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyIsPledged">
+        <Object Name="PropertyIsPledgedCheckBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyPledgeDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyPledgeDate">
+        <Object Name="PropertyPledgeDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyPledgePriceValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyPledgePrice">
+        <Object Name="PropertyPledgePriceNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyDescriptionValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyDescription">
+        <Object Name="PropertyDescriptionTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableModelValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableModel">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableModelTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableYearValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableYear">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableYearTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableBuyDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableBuyDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableBuyDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableNumberValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableNumber">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableNumberTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableColorValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableColor">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableColorTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableVinValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableVin">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableVinTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableBanRaiseDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableBanRaiseDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableBanRaiseDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableBanResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableBanResultDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableBanResultDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableUnBanDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableUnBanDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableUnBanDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableBanResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableBanResult">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableBanResultTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableArrestRaiseDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableArrestRaiseDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableArrestRaiseDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableArrestResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableArrestResultDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableArrestResultDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableUnArrestDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableUnArrestDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableUnArrestDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableArrestResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableArrestResult">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableArrestResultTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableWantedRaiseDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableWantedRaiseDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableWantedRaiseDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableWantedResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableWantedResultDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableWantedResultDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableUnWantedDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableUnWantedDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableUnWantedDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableWantedResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableWantedResult">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableWantedResultTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableSellDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableSellDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableSellDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyMovableSellResultIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyMovableSellResultId">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualMovableCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyMovableSellResultComboBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealAddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealAddress">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealAddressTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealCadastralNumberValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealCadastralNumber">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealCadastralNumberTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealCadastralPriceValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealCadastralPrice">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealCadastralPriceNumericBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealAreaValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealArea">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealAreaNumericBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealBanRaiseDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealBanRaiseDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealBanRaiseDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealBanResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealBanResultDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealBanResultDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealUnBanDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealUnBanDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealUnBanDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealBanResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealBanResult">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealBanResultTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealArrestRaiseDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealArrestRaiseDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealArrestRaiseDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealArrestResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealArrestResultDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealArrestResultDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealUnArrestDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealUnArrestDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealUnArrestDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealArrestResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealArrestResult">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealArrestResultTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealSellDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealSellDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealSellDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyRealSellResultIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyRealSellResultId">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyRealSellResultComboBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyInnValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyInn">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyInnTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyTitle">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyTitleTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyAddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyAddress">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyAddressTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyContactValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyContact">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyContactTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyBanRaiseDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyBanRaiseDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyBanRaiseDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyBanResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyBanResultDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyBanResultDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyUnBanDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyUnBanDate">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyUnBanDateDateTimePicker" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PropertyCompanyBanResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PropertyCompanyBanResult">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Object Name="PropertyCompanyBanResultTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="PropertyTitleValueSetCommand" />
+        <Command Name="PropertyPriceValueSetCommand" />
+        <Command Name="PropertyShareValueSetCommand" />
+        <Command Name="PropertyIsPledgedValueSetCommand" />
+        <Command Name="PropertyPledgeDateValueSetCommand" />
+        <Command Name="PropertyPledgePriceValueSetCommand" />
+        <Command Name="PropertyDescriptionValueSetCommand" />
+        <Command Name="PropertyMovableModelValueSetCommand" />
+        <Command Name="PropertyMovableYearValueSetCommand" />
+        <Command Name="PropertyMovableBuyDateValueSetCommand" />
+        <Command Name="PropertyMovableNumberValueSetCommand" />
+        <Command Name="PropertyMovableColorValueSetCommand" />
+        <Command Name="PropertyMovableVinValueSetCommand" />
+        <Command Name="PropertyMovableBanRaiseDateValueSetCommand" />
+        <Command Name="PropertyMovableBanResultDateValueSetCommand" />
+        <Command Name="PropertyMovableUnBanDateValueSetCommand" />
+        <Command Name="PropertyMovableBanResultValueSetCommand" />
+        <Command Name="PropertyMovableArrestRaiseDateValueSetCommand" />
+        <Command Name="PropertyMovableArrestResultDateValueSetCommand" />
+        <Command Name="PropertyMovableUnArrestDateValueSetCommand" />
+        <Command Name="PropertyMovableArrestResultValueSetCommand" />
+        <Command Name="PropertyMovableWantedRaiseDateValueSetCommand" />
+        <Command Name="PropertyMovableWantedResultDateValueSetCommand" />
+        <Command Name="PropertyMovableUnWantedDateValueSetCommand" />
+        <Command Name="PropertyMovableWantedResultValueSetCommand" />
+        <Command Name="PropertyMovableSellDateValueSetCommand" />
+        <Command Name="PropertyMovableSellResultIdValueSetCommand" />
+        <Command Name="PropertyRealAddressValueSetCommand" />
+        <Command Name="PropertyRealCadastralNumberValueSetCommand" />
+        <Command Name="PropertyRealCadastralPriceValueSetCommand" />
+        <Command Name="PropertyRealAreaValueSetCommand" />
+        <Command Name="PropertyRealBanRaiseDateValueSetCommand" />
+        <Command Name="PropertyRealBanResultDateValueSetCommand" />
+        <Command Name="PropertyRealUnBanDateValueSetCommand" />
+        <Command Name="PropertyRealBanResultValueSetCommand" />
+        <Command Name="PropertyRealArrestRaiseDateValueSetCommand" />
+        <Command Name="PropertyRealArrestResultDateValueSetCommand" />
+        <Command Name="PropertyRealUnArrestDateValueSetCommand" />
+        <Command Name="PropertyRealArrestResultValueSetCommand" />
+        <Command Name="PropertyRealSellDateValueSetCommand" />
+        <Command Name="PropertyRealSellResultIdValueSetCommand" />
+        <Command Name="PropertyCompanyInnValueSetCommand" />
+        <Command Name="PropertyCompanyTitleValueSetCommand" />
+        <Command Name="PropertyCompanyAddressValueSetCommand" />
+        <Command Name="PropertyCompanyContactValueSetCommand" />
+        <Command Name="PropertyCompanyBanRaiseDateValueSetCommand" />
+        <Command Name="PropertyCompanyBanResultDateValueSetCommand" />
+        <Command Name="PropertyCompanyUnBanDateValueSetCommand" />
+        <Command Name="PropertyCompanyBanResultValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Input />
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="FormHeightSetSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="PropertyTypeEqualMovableCondition" />
+          </When>
+          <Then>
+            <Command Name="FormHeightValueSetCommand">672</Command>
+          </Then>
+          <ElseIf>
+            <When>
+              <Condition Name="PropertyTypeEqualRealCondition" />
+            </When>
+            <Then>
+              <Command Name="FormHeightValueSetCommand">555</Command>
+            </Then>
+          </ElseIf>
+          <ElseIf>
+            <When>
+              <Condition Name="PropertyTypeEqualCompanyCondition" />
+            </When>
+            <Then>
+              <Command Name="FormHeightValueSetCommand">410</Command>
+            </Then>
+          </ElseIf>
+          <Else>
+            <Command Name="FormHeightValueSetCommand">265</Command>
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightSetSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="PropertyTypeChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightSetSequentialCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="PropertyTitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="PropertyTitleTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Наименование имущества" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="PropertyCompanyInnTextBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="PropertyTypeEqualCompanyCondition" />
+          <Not>
+            <Condition Name="PropertyCompanyInnTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="PropertyCompanyInnTextBoxIsINNCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный номер ИНН.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="PropertyGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyDescriptionTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>Основные сведения</Text>
+
+        <MyObject Name="PropertyTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyTitleLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>60</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Наименование имущества</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <Parameter Name="PropertyTitle" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyPriceLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Цена имущества</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyPriceNumericBox" Type="NumericBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyPriceLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyPriceLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyPriceLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <DecimalPlaces>2</DecimalPlaces>
+          <Increment>10000</Increment>
+          <Minimum>0</Minimum>
+          <ThousandsSeparator>True</ThousandsSeparator>
+          <Value>
+            <Parameter Name="PropertyPrice" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyShareLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyPriceNumericBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Доля должника</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyShareTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyShareLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyShareLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyShareLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <Parameter Name="PropertyShare" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyIsPledgedCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyTitleTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyTitleLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Text>В залоге</Text>
+          <ForeColor>Black</ForeColor>
+          <Value>
+            <Parameter Name="PropertyIsPledged" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyPledgeDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyPriceLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyIsPledgedCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyIsPledgedCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата залога</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyPledgeDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyPledgeDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyPledgeDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyPledgeDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyPledgeDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyPledgePriceLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyShareLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyIsPledgedCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyIsPledgedCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Стоимость залога</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyPledgePriceNumericBox" Type="NumericBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyPledgePriceLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyPledgePriceLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyPledgePriceLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <DecimalPlaces>2</DecimalPlaces>
+          <Increment>10000</Increment>
+          <Minimum>0</Minimum>
+          <ThousandsSeparator>True</ThousandsSeparator>
+          <Value>
+            <Parameter Name="PropertyPledgePrice" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyDescriptionLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyIsPledgedCheckBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyDescriptionLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Доп. информация</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyDescriptionTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyDescriptionLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyDescriptionLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyShareTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyDescriptionTextBox">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Object Name="PropertyDescriptionLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyDescription" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyMovableGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableBuyDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="PropertyGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Text>Сведения о движимом имуществе</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualMovableCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyMovableModelLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyMovableGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyMovableModelLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>60</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Модель</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableModelTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <Parameter Name="PropertyMovableModel" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBuyDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableModelTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата приобретения</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBuyDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableBuyDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableBuyDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableBuyDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableBuyDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableYearLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableModelLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Год выпуска</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableYearTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableYearLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableYearLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableYearLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <MaxLength>4</MaxLength>
+          <AllowedSymbols>0123456789</AllowedSymbols>
+          <Text>
+            <Parameter Name="PropertyMovableYear" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableNumberLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableYearTextBox">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableYearLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableYearLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Гос. номер</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableNumberTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableNumberLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableNumberLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableNumberLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Text>
+            <Parameter Name="PropertyMovableNumber" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableColorLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableYearLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableColorLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Цвет</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableColorTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableColorLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableColorLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableColorLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Text>
+            <Parameter Name="PropertyMovableColor" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableVinLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableColorTextBox">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableColorLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableColorLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableModelLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>VIN</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableVinTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableVinLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableVinLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableVinLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Text>
+            <Parameter Name="PropertyMovableVin" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyMovableBanGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableBanResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PropertyGroupBox">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Text>Сведения о запрете</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualMovableCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyMovableBanRaiseDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyMovableBanGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyMovableBanRaiseDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата предъявления</Text>
+          <Hint>Дата предъявления ходатайства о наложении запрета совершения регистрационных действий в отношении ТС</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBanRaiseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <TabIndex>1</TabIndex>
+          <Value>
+            <Parameter Name="PropertyMovableBanRaiseDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBanResultDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableBanRaiseDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата постановления</Text>
+          <Hint>Дата постановления о запрете совершения регистрационных действий в отношении ТС</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBanResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableBanResultDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableBanResultDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableBanResultDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableBanResultDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableUnBanDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableBanResultDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableBanGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableUnBanDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата снятия запрета</Text>
+          <Hint>Дата снятия запрета на совершения регистрационных действий в отношении ТС</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableUnBanDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableUnBanDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableUnBanDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableUnBanDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableUnBanDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBanResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableBanRaiseDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableBanGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableBanResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableBanResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableBanResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableBanResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyMovableBanResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyMovableBanResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyMovableArrestGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableBanGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableArrestResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="PropertyMovableBanGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Text>Сведения об аресте</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualMovableCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyMovableArrestRaiseDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyMovableArrestGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyMovableArrestRaiseDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата предъявления</Text>
+          <Hint>Дата предъявления ходатайства о наложении ареста в отношении ТС</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableArrestRaiseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableArrestRaiseDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableArrestResultDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableArrestRaiseDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата постановления</Text>
+          <Hint>Дата постановления о наложении ареста в отношении ТС</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableArrestResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableArrestResultDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableArrestResultDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableArrestResultDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableArrestResultDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableUnArrestDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableArrestResultDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableArrestGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableUnArrestDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата снятия ареста</Text>
+          <Hint>Дата снятия ареста в отношении ТС</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableUnArrestDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableUnArrestDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableUnArrestDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableUnArrestDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableUnArrestDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableArrestResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableArrestRaiseDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableArrestGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableArrestResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableArrestRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableArrestResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableArrestResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableArrestResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyMovableArrestResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyMovableArrestResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyMovableWantedGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="PropertyMovableBanGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableBanGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyMovableWantedResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PropertyMovableWantedGroupBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Text>Сведения о розыске</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualMovableCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyMovableWantedRaiseDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyMovableWantedGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyMovableWantedRaiseDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата предъявления</Text>
+          <Hint>Дата предъявления ходатайства об объявлении ТС в розыск</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableWantedRaiseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableWantedRaiseDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableWantedResultDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableWantedRaiseDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата постановления</Text>
+          <Hint>Дата постановления об объявлении ТС в розыск</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableWantedResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableWantedResultDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableWantedResultDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableWantedResultDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableWantedResultDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableUnWantedDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableWantedResultDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableWantedGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableUnWantedDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата снятия с розыска</Text>
+          <Hint>Дата снятия ТС с розыска</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableUnWantedDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableUnWantedDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableUnWantedDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableUnWantedDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableUnWantedDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableWantedResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableWantedRaiseDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableWantedGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableWantedResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableWantedRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableWantedResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableWantedResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableWantedResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyMovableWantedResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyMovableWantedResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyMovableSellGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="PropertyMovableArrestGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="PropertyMovableWantedGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>68</Height>
+        <Width>
+          <Object Name="PropertyMovableWantedGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Text>Сведения о реализации</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualMovableCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyMovableSellDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyMovableSellGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyMovableSellDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>30</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата реализации</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableSellDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyMovableSellDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableSellResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableSellDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyMovableSellGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyMovableSellResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyMovableSellDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат реализации</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyMovableSellResultComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyMovableSellResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyMovableSellResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyMovableSellResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <DataConnection SourceDataConnection="SellResultPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="SellResultId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <Parameter Name="PropertyMovableSellResultId" />
+          </Value>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyRealGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealCadastralPriceNumericBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PropertyGroupBox">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <Text>Сведения о недвижимости</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualRealCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyRealAddressLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealAddressLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Адрес</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealAddressTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyRealAddress" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealCadastralNumberLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealAddressTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Кадастровый номер</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealCadastralNumberTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealCadastralNumberLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealCadastralNumberLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealCadastralNumberLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <Parameter Name="PropertyRealCadastralNumber" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealCadastralPriceLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealCadastralNumberTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyRealGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyRealCadastralPriceLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>30</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Кадастровая стоимость</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealCadastralPriceNumericBox" Type="NumericBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealCadastralPriceLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealCadastralPriceLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealCadastralPriceLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <DecimalPlaces>2</DecimalPlaces>
+          <Increment>10000</Increment>
+          <Minimum>0</Minimum>
+          <ThousandsSeparator>True</ThousandsSeparator>
+          <Value>
+            <Parameter Name="PropertyRealCadastralPrice" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealAreaLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyRealCadastralPriceLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealCadastralPriceLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealAreaLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealAddressLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Площадь</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealAreaNumericBox" Type="NumericBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealAreaLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealAreaLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealAreaLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <DecimalPlaces>2</DecimalPlaces>
+          <Increment>10</Increment>
+          <Minimum>0</Minimum>
+          <ThousandsSeparator>True</ThousandsSeparator>
+          <Value>
+            <Parameter Name="PropertyRealArea" />
+          </Value>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyRealSellGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyRealGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealSellDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="PropertyRealGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>8</TabIndex>
+        <Text>Сведения о реализации</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualRealCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyRealSellDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyRealSellGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyRealSellDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>30</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата реализации</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealSellDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealSellDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealSellResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealSellDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealSellGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealSellResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealSellDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат реализации</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealSellResultComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealSellResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealSellResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealSellResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <DataConnection SourceDataConnection="SellResultPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="SellResultId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <Parameter Name="PropertyRealSellResultId" />
+          </Value>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyRealBanGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="PropertyRealGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealBanResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PropertyRealBanGroupBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>9</TabIndex>
+        <Text>Сведения о запрете</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualRealCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyRealBanRaiseDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyRealBanGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyRealBanRaiseDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата предъявления</Text>
+          <Hint>Дата предъявления ходатайства о наложении запрета совершения регистрационных действий в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyRealBanRaiseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealBanRaiseDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealBanResultDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealBanRaiseDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата постановления</Text>
+          <Hint>Дата постановления о запрете совершения регистрационных действий в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyRealBanResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealBanResultDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealBanResultDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealBanResultDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealBanResultDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealUnBanDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealBanResultDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealBanGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealUnBanDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата снятия запрета</Text>
+          <Hint>Дата отмены запрета совершения регистрационных действий в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyRealUnBanDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealUnBanDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealUnBanDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealUnBanDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealUnBanDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealBanResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealBanRaiseDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealBanGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealBanResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealBanResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealBanResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealBanResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyRealBanResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyRealBanResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyRealArrestGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealBanGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyRealBanGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyRealArrestResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="PropertyRealBanGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>10</TabIndex>
+        <Text>Сведения об аресте</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualRealCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyRealArrestRaiseDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyRealArrestGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyRealArrestRaiseDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата предъявления</Text>
+          <Hint>Дата предъявления ходатайства о наложении ареста в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyRealArrestRaiseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealArrestRaiseDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealArrestResultDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealArrestRaiseDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата постановления</Text>
+          <Hint>Дата постановления о наложении ареста в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyRealArrestResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealArrestResultDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealArrestResultDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealArrestResultDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealArrestResultDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealUnArrestDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealArrestResultDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealArrestGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealUnArrestDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата снятия ареста</Text>
+          <Hint>Дата отмены ареста в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyRealUnArrestDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealUnArrestDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealUnArrestDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyRealUnArrestDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyRealUnArrestDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyRealArrestResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealArrestRaiseDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyRealArrestGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyRealArrestResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyRealArrestRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyRealArrestResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyRealArrestResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyRealArrestResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyRealArrestResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyRealArrestResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyCompanyGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PropertyGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyCompanyAddressTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PropertyGroupBox">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <TabIndex>11</TabIndex>
+        <Text>Сведения об ООО / ИП</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualCompanyCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyCompanyTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyCompanyGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyCompanyTitleLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>30</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Наименование</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <Parameter Name="PropertyCompanyTitle" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyInnLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyTitleLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyCompanyInnLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ИНН</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyInnTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyInnLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <AllowedSymbols>0123456789</AllowedSymbols>
+          <MaxLength>12</MaxLength>
+          <Text>
+            <Parameter Name="PropertyCompanyInn" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyAddressLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Адрес</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyAddressTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyAddressLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyCompanyAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyCompanyAddress" />
+          </Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyContactLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyCompanyAddressLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyCompanyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Контакты</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyContactTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyContactLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyContactLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="PropertyCompanyAddressTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="PropertyCompanyContactLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyCompanyContact" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PropertyCompanyBanGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="PropertyCompanyGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyCompanyGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PropertyCompanyBanResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PropertyCompanyBanGroupBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>12</TabIndex>
+        <Text>Сведения о запрете</Text>
+        <Visible>
+          <Condition Name="PropertyTypeEqualCompanyCondition" />
+        </Visible>
+
+        <MyObject Name="PropertyCompanyBanRaiseDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="PropertyCompanyBanGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="PropertyCompanyBanRaiseDateLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата предъявления</Text>
+          <Hint>Дата предъявления ходатайства о наложении запрета совершения регистрационных действий в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyBanRaiseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyCompanyBanRaiseDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyBanResultDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyBanRaiseDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата постановления</Text>
+          <Hint>Дата постановления о запрете совершения регистрационных действий в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyBanResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyBanResultDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyBanResultDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyBanResultDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyCompanyBanResultDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyUnBanDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyBanResultDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyBanGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyCompanyUnBanDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата снятия запрета</Text>
+          <Hint>Дата отмены запрета совершения регистрационных действий в отношении недвижимого имущества</Hint>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyUnBanDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyUnBanDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyUnBanDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PropertyCompanyUnBanDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <NullValue Show="True" />
+          <Format>dd MMMM yyyy</Format>
+          <Value>
+            <Parameter Name="PropertyCompanyUnBanDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyBanResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyBanRaiseDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PropertyCompanyBanGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PropertyCompanyBanResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="PropertyCompanyBanRaiseDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат</Text>
+        </MyObject>
+
+        <MyObject Name="PropertyCompanyBanResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="PropertyCompanyBanResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PropertyCompanyBanResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="PropertyCompanyBanResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="PropertyCompanyBanResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="PropertyTitleTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Наименование имущества" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="PropertyTypeEqualCompanyCondition" />
+                  <Not>
+                    <Condition Name="PropertyCompanyInnTextBoxIsNullOrEmptyCondition" />
+                  </Not>
+                  <Not>
+                    <Condition Name="PropertyCompanyInnTextBoxIsINNCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Некорректный номер ИНН.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

@@ -1,0 +1,1940 @@
+<?xml version="1.0"?>
+<Form Name="CollectTemplateEditForm" Width="650" Height="270" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="TemplateId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование шаблона</Then>
+        </Case>
+        <Case>Добавление шаблона</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+
+    <Parameter Name="FormHeightDefaultValue">270</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ModulePochtaRuPermission" />
+          <Field Name="ListPochtaRuOrderPermission" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TemplatePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TemplateByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+          <Field Name="FileName" />
+          <Field Name="SystemPath" />
+          <Field Name="Guid" />
+          <Field Name="TemplateCategoryId" />
+          <Field Name="System" />
+          <Field Name="UpdateFieldsOnMailSent" />
+          <Field Name="UpdateFieldsOnMailArrival" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TemplateId">
+            <Value>
+              <Parameter Name="TemplateId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TemplateCategoryPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TemplateCategorySelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TemplateCategoryId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="TemplateCategoryId" />
+              <Value>
+                <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="TemplateCategoryId" />
+                  </Fields>
+                </DataConnection>
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="FieldsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="FieldsSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="FieldId" />
+          <Field Name="Description" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TemplateUpdateFieldsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TemlplateUpdateFieldsSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="FieldId" />
+          <Field Name="UpdateOnMailSent" />
+          <Field Name="UpdateOnMailArrival" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TemplateId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="TemplateId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TemplateUpdateFieldsOnMailSentSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="TemplateUpdateFieldsPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="UpdateOnMailSent" />
+        <Value>True</Value>
+        <DataType Type="BooleanDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TemplateUpdateFieldsOnMailArrivalSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="TemplateUpdateFieldsPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="UpdateOnMailArrival" />
+        <Value>True</Value>
+        <DataType Type="BooleanDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TemplateInsertSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Title">
+          <Value>
+            <Object Name="TemplateTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Guid">
+          <Value>
+            <Object Name="GuidVariable" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TemplateCategoryId">
+          <Value>
+            <Object Name="TemplateCategoryComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateFieldsOnMailSent">
+          <Value>
+            <Object Name="UpdateFieldsOnMailSentCheckBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateFieldsOnMailArrival">
+          <Value>
+            <Object Name="UpdateFieldsOnMailArrivalCheckBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateOnMailSentFieldIds" SendAsArray="True">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="UpdateFieldsOnMailSentCheckedComboBoxSelectedAllCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="FieldsPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="FieldId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="UpdateFieldsOnMailSentCheckedComboBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateOnMailArrivalFieldIds" SendAsArray="True">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="UpdateFieldsOnMailArrivalCheckedComboBoxSelectedAllCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="FieldsPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="FieldId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="UpdateFieldsOnMailArrivalCheckedComboBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TemplateInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TemplateUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TemplateId">
+          <Value>
+            <Parameter Name="TemplateId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Title">
+          <Value>
+            <Object Name="TemplateTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Guid">
+          <Value>
+            <Object Name="GuidVariable" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TemplateCategoryId">
+          <Value>
+            <Object Name="TemplateCategoryComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateFieldsOnMailSent">
+          <Value>
+            <Object Name="UpdateFieldsOnMailSentCheckBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateFieldsOnMailArrival">
+          <Value>
+            <Object Name="UpdateFieldsOnMailArrivalCheckBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateOnMailSentFieldIds" SendAsArray="True">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="UpdateFieldsOnMailSentCheckedComboBoxSelectedAllCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="FieldsPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="FieldId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="UpdateFieldsOnMailSentCheckedComboBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="UpdateOnMailArrivalFieldIds" SendAsArray="True">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="UpdateFieldsOnMailArrivalCheckedComboBoxSelectedAllCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="FieldsPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="FieldId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="UpdateFieldsOnMailArrivalCheckedComboBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TemplateUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="TemplateTitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateTitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TemplateFileTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateFileTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="GuidVariableIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GuidVariable" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TemplateIsSystemCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="System" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="GuidsToDeleteVariableIsNotEmptyCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="GuidsToDeleteVariable" />
+            </Source>
+            <Filter Type="IsNotNull">
+              <Index Value="0" />
+            </Filter>
+            <Filter Type="NotEqual">
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value />
+            </Filter>
+            <Distinct />
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TemplateGuidIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Guid" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TemplateCopyFileCommandHasErrorCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="TemplateCopyFileCommand" Parameter="ErrorMessage" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PochtaRuModuleAndListPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <And>
+            <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ModulePochtaRuPermission" />
+              </Fields>
+            </DataConnection>
+            <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ListPochtaRuOrderPermission" />
+              </Fields>
+            </DataConnection>
+          </And>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="UpdateFieldsOnMailArrivalCheckedComboBoxSelectedNoneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="UpdateFieldsOnMailArrivalCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="UpdateFieldsOnMailSentCheckedComboBoxSelectedNoneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="UpdateFieldsOnMailSentCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="UpdateFieldsOnMailArrivalCheckedComboBoxSelectedAllCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="UpdateFieldsOnMailArrivalCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>
+          <Object Name="UpdateFieldsOnMailArrivalCheckedComboBox">
+            <Property Name="ItemsCount" />
+          </Object>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="UpdateFieldsOnMailSentCheckedComboBoxSelectedAllCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="UpdateFieldsOnMailSentCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>
+          <Object Name="UpdateFieldsOnMailSentCheckedComboBox">
+            <Property Name="ItemsCount" />
+          </Object>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="UpdateFieldsOnMailSentCheckedButNoItemsSelectedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Object Name="UpdateFieldsOnMailSentCheckBox" />
+          <Condition Name="UpdateFieldsOnMailSentCheckedComboBoxSelectedNoneCondition" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="UpdateFieldsOnMailArrivalCheckedButNoItemsSelectedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Object Name="UpdateFieldsOnMailArrivalCheckBox" />
+          <Condition Name="UpdateFieldsOnMailArrivalCheckedComboBoxSelectedNoneCondition" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="DeleteFileCommand" />
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="DeleteFileCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="DeleteFileCommand" />
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Parameter Name="FormHeightDefaultValue" />
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+                    </When>
+                    <Then>100</Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Plus>
+          </Formula>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="TemplateCategoryListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTemplateCategoryList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="TemplateCategoryId">
+          <Object Name="TemplateCategoryComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="TemplateCategoryComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TemplateCategoryComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateCategoryPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateInsertSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateInsertSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="TemplateId">
+        <Command Name="TemplateInsertSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <If>
+          <When>
+            <Condition Name="TemplateGuidIsNotNullCondition" />
+          </When>
+          <Then>
+            <Command Name="GuidsToDeleteVariableAddGuidCommand">
+              <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Guid" />
+                </Fields>
+              </DataConnection>
+            </Command>
+          </Then>
+        </If>
+        <Command Name="GuidsToDeleteVariableRemoveGuidCommand" />
+        <If>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>
+            <Command Name="TemplateUpdateSaveCommand" />
+          </Then>
+          <Else>
+            <Command Name="TemplateInsertSaveCommand" />
+            <Command Name="TemplateIdValueSetCommand" />
+          </Else>
+        </If>
+        <Command Name="DeleteFileCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="TemplateFileDialogShowCommand" Type="FileDialogShowCommand" Assembly="Commands">
+      <Title>Выберите файл</Title>
+      <Filter>Текстовые файлы|*.docx</Filter>
+      <InitialDirectory>
+        <Object Name="FileDialogPathVariable" />
+      </InitialDirectory>
+    </Command>
+
+    <Command Name="UploadFileCommand" Type="UploadFileCommand" Assembly="Commands">
+      <FileName>
+        <Command Name="TemplateFileDialogShowCommand" Parameter="FullPath" />
+      </FileName>
+    </Command>
+
+    <Command Name="FileDialogPathVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FileDialogPathVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="DownloadFileFolderDialogShowCommand" Type="FolderDialogShowCommand" Assembly="Commands">
+      <Title>Выберите папку</Title>
+      <RootSpecialFolder>Desktop</RootSpecialFolder>
+    </Command>
+
+    <Command Name="DocumentTemplateDownloadFileCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <Open>False</Open>
+      <ReadOnly>False</ReadOnly>
+      <FileGuid>
+        <Object Name="GuidVariable" />
+      </FileGuid>
+      <ExportFileName>
+        <Command Name="DownloadFileFolderDialogShowCommand" Parameter="Path" />
+      </ExportFileName>
+    </Command>
+
+    <Command Name="TemplateCopyFileCommand" Type="CopyFileCommand" Assembly="Commands">
+      <FilesToCopy>
+        <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+          <Fields>
+            <Field Name="SystemPath" />
+          </Fields>
+        </DataConnection>
+      </FilesToCopy>
+      <ExportFileName>
+        <String>
+          <Format>{0}\{1}.docx</Format>
+          <Items>
+            <Item>
+              <Command Name="DownloadFileFolderDialogShowCommand" Parameter="Path" />
+            </Item>
+            <Item>
+              <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Item>
+          </Items>
+        </String>
+      </ExportFileName>
+    </Command>
+
+    <Command Name="TemplateCopyFileCommandErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r{1}</Format>
+          <Items>
+            <Item>При сохранении шаблона произошла ошибка:</Item>
+            <Item>
+              <Command Name="TemplateCopyFileCommand" Parameter="ErrorMessage" />
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="GuidVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="TemplateFileTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TemplateFileTextBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="GuidsToDeleteVariableAddGuidCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidsToDeleteVariable">
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Add>
+            <Input />
+          </Add>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="FormChangedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">True</Property>
+      </Form>
+    </Command>
+
+    <Command Name="DeleteFileCommand" Type="DeleteFileCommand" Assembly="Commands">
+      <Condition Name="GuidsToDeleteVariableIsNotEmptyCondition" />
+      <ThrowException>False</ThrowException>
+      <FileGuid>
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Filter Type="IsNotNull">
+            <Index Value="0" />
+          </Filter>
+          <Filter Type="NotEqual">
+            <Index Value="0" />
+            <DataType Type="StringDataType" />
+            <Value />
+          </Filter>
+          <Distinct />
+        </Array>
+      </FileGuid>
+    </Command>
+
+    <Command Name="GuidsToDeleteVariableRemoveGuidCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidsToDeleteVariable">
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Filter Type="NotEqual">
+            <Index Value="0" />
+            <DataType Type="StringDataType" />
+            <Value>
+              <Object Name="GuidVariable" />
+            </Value>
+          </Filter>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="DownloadMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение шаблона</Caption>
+      <Text>
+        <String>
+          <Format>Файл шаблона сохранен в папке {0}.</Format>
+          <Items>
+            <Item>
+              <Command Name="DownloadFileFolderDialogShowCommand" Parameter="Path" />
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="TemplateVariableFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTemplateVariableList.xml</Xml>
+      <Show Type="None" />
+    </Command>
+
+    <Command Name="UpdateFieldsOnMailSentHelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Автоматически изменяемые поля</Caption>
+      <Text>При отправке корреспонденции с помощью встроенного модуля "Почта России", содержащей документ этого шаблона, дата отправки будет автоматически выставлена в выбранные поля.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdateFieldsOnMailArrivalHelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Автоматически изменяемые поля</Caption>
+      <Text>При доставке корреспонденции с помощью встроенного модуля "Почта России", содержащей документ этого шаблона, дата доставки будет автоматически выставлена в выбранные поля.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+        <Command Name="GuidVariableValueSetCommand">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Guid" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <First />
+          </Array>
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="DownloadFileFolderDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GuidVariableIsNullOrEmptyCondition" />
+          </When>
+          <Then>
+            <Command Name="TemplateCopyFileCommand" />
+            <If>
+              <When>
+                <Condition Name="TemplateCopyFileCommandHasErrorCondition" />
+              </When>
+              <Then>
+                <Command Name="TemplateCopyFileCommandErrorMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="DownloadMessageBoxCommand" />
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="DocumentTemplateDownloadFileCommand" />
+            <Command Name="DownloadMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TemplateFileDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FileDialogPathVariableValueSetCommand">
+          <Command Name="TemplateFileDialogShowCommand" Parameter="OK" />
+        </Command>
+        <Command Name="UploadFileCommand" />
+        <Command Name="GuidVariableValueSetCommand">
+          <Command Name="UploadFileCommand" />
+        </Command>
+        <Command Name="TemplateFileTextBoxValueSetCommand">
+          <Command Name="TemplateFileDialogShowCommand" Parameter="FullFileName" />
+        </Command>
+        <Command Name="GuidsToDeleteVariableAddGuidCommand">
+          <Command Name="UploadFileCommand" />
+        </Command>
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TemplateCategoryListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="TemplateCategoryListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="TemplateCategoryListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="TemplateCategoryComboBoxValueSetCommand">
+              <Command Name="TemplateCategoryListFormShowCommand" Parameter="SelectedTemplateCategoryId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="TemplateTitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="TemplateTitleTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Наименование шаблона" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="TemplateFileTextBox" />
+      <ConditionExpression>
+        <Condition Name="TemplateFileTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Необходимо выбрать файл для шаблона.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="UpdateFieldsOnMailSentCheckedComboBox" />
+      <ConditionExpression>
+        <Condition Name="UpdateFieldsOnMailSentCheckedButNoItemsSelectedCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Изменяемые поля после отправки корреспонденции" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="UpdateFieldsOnMailArrivalCheckedComboBox" />
+      <ConditionExpression>
+        <Condition Name="UpdateFieldsOnMailArrivalCheckedButNoItemsSelectedCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Изменяемые поля после доставки корреспонденции" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="GuidVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="GuidsToDeleteVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="List" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="FileDialogPathVariable" Type="StaticVariable" Assembly="Collect" ChangeForm="False">
+      <Key Value="FileDialogPath" />
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TemplateTitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateTitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Наименование шаблона</Text>
+      </MyObject>
+
+      <MyObject Name="TemplateTitleTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="TemplateCategoryLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateTitleTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Категория</Text>
+      </MyObject>
+
+      <MyObject Name="TemplateCategoryComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="TemplateCategoryLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TemplateCategoryLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateCategorySelectButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <ValueList>
+          <DataConnection SourceDataConnection="TemplateCategoryPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TemplateCategoryId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TemplateCategoryId" />
+            </Fields>
+          </DataConnection>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="TemplateCategorySelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateCategoryComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="TemplateCategoryComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateCategoryComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateCategoryListFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="TemplateFileLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TemplateTitleLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Наименование файла</Text>
+      </MyObject>
+
+      <MyObject Name="TemplateFileTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateFileLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TemplateFileLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateFileLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateFileDownloadButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="TemplateFileUploadButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="TemplateFileDownloadButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>10</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>5</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Text>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="FileName" />
+            </Fields>
+          </DataConnection>
+        </Text>
+        <ReadOnly>True</ReadOnly>
+      </MyObject>
+
+      <MyObject Name="TemplateFileDownloadButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateFileTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateFileTextBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="TemplateFileTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateFileTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Image>Images\11x11\download.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Enabled>
+          <Or>
+            <Condition Name="TemplateIsSystemCondition" />
+            <Not>
+              <Condition Name="GuidVariableIsNullOrEmptyCondition" />
+            </Not>
+          </Or>
+        </Enabled>
+        <Commands>
+          <Command Name="DownloadFileFolderDialogShowCommand" />
+        </Commands>
+        <Hint>Скачать файл</Hint>
+      </MyObject>
+
+      <MyObject Name="TemplateFileUploadButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateFileDownloadButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateFileDownloadButton">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="TemplateFileDownloadButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateFileDownloadButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Image>Images\11x11\upload.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateFileDialogShowCommand" />
+        </Commands>
+        <Hint>Загрузить новый файл</Hint>
+        <Visible>
+          <Not>
+            <Condition Name="TemplateIsSystemCondition" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="UpdateFieldsOnMailSentCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <TabIndex>7</TabIndex>
+        <Change User="True" Source="False" ValueSet="False" />
+        <Visible>
+          <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+        </Visible>
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateFileTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>10</Left>
+        <Width>
+          <Object Name="TemplateCategoryComboBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Text>Автоматически изменять поля после отправки корреспонденции</Text>
+        <Value>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UpdateFieldsOnMailSent" />
+            </Fields>
+          </DataConnection>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="UpdateFieldsOnMailSentHelpButton" Type="Button" Assembly="BaseControls" ChangeForm="False">
+        <TabIndex>8</TabIndex>
+        <Visible>
+          <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+        </Visible>
+        <Top>
+          <Object Name="UpdateFieldsOnMailSentCheckBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="UpdateFieldsOnMailSentCheckBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="UpdateFieldsOnMailSentCheckBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="UpdateFieldsOnMailSentHelpButton">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Text>?</Text>
+        <Commands>
+          <Command Name="UpdateFieldsOnMailSentHelpMessageBoxCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="UpdateFieldsOnMailSentCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <TabIndex>9</TabIndex>
+        <Change User="True" Source="False" ValueSet="False" />
+        <Visible>
+          <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+        </Visible>
+        <Enabled>
+          <Object Name="UpdateFieldsOnMailSentCheckBox" />
+        </Enabled>
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="UpdateFieldsOnMailSentCheckBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="UpdateFieldsOnMailSentCheckBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TemplateTitleTextBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <NullValue Show="True" Title="[Все]" />
+        <DropDownHeight>500</DropDownHeight>
+        <ValueList>
+          <DataConnection SourceDataConnection="FieldsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="FieldId" />
+              <Field Name="Description" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <DataConnection SourceDataConnection="TemplateUpdateFieldsOnMailSentSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="FieldId" />
+            </Fields>
+          </DataConnection>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="UpdateFieldsOnMailArrivalCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <TabIndex>10</TabIndex>
+        <Change User="True" Source="False" ValueSet="False" />
+        <Visible>
+          <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+        </Visible>
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="UpdateFieldsOnMailSentCheckedComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>10</Left>
+        <Width>
+          <Object Name="TemplateCategoryComboBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Text>Автоматически изменять поля после доставки корреспонденции</Text>
+        <Value>
+          <DataConnection SourceDataConnection="TemplatePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UpdateFieldsOnMailArrival" />
+            </Fields>
+          </DataConnection>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="UpdateFieldsOnMailArrivalHelpButton" Type="Button" Assembly="BaseControls" ChangeForm="False">
+        <TabIndex>11</TabIndex>
+        <Visible>
+          <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+        </Visible>
+        <Top>
+          <Object Name="UpdateFieldsOnMailArrivalCheckBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="UpdateFieldsOnMailArrivalCheckBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="UpdateFieldsOnMailArrivalCheckBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="UpdateFieldsOnMailArrivalHelpButton">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Text>?</Text>
+        <Commands>
+          <Command Name="UpdateFieldsOnMailArrivalHelpMessageBoxCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="UpdateFieldsOnMailArrivalCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <TabIndex>12</TabIndex>
+        <Change User="True" Source="False" ValueSet="False" />
+        <Visible>
+          <Condition Name="PochtaRuModuleAndListPermissionCondition" />
+        </Visible>
+        <Enabled>
+          <Object Name="UpdateFieldsOnMailArrivalCheckBox" />
+        </Enabled>
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="UpdateFieldsOnMailArrivalCheckBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="UpdateFieldsOnMailArrivalCheckBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TemplateTitleTextBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <NullValue Show="True" Title="[Все]" />
+        <DropDownHeight>500</DropDownHeight>
+        <ValueList>
+          <DataConnection SourceDataConnection="FieldsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="FieldId" />
+              <Field Name="Description" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <DataConnection SourceDataConnection="TemplateUpdateFieldsOnMailArrivalSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="FieldId" />
+            </Fields>
+          </DataConnection>
+        </Value>
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="VariableListButton" Type="Button" Assembly="BaseControls">
+        <TabIndex>2</TabIndex>
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>30</Height>
+        <Width>200</Width>
+        <Text>Список переменных</Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\list.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateVariableFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <TabIndex>1</TabIndex>
+        <Top>
+          <Object Name="VariableListButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="VariableListButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="VariableListButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="TemplateTitleTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Наименование шаблона" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="TemplateFileTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Необходимо выбрать файл для шаблона.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="UpdateFieldsOnMailSentCheckedButNoItemsSelectedCondition" />
+              </When>
+              <Then>Поле "Автоматически изменять поля после отправки корреспонденции" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="UpdateFieldsOnMailArrivalCheckedButNoItemsSelectedCondition" />
+              </When>
+              <Then>Поле "Автоматически изменять поля после доставки корреспонденции" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

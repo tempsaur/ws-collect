@@ -1,0 +1,2017 @@
+<?xml version="1.0"?>
+<Form Name="CollectCommentEditForm" Width="650" Height="369" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ID" />
+    <Parameter Name="LoanClientFormID" />
+    <Parameter Name="LoanClientList" />
+    <Parameter Name="CommentFileList" />
+    <Parameter Name="TaskTypeId" />
+    <Parameter Name="Comment" />
+    <Parameter Name="NotificationDate" />
+    <Parameter Name="ExecutionDate" />
+    <Parameter Name="CommentTypeTitle" />
+    <Parameter Name="ReadOnly">False</Parameter>
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование комментария</Then>
+        </Case>
+        <Case>Добавление комментария</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="CommentPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>
+        <Not>
+          <Parameter Name="ReadOnly" />
+        </Not>
+      </ManualLoad>
+      <SqlQuery Name="CommentByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanClientId" />
+          <Field Name="LoanClientTitle" />
+          <Field Name="TaskTypeId" />
+          <Field Name="NotificationDate" />
+          <Field Name="ExecutionDate" />
+          <Field Name="Comment" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="LoanCommentId">
+            <Value>
+              <Parameter Name="ID" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CommentFilePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>
+        <Not>
+          <Parameter Name="ReadOnly" />
+        </Not>
+      </ManualLoad>
+      <SqlQuery Name="CommentFileByCommentIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="FileName" />
+          <Field Name="Guid" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="LoanCommentId">
+            <Value>
+              <Parameter Name="ID" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="LoanClientArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Parameter Name="LoanClientList" />
+      </Source>
+      <Fields>
+        <Field Name="LoanClientFormID" DataType="IntegerDataType" Index="0" />
+        <Field Name="Title" DataType="StringDataType" Index="1" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="CommentFileArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Parameter Name="CommentFileList" />
+      </Source>
+      <Fields>
+        <Field Name="Guid" DataType="StringDataType" Index="0" />
+        <Field Name="FileName" DataType="StringDataType" Index="1" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="TaskTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskTypeId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="TaskTypeId" />
+              <Value>
+                <Parameter Name="TaskTypeId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="TaskTypeIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="TaskTypeId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="CommentTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CommentTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TaskTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TaskTypeComboBoxVisibleChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskTypeComboBox">
+            <Property Name="Visible" />
+          </Object>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="FileSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="FileDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="FileSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="FileDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="GuidsToDeleteVariableIsNotEmptyCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="GuidsToDeleteVariable" />
+            </Source>
+            <Filter Type="IsNotNull">
+              <Index Value="0" />
+            </Filter>
+            <Filter Type="NotEqual">
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value />
+            </Filter>
+            <Distinct />
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="LoanClientIdIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="LoanClientId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="DeleteFileCommand" />
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="DeleteFileCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="DeleteFileCommand" />
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="FormChangedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">True</Property>
+      </Form>
+    </Command>
+
+    <Command Name="DeleteFileCommand" Type="DeleteFileCommand" Assembly="Commands">
+      <Condition Name="GuidsToDeleteVariableIsNotEmptyCondition" />
+      <ThrowException>False</ThrowException>
+      <FileGuid>
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Filter Type="IsNotNull">
+            <Index Value="0" />
+          </Filter>
+          <Filter Type="NotEqual">
+            <Index Value="0" />
+            <DataType Type="StringDataType" />
+            <Value />
+          </Filter>
+          <Distinct />
+        </Array>
+      </FileGuid>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="GuidsToDeleteVariableRemoveGuidCommand" />
+        <Command Name="DeleteFileCommand" />
+
+        <Command Name="CommentTypeTitleValueSetCommand" />
+        <Command Name="CommentFileListValueSetCommand">
+          <DataConnection SourceDataConnection="CommentFileArrayGetDataConnection">
+            <Fields>
+              <Field Name="Guid" />
+              <Field Name="FileName" />
+            </Fields>
+          </DataConnection>
+        </Command>
+        <Command Name="LoanClientFormIDValueSetCommand">
+          <Object Name="LoanClientComboBox" />
+        </Command>
+        <Command Name="TaskTypeIdValueSetCommand">
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="CommentTypeComboBox" />
+              </When>
+              <Then />
+            </Case>
+            <Case>
+              <Object Name="TaskTypeComboBox" />
+            </Case>
+          </Switch>
+        </Command>
+        <Command Name="CommentValueSetCommand">
+          <Object Name="CommentTextBox" />
+        </Command>
+        <Command Name="NotificationDateValueSetCommand">
+          <Object Name="NotificationDateDateTimePicker" />
+        </Command>
+        <Command Name="ExecutionDateValueSetCommand">
+          <Object Name="ExecutionDateDateTimePicker" />
+        </Command>
+
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="TaskTypeComboBox">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>417</Then>
+                  </Case>
+                  <Case>369</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Parameter Name="ReadOnly" />
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="FootSeparatePanel">
+                              <Property Name="Height" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="FootPanel">
+                              <Property Name="Height" />
+                            </Object>
+                          </Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="DownloadFileCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <ReadOnly>False</ReadOnly>
+      <FileGuid>
+        <Object Name="FileDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">Guid</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </FileGuid>
+    </Command>
+
+    <Command Name="FileDialogShowCommand" Type="FileDialogShowCommand" Assembly="Commands">
+      <Title>Выберите файлы</Title>
+      <MultiSelect>True</MultiSelect>
+      <InitialDirectory>
+        <Object Name="FileDialogPathVariable" />
+      </InitialDirectory>
+    </Command>
+
+    <Command Name="UploadFileCommand" Type="UploadFileCommand" Assembly="Commands">
+      <FileName>
+        <Command Name="FileDialogShowCommand" Parameter="FullPath" />
+      </FileName>
+    </Command>
+
+    <Command Name="FileDialogPathVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FileDialogPathVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="FileDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранные файлы?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="CommentFileAddRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="CommentFileArrayGetDataConnection">
+        <Property Name="AddRows">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>Guid</Item>
+                <Item>FileName</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Array>
+                <Source>
+                  <Command Name="UploadFileCommand" />
+                </Source>
+                <Select>
+                  <Items>
+                    <Item Type="Number" />
+                    <Item Type="Index">0</Item>
+                  </Items>
+                </Select>
+                <Join>
+                  <OuterArray>
+                    <Array>
+                      <Source>
+                        <Command Name="FileDialogShowCommand" Parameter="FullFileName" />
+                      </Source>
+                      <Select>
+                        <Items>
+                          <Item Type="Number" />
+                          <Item Type="Index">0</Item>
+                        </Items>
+                      </Select>
+                    </Array>
+                  </OuterArray>
+                  <Keys>
+                    <Inner Index="0" Type="IntegerDataType" />
+                    <Outer Index="0" Type="IntegerDataType" />
+                  </Keys>
+                  <Result>
+                    <Inner Index="1" />
+                    <Outer Index="1" />
+                  </Result>
+                </Join>
+              </Array>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="FileDatabaseTableSelectRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FileDatabaseTable">
+        <Property Name="SelectedRowsIndices">
+          <Object Name="FileDatabaseTable">
+            <Property Name="RowsIndicesOf">
+              <Parameters>
+                <Parameter Name="SearchWithArrays">True</Parameter>
+                <Parameter Name="ColumnNames">
+                  <Structure Type="List">
+                    <Item>Guid</Item>
+                  </Structure>
+                </Parameter>
+                <Parameter Name="Values">
+                  <Structure Type="List">
+                    <Item>
+                      <Command Name="UploadFileCommand" />
+                    </Item>
+                  </Structure>
+                </Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="FileDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="CommentFileArrayGetDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="CommentFileArrayGetDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="SearchWithArrays">True</Parameter>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>Guid</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="FileDatabaseTable">
+                            <Property Name="SelectedRowsCellValuesByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">Guid</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="GuidsToDeleteVariableAddGuidCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidsToDeleteVariable">
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Add>
+            <Command Name="UploadFileCommand" />
+          </Add>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="GuidsToDeleteVariableRemoveGuidCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidsToDeleteVariable">
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Filter Type="NotIn">
+            <Index Value="0" />
+            <DataType Type="StringDataType" />
+            <Value>
+              <DataConnection SourceDataConnection="CommentFileArrayGetDataConnection">
+                <Fields>
+                  <Field Name="Guid" />
+                </Fields>
+              </DataConnection>
+            </Value>
+          </Filter>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="LoanClientFormIDValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="LoanClientFormID">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="CommentFileListValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CommentFileList">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="TaskTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="TaskTypeId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="CommentValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Comment">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="NotificationDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="NotificationDate">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="ExecutionDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ExecutionDate">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="CommentTypeTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CommentTypeTitle">
+        <Switch>
+          <Case>
+            <When>
+              <Object Name="CommentTypeComboBox" />
+            </When>
+            <Then>
+              <Object Name="CommentTypeComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case>
+            <Object Name="TaskTypeComboBox">
+              <Property Name="VisibleText" />
+            </Object>
+          </Case>
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="LoanClientListValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="LoanClientList">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="FolderDialogShowCommand" Type="FolderDialogShowCommand" Assembly="Commands">
+      <Title>Выбор папки для выгрузки файлов</Title>
+    </Command>
+
+    <Command Name="DownloadFileInFolderCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <Open>False</Open>
+      <ReadOnly>False</ReadOnly>
+      <FileGuid>
+        <Array>
+          <Source>
+            <DataConnection SourceDataConnection="CommentFileArrayGetDataConnection">
+              <Fields>
+                <Field Name="Guid" />
+              </Fields>
+            </DataConnection>
+          </Source>
+          <Filter Type="IsNotNull">
+            <Index Value="0" />
+          </Filter>
+          <Filter Type="NotEqual">
+            <Index Value="0" />
+            <DataType Type="StringDataType" />
+            <Value />
+          </Filter>
+        </Array>
+      </FileGuid>
+      <ExportFileName>
+        <Command Name="FolderDialogShowCommand" Parameter="Path" />
+      </ExportFileName>
+    </Command>
+
+    <Command Name="DownloadInFolderMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выгрузка файлов</Caption>
+      <Text>
+        <String>
+          <Format>Файлы комментария сохранены в папке {0}.</Format>
+          <Items>
+            <Item>
+              <Command Name="FolderDialogShowCommand" Parameter="Path" />
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="ReadOnly" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="LoanClientIdIsNotNullCondition" />
+              </When>
+              <Then>
+                <Command Name="LoanClientListValueSetCommand">
+                  <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="LoanClientId" />
+                      <Field Name="LoanClientTitle" />
+                    </Fields>
+                  </DataConnection>
+                </Command>
+                <Command Name="LoanClientFormIDValueSetCommand">
+                  <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="LoanClientId" />
+                    </Fields>
+                  </DataConnection>
+                </Command>
+              </Then>
+            </If>
+            <Command Name="CommentFileListValueSetCommand">
+              <DataConnection SourceDataConnection="CommentFilePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Guid" />
+                  <Field Name="FileName" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="TaskTypeIdValueSetCommand">
+              <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="TaskTypeId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="NotificationDateValueSetCommand">
+              <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="NotificationDate" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="ExecutionDateValueSetCommand">
+              <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ExecutionDate" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="CommentValueSetCommand">
+              <DataConnection SourceDataConnection="CommentPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Comment" />
+                </Fields>
+              </DataConnection>
+            </Command>
+          </Then>
+        </If>
+        <Command Name="FormHeightValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TaskTypeComboBoxVisibleChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="FileDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FileDeleteRowsCommand" />
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="FileDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FileDialogPathVariableValueSetCommand">
+          <Command Name="FileDialogShowCommand" Parameter="OK" />
+        </Command>
+        <Command Name="UploadFileCommand" />
+        <Command Name="CommentFileAddRowsCommand" />
+        <Command Name="FileDatabaseTableSelectRowsCommand" />
+        <Command Name="GuidsToDeleteVariableAddGuidCommand" />
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="FolderDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="DownloadFileInFolderCommand" />
+        <Command Name="DownloadInFolderMessageBoxCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="CommentTextBox" />
+      <ConditionExpression>
+        <Condition Name="CommentTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Комментарий" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="TaskTypeComboBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Object Name="CommentTypeComboBox" />
+          </Not>
+          <Condition Name="TaskTypeComboBoxIsNullCondition" />
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип действия" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="GuidsToDeleteVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="List" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="FileDialogPathVariable" Type="StaticVariable" Assembly="Collect" ChangeForm="False">
+      <Key Value="FileDialogPath" />
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <String>
+            <Format>{0}{1}</Format>
+            <Items>
+              <Item>
+                <Parameter Name="Title" />
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Parameter Name="ReadOnly" />
+                    </When>
+                    <Then> (режим чтения)</Then>
+                  </Case>
+                  <Case />
+                </Switch>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Parameter Name="ReadOnly" />
+                  </When>
+                  <Then>0</Then>
+                </Case>
+                <Case>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="FootSeparatePanel">
+                          <Property Name="Height" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="FootPanel">
+                          <Property Name="Height" />
+                        </Object>
+                      </Item>
+                    </Plus>
+                  </Formula>
+                </Case>
+              </Switch>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="LoanClientLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>50</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Фигурант</Text>
+      </MyObject>
+
+      <MyObject Name="LoanClientComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="LoanClientLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Все фигуранты]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="LoanClientArrayGetDataConnection">
+            <Fields>
+              <Field Name="LoanClientFormID" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="LoanClientFormID" />
+        </Value>
+        <Enabled>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="CommentTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="LoanClientComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Тип комментария</Text>
+      </MyObject>
+
+      <MyObject Name="CommentTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CommentTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CommentTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CommentTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <NullValue Show="False" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>
+                <DataTypeConvert Type="BooleanDataType">True</DataTypeConvert>
+              </Item>
+              <Item>Комментарий</Item>
+            </Row>
+            <Row>
+              <Item>
+                <DataTypeConvert Type="BooleanDataType">False</DataTypeConvert>
+              </Item>
+              <Item>Действие</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>
+          <Condition Name="TaskTypeIdIsNullCondition" />
+        </Value>
+        <Enabled>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="TaskTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CommentTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Тип действия</Text>
+        <Visible>
+          <Not>
+            <Object Name="CommentTypeComboBox" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="TaskTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="TaskTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="TaskTypeId" />
+        </Value>
+        <Visible>
+          <Not>
+            <Object Name="CommentTypeComboBox" />
+          </Not>
+        </Visible>
+        <Enabled>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="CommentLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="TaskTypeComboBox">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="TaskTypeComboBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="CommentTypeComboBox">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Комментарий</Text>
+      </MyObject>
+
+      <MyObject Name="CommentTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CommentLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CommentLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>51</Height>
+        <Width>
+          <Object Name="CommentLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Parameter Name="Comment" />
+        </Text>
+        <ReadOnly>
+          <Parameter Name="ReadOnly" />
+        </ReadOnly>
+      </MyObject>
+
+      <MyObject Name="NotificationDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CommentTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Контрольный срок</Text>
+      </MyObject>
+
+      <MyObject Name="NotificationDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="NotificationDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="NotificationDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="NotificationDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <NullValue Show="True" />
+        <Format> d  MMMM  yyyy</Format>
+        <Value>
+          <Parameter Name="NotificationDate" />
+        </Value>
+        <Enabled>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="ExecutionDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="NotificationDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата исполнения</Text>
+      </MyObject>
+
+      <MyObject Name="ExecutionDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ExecutionDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ExecutionDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ExecutionDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <NullValue Show="True" />
+        <Format> d  MMMM  yyyy</Format>
+        <Value>
+          <Parameter Name="ExecutionDate" />
+        </Value>
+        <Enabled>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="FileLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="LoanClientLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="LoanClientLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="FileLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Файлы</Text>
+      </MyObject>
+
+      <MyObject Name="FileDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+        <Top>
+          <Object Name="FileLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="FileLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="FileDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FileLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="FileAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <MultiSelect Value="True" />
+        <SourceDataConnection Name="CommentFileArrayGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="Guid" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="FileName" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование файла</Title>
+            <Width>140</Width>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="FileAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="FileDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FileDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>8</TabIndex>
+        <Hint>Добавить файлы...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="FileDialogShowCommand" />
+        </Commands>
+        <Visible>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="FileDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FileAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="FileAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="FileAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="FileAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>9</TabIndex>
+        <Hint>Удалить файлы</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="FileDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="FileSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите файлы для удаления.</DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="ReadOnly" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="FileOpenButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="ReadOnly" />
+              </When>
+              <Then>
+                <Object Name="FileAddButton">
+                  <Property Name="Top" />
+                </Object>
+              </Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="FileDeleteButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>15</Item>
+                </Plus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="FileAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="FileAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="FileAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>10</TabIndex>
+        <Hint>Открыть файл...</Hint>
+        <Image>Images\24x24\file_open.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Enabled>
+          <Condition Name="FileSelectedOneCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="DownloadFileCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите файл для просмотра.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="FileDownloadButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FileOpenButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="FileAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="FileAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="FileAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>11</TabIndex>
+        <Hint>Выгрузить все файлы в папку</Hint>
+        <Image>Images\24x24\folder_download.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="FolderDialogShowCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Not>
+          <Parameter Name="ReadOnly" />
+        </Not>
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+      <Visible>
+        <Not>
+          <Parameter Name="ReadOnly" />
+        </Not>
+      </Visible>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CommentTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Комментарий" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Object Name="CommentTypeComboBox" />
+                  </Not>
+                  <Condition Name="TaskTypeComboBoxIsNullCondition" />
+                </And>
+              </When>
+              <Then>Поле "Тип действия" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

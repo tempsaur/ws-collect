@@ -1,0 +1,1093 @@
+<?xml version="1.0"?>
+<Form Name="CollectMessageTemplateListForm" Width="1260" Height="650" BackColor="White" StartPosition="CenterScreen" MaximizeBox="True" FormBorderStyle="FixedSingle" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Шаблоны SMS</Parameter>
+    <Parameter Name="MessageTemplateId" />
+    <Parameter Name="MessageTemplateName" />
+    <Parameter Name="MessageTemplateTitle" />
+    <Parameter Name="MessageTemplateText" />
+    <Parameter Name="SMSVisible">True</Parameter>
+    <Parameter Name="Select">False</Parameter>
+    <Parameter Name="SelectedMessageTemplateId" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="Gray225" Red="225" Green="225" Blue="225" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <Color Name="StatusLightPink" Red="229" Green="184" Blue="183" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TabButtonFont" Font="Segoe UI" Size="12" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserIsAdministrator" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplatePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="MessageTemplateSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="MessageTemplateId" />
+          <Field Name="Title" />
+          <Field Name="Text" />
+          <Field Name="System" />
+          <Field Name="SystemForSelect" />
+          <Field Name="Archive" />
+          <Field Name="MessageTypeTitle" />
+          <Field Name="MessageType" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="MessageTemplateName">
+            <Value>
+              <Parameter Name="MessageTemplateName" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="SMSVisible">
+            <Value>
+              <Parameter Name="SMSVisible" />
+            </Value>
+          </Parameter>
+        </Parameters>
+        <Filter Type="Nested">
+          <And>
+            <Filter FilterByNullValue="False">
+              <Field NativeName="Archive" />
+              <Value>
+                <Object Name="ArchiveFilterComboBox" />
+              </Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter FilterByNullValue="False">
+              <Field NativeName="SystemForSelect" />
+              <Value>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Parameter Name="Select" />
+                    </When>
+                    <Then>False</Then>
+                  </Case>
+                </Switch>
+              </Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+          </And>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplateArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MessageTemplateId">
+          <Value>
+            <Object Name="MessageTemplateDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">MessageTemplateId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive">
+          <Value>
+            <Not>
+              <Object Name="MessageTemplateDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Archive</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Not>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageTemplateArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+      <Refresh>
+        <DataConnection Name="MessageTemplatePrimaryGetDataConnection" />
+      </Refresh>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplateDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MessageTemplateId">
+          <Value>
+            <Object Name="MessageTemplateDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">MessageTemplateId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageTemplateDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+    
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+    
+    <Condition Name="FormClosingNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <AlwaysChange Value="True" />
+      <ConditionExpression>
+        <Or>
+          <Condition Name="FormClosingCondition" />
+          <Condition Name="FormEscapeKeyDownCondition" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UserIsAdministrator" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MessageTemplateDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="MessageTemplateDatabaseTable" />
+    </Condition>
+
+    <Condition Name="MessageTemplateSelectedCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="SelectedMessageTemplateIsNotSystemCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">System</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>False</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="SelectedMessageTemplateIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MessageTemplateDeleteResultIsSuccessCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="MessageTemplateDeleteCommand" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTemplateDeleteResultIsSystemCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="MessageTemplateDeleteCommand" />
+        </Item>
+        <Item>system</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTemplateDeleteResultIsUsedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="MessageTemplateDeleteCommand" />
+        </Item>
+        <Item>used</Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+
+    <Command Name="MessageTemplateAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectMessageTemplateEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="True" />
+      <Parameters>
+        <Parameter Name="MessageTemplateTitle">
+          <Parameter Name="MessageTemplateTitle" />
+        </Parameter>
+        <Parameter Name="MessageTemplateText">
+          <Parameter Name="MessageTemplateText" />
+        </Parameter>
+        <Parameter Name="MessageType">
+          <Input />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="MessageTemplateEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectMessageTemplateEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="True" />
+      <Parameters>
+        <Parameter Name="MessageTemplateId">
+          <Object Name="MessageTemplateDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">MessageTemplateId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="MessageType">
+          <Object Name="MessageTemplateDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">MessageType</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="MessageTemplateSelectInTableCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="MessageTemplateDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">MessageTemplateId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="MessageTemplateArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="SelectedMessageTemplateIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить запись из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить запись в архив?</Case>
+        </Switch>
+      </Text>
+      <Buttons Type="YesNo" />
+      <Icon Type="Question" />
+    </Command>
+
+    <Command Name="MessageTemplateArchiveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageTemplateArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageTemplateDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить запись?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="MessageTemplateDeleteCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageTemplateDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageTemplateDeleteWarningMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="MessageTemplateDeleteResultIsSystemCondition" />
+            </When>
+            <Then>Невозможно удалить шаблон, так как он является системным.</Then>
+          </Case>
+          <Case>
+            <When>
+              <Condition Name="MessageTemplateDeleteResultIsUsedCondition" />
+            </When>
+            <Then>Невозможно удалить запись, так как она используется в программе. \rЗапись перемещена в архив.</Then>
+          </Case>
+        </Switch>
+      </Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="MessageTemplateDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageTemplatePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SelectedMessageTemplateIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedMessageTemplateId">
+        <Object Name="MessageTemplateDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">MessageTemplateId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectMessageTemplateSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedMessageTemplateIdValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateSelectInTableCommand">
+          <Parameter Name="MessageTemplateId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingNestedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplateAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateDataConnectionRefreshCommand" />
+        <Command Name="MessageTemplateSelectInTableCommand">
+          <Command Name="MessageTemplateAddFormShowCommand" Parameter="MessageTemplateId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplateEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateDataConnectionRefreshCommand" />
+        <Command Name="MessageTemplateSelectInTableCommand">
+          <Command Name="MessageTemplateEditFormShowCommand" Parameter="MessageTemplateId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="MessageTemplateDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="Select" />
+          </When>
+          <Then>
+            <Command Name="SelectMessageTemplateSequentialCommand" />
+          </Then>
+          <ElseIf>
+            <When>
+              <Object Name="MessageTemplateEditButton">
+                <Property Name="Enabled" />
+              </Object>
+            </When>
+            <Then>
+              <Command Name="MessageTemplateEditFormShowCommand" />
+            </Then>
+          </ElseIf>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplateArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateArchiveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplateDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateDeleteCommand" />
+        <Command Name="MessageTemplateDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+        <If>
+          <When>
+            <Not>
+              <Condition Name="MessageTemplateDeleteResultIsSuccessCondition" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="MessageTemplateDeleteWarningMessageBoxCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>250</Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+      
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>10</Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <NullValue Show="False" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <TabIndex>1</TabIndex>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>%NULL%</Item>
+              <Item>Все</Item>
+            </Row>
+            <Row>
+              <Item>False</Item>
+              <Item>Актуальные</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>False</Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="MessageTemplateDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="MessageTemplateDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>7</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="MessageTemplateDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="MessageTemplateAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <MultiSelect Value="True" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="MessageTemplatePrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="MessageTemplateId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <Text Id="Title">Название</Text>
+            </Title>
+            <Width>150</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="MessageType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Text" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <Text Id="Text">Текст сообщения</Text>
+            </Title>
+          </Column>
+          <Column Name="System" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="Gray225">
+            <Expression>Archive</Expression>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="MessageTemplateDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MessageTemplateDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="MessageTemplateAddFormShowCommand">sms</Command>
+        </Commands>
+        <Enabled>
+          <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Text Id="InsufficientRights">У вас недостаточно прав для выполнения команды.</Text>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MessageTemplateAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Изменить...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="MessageTemplateEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+            <Condition Name="MessageTemplateSelectedCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+                </Not>
+              </When>
+              <Then>У вас недостаточно прав для выполнения команды.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="MessageTemplateSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите запись для редактирования.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MessageTemplateEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="SelectedMessageTemplateIsArchiveCondition" />
+              </When>
+              <Then>Восстановить из архива</Then>
+            </Case>
+            <Case>Перенести в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="SelectedMessageTemplateIsArchiveCondition" />
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="MessageTemplateArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+            <Condition Name="MessageTemplateSelectedCondition" />
+            <Condition Name="SelectedMessageTemplateIsNotSystemCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+                </Not>
+              </When>
+              <Then>У вас недостаточно прав для выполнения команды.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="MessageTemplateSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите запись для переноса в архив.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="SelectedMessageTemplateIsNotSystemCondition" />
+                </Not>
+              </When>
+              <Then>Невозможно перенести шаблон в архив, так как он является системным.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+      
+      <MyObject Name="MessageTemplateDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MessageTemplateArchiveButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <Image>Images\24x24\delete.png</Image>
+        <ImageAlign>MiddleCenter</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Удалить</Hint>
+        <Enabled>
+          <And>
+            <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+            <Condition Name="MessageTemplateSelectedCondition" />
+            <Condition Name="SelectedMessageTemplateIsNotSystemCondition" />
+          </And>
+        </Enabled>
+        <Commands>
+          <Command Name="MessageTemplateDeleteMessageBoxCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+                </Not>
+              </When>
+              <Then>У вас недостаточно прав для выполнения команды.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="MessageTemplateSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите запись для удаления.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="SelectedMessageTemplateIsNotSystemCondition" />
+                </Not>
+              </When>
+              <Then>Невозможно удалить шаблон, так как он является системным.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+    
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+    
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ChooseButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Object Name="MessageTemplateAddButton">
+            <Property Name="Right" />
+          </Object>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleCenter</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Выбрать</Text>
+        <Enabled>
+          <Condition Name="MessageTemplateSelectedCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="SelectMessageTemplateSequentialCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите запись</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

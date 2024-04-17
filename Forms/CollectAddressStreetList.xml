@@ -1,0 +1,1341 @@
+<?xml version="1.0"?>
+<Form Name="CollectAddressStreetListForm" Width="470" Height="500" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="AddressStreetId" />
+    <Parameter Name="Title">Список улиц</Parameter>
+    <Parameter Name="MergeMode">False</Parameter>
+    <Parameter Name="MergeAddressStreetIds" />
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="SelectedAddressStreetId" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="AddressStreetPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressStreetSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressStreetId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <And>
+            <Filter FilterByNullValue="False">
+              <Field NativeName="Archive" />
+              <Value>
+                <Object Name="ArchiveFilterComboBox" />
+              </Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Enabled>
+                <Parameter Name="MergeMode" />
+              </Enabled>
+              <Field NativeName="AddressStreetId" />
+              <Value>
+                <Parameter Name="MergeAddressStreetIds" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </And>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressStreetArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="AddressStreetId" SendAsArray="True">
+          <Value>
+            <Object Name="AddressStreetDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">AddressStreetId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive" SendAsArray="True">
+          <Value>
+            <Object Name="AddressStreetDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">Archive</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="AddressStreetArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="AddressStreetDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="AddressStreetId" SendAsArray="True">
+          <Value>
+            <Object Name="AddressStreetDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">AddressStreetId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="AddressStreetDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="AddressStreetMergeSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MergeAddressStreetIds" SendAsArray="True">
+          <Value>
+            <Parameter Name="MergeAddressStreetIds" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressStreetId">
+          <Value>
+            <Object Name="AddressStreetDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">AddressStreetId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="AddressStreetMergeSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="AddressStreetDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="AddressStreetDatabaseTable" />
+    </Condition>
+
+    <Condition Name="AddressStreetSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStreetSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStreetSelectedGreaterOneCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStreetIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="AddressStreetAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressStreetEdit.xml</Xml>
+      <Multiple Allow="False" Reload="False" />
+      <Show Type="None" />
+    </Command>
+
+    <Command Name="AddressStreetEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressStreetEdit.xml</Xml>
+      <Multiple Allow="False" Reload="False" />
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="AddressStreetId">
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">AddressStreetId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddressStreetArchiveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressStreetArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressStreetMergeSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressStreetMergeSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressStreetDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранные улицы?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="AddressStreetDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressStreetDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressStreetPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressStreetTryDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Одна или несколько улиц не были удалены, т.к. используются в программе. \rЭти записи были перемещены в архив.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="AddressStreetArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="AddressStreetIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить улицы из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить улицы в архив?</Case>
+        </Switch>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="AddressStreetTrySelectMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выбор</Caption>
+      <Text>Невозможно выбрать улицу, т.к. запись находится в архиве.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="AddressStreetSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressStreetDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">AddressStreetId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="SelectedAddressStreetIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedAddressStreetId">
+        <Object Name="AddressStreetDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">AddressStreetId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectAddressStreetSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedAddressStreetIdValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="AddressStreetDatabaseTableMultiSelectValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressStreetDatabaseTable">
+        <Property Name="MultiSelect">False</Property>
+      </Object>
+    </Command>
+
+    <Command Name="AddressStreetListMergeFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressStreetList.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="MergeMode">True</Parameter>
+        <Parameter Name="MergeAddressStreetIds">
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">AddressStreetId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddressStreetMergeMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Объединение улиц</Caption>
+      <Text>
+        <String>
+          <Format>При объединении улиц в адресах будет указана улица "{0}", остальные улицы будут удалены.\r\rПродолжить?</Format>
+          <Items>
+            <Item>
+              <Object Name="AddressStreetDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Title</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Or>
+              <Parameter Name="SelectionMode" />
+              <Parameter Name="MergeMode" />
+            </Or>
+          </When>
+          <Then>
+            <Command Name="AddressStreetDatabaseTableMultiSelectValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="AddressStreetSelectRowCommand">
+          <Parameter Name="AddressStreetId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="AddressStreetSelectRowCommand">
+          <Command Name="AddressStreetAddFormShowCommand" Parameter="AddressStreetId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="AddressStreetSelectRowCommand">
+          <Command Name="AddressStreetEditFormShowCommand" Parameter="AddressStreetId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="AddressStreetDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="SelectionMode" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="AddressStreetIsArchiveCondition" />
+              </When>
+              <Then>
+                <Command Name="AddressStreetTrySelectMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="SelectAddressStreetSequentialCommand" />
+              </Else>
+            </If>
+          </Then>
+          <ElseIf>
+            <When>
+              <Parameter Name="MergeMode" />
+            </When>
+            <Then>
+              <Command Name="AddressStreetMergeMessageBoxCommand" />
+            </Then>
+          </ElseIf>
+          <Else>
+            <If>
+              <When>
+                <Object Name="AddressStreetEditButton">
+                  <Property Name="Enabled" />
+                </Object>
+              </When>
+              <Then>
+                <Command Name="AddressStreetEditFormShowCommand" />
+              </Then>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetDeleteSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="AddressStreetDeleteSaveCommand" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="AddressStreetTryDeleteMessageBoxCommand" />
+          </Then>
+        </If>
+        <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetArchiveSaveCommand" />
+        <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetMergeMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetMergeSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetListMergeFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Выбор основной улицы</Then>
+            </Case>
+            <Case>
+              <Parameter Name="Title" />
+            </Case>
+          </Switch>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="Все" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then />
+            </Case>
+            <Case>False</Case>
+          </Switch>
+        </Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Or>
+                <Parameter Name="SelectionMode" />
+                <Parameter Name="MergeMode" />
+              </Or>
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="AddressStreetDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AddressStreetDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="AddressStreetDatabaseTable">
+                        <Property Name="Left" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ContentPanel">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="AddressStreetDatabaseTable">
+                      <Property Name="Left" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="AddressStreetAddButton">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>20</Item>
+                </Minus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <MultiSelect Value="True" />
+        <SourceDataConnection Name="AddressStreetPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="AddressStreetId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование</Title>
+            <Width>200</Width>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="ArchiveColor">
+            <Expression>Archive AND {0}</Expression>
+            <Items>
+              <Item>
+                <Not>
+                  <Object Name="ArchiveFilterComboBox" />
+                </Not>
+              </Item>
+            </Items>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="AddressStreetAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressStreetDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить улицу...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressStreetAddFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressStreetEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать улицу...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressStreetEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="AddressStreetIsArchiveCondition" />
+            </Not>
+            <Condition Name="AddressStreetSelectedOneCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="AddressStreetSelectedOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите улицу для редактирования.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="AddressStreetIsArchiveCondition" />
+              </When>
+              <Then>Для редактирования восстановите улицу из архива.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressStreetMergeButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Объединить улицы...</Hint>
+        <Image>Images\24x24\merge.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressStreetListMergeFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="AddressStreetSelectedGreaterOneCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите в таблице улицы, которые следует объединить.</DisabledText>
+        <Visible>
+          <Not>
+            <Or>
+              <Parameter Name="SelectionMode" />
+              <Parameter Name="MergeMode" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressStreetArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="AddressStreetMergeButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="AddressStreetMergeButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="AddressStreetEditButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="AddressStreetIsArchiveCondition" />
+              </When>
+              <Then>Восстановить улицы из архива</Then>
+            </Case>
+            <Case>Переместить улицы в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="AddressStreetIsArchiveCondition" />
+                  <Object Name="ArchiveFilterComboBox" />
+                </Or>
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressStreetArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="AddressStreetSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="AddressStreetIsArchiveCondition" />
+              </When>
+              <Then>Выберите улицы для восстановления из архива.</Then>
+            </Case>
+            <Case>Выберите улицы для перемещения в архив.</Case>
+          </Switch>
+        </DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressStreetDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetArchiveButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressStreetAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Hint>Удалить улицы</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressStreetDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="AddressStreetSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите улицы для удаления.</DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Or>
+          <Parameter Name="SelectionMode" />
+          <Parameter Name="MergeMode" />
+        </Or>
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Visible>
+        <Or>
+          <Parameter Name="SelectionMode" />
+          <Parameter Name="MergeMode" />
+        </Or>
+      </Visible>
+
+      <MyObject Name="SelectButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Images\18x18\merge.png</Then>
+            </Case>
+            <Case>Images\18x18\check.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Объединить улицы</Then>
+            </Case>
+            <Case>Выбрать</Case>
+          </Switch>
+        </Text>
+        <Enabled>
+          <And>
+            <Condition Name="AddressStreetSelectedOneCondition" />
+            <Or>
+              <Parameter Name="MergeMode" />
+              <Not>
+                <Condition Name="AddressStreetIsArchiveCondition" />
+              </Not>
+            </Or>
+          </And>
+        </Enabled>
+        <Commands>
+          <If>
+            <When>
+              <Parameter Name="MergeMode" />
+            </When>
+            <Then>
+              <Command Name="AddressStreetMergeMessageBoxCommand" />
+            </Then>
+            <Else>
+              <Command Name="SelectAddressStreetSequentialCommand" />
+            </Else>
+          </If>
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="AddressStreetSelectedOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите нужную улицу в таблице.</Then>
+            </Case>
+            <Case>Невозможно выбрать улицу, т.к. запись находится в архиве.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

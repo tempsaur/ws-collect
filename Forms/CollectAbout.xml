@@ -1,0 +1,771 @@
+﻿<?xml version="1.0"?>
+<Form Name="CollectAboutForm" Title="О программе" Width="730" Height="270" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" BackColor="White" MinimizeBox="False" MaximizeBox="False">
+  <Parameters>
+    <Parameter Name="Title">О нашей программе</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadLightThemeColor" Red="115" Green="150" Blue="166" Alpha="255" />
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="AboutPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AboutSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UpdateDate" />
+          <Field Name="Version" />
+          <Field Name="VersionDate" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="LogoPanelClickCondition" Type="ClickCondition" Assembly="Conditions">
+      <Object Name="LogoPanel" />
+    </Condition>
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="WorkflowSystemsLinkApplicationRunCommand" Type="ApplicationRunCommand" Assembly="Commands">
+      <Arguments>https://wfsys.ru/?utm_source=application<![CDATA[&]]>utm_medium=desktop<![CDATA[&]]>utm_campaign=collector<![CDATA[&]]>utm_content=about</Arguments>
+    </Command>
+
+    <Command Name="GetEngineAssemblyVersionLongCommand" Type="GetEngineInfoCommand" Assembly="Commands">
+      <Async Value="True" />
+      <Info Type="EngineAssemblyVersionLong" />
+    </Command>
+
+    <Command Name="GetEngineAssemblyDateTimeCommand" Type="GetEngineInfoCommand" Assembly="Commands">
+      <Async Value="True" />
+      <Info Type="EngineAssemblyDateTime" />
+    </Command>
+
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="GetEngineAssemblyVersionLongCommand" />
+        <Command Name="GetEngineAssemblyDateTimeCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="LogoPanelClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="WorkflowSystemsLinkApplicationRunCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="LogoPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>10</Left>
+      <Height>
+        <Form>
+          <Property Name="Height" />
+        </Form>
+      </Height>
+      <Width>280</Width>
+      <BackgroundImage>Images\dev_logo.png</BackgroundImage>
+      <BackgroundImageLayout>Center</BackgroundImageLayout>
+      <Cursor>Hand</Cursor>
+    </MyObject>
+
+    <MyObject Name="UpdateDateLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="LogoPanel">
+          <Property Name="Right" />
+        </Object>
+      </Left>
+      <Width>170</Width>
+      <Height>20</Height>
+      <TextAlign>MiddleRight</TextAlign>
+      <Text>Последнее обновление:</Text>
+    </MyObject>
+
+    <MyObject Name="UpdateDateValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>30</Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Right" />
+        </Object>
+      </Left>
+      <Width>300</Width>
+      <Height>20</Height>
+      <FontStyle>TitleFont</FontStyle>
+      <TextAlign>MiddleLeft</TextAlign>
+      <Text>
+        <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm">
+          <DataConnection SourceDataConnection="AboutPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UpdateDate" />
+            </Fields>
+          </DataConnection>
+        </DataTypeFormat>
+      </Text>
+    </MyObject>
+
+    <MyObject Name="ProgramVersionLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="ProgramVersionValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Версия программы:</Text>
+    </MyObject>
+
+    <MyObject Name="ProgramVersionValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="UpdateDateValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>20</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <FontStyle>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="FontStyle" />
+        </Object>
+      </FontStyle>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>
+        <String>
+          <Format>{0} (от {1})</Format>
+          <Items>
+            <Item>
+              <DataConnection SourceDataConnection="AboutPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Version" />
+                </Fields>
+              </DataConnection>
+            </Item>
+            <Item>
+              <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                <DataConnection SourceDataConnection="AboutPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="VersionDate" />
+                  </Fields>
+                </DataConnection>
+              </DataTypeFormat>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+    </MyObject>
+
+    <MyObject Name="EngineVersionLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="EngineVersionValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Версия Workflow Engine:</Text>
+    </MyObject>
+
+    <MyObject Name="EngineVersionValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="ProgramVersionValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>20</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <FontStyle>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="FontStyle" />
+        </Object>
+      </FontStyle>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>
+        <String>
+          <Format>{0} (от {1})</Format>
+          <Items>
+            <Item>
+              <Command Name="GetEngineAssemblyVersionLongCommand" />
+            </Item>
+            <Item>
+              <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                <Command Name="GetEngineAssemblyDateTimeCommand" />
+              </DataTypeFormat>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+    </MyObject>
+
+    <MyObject Name="FormVersionLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="FormVersionValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Версия Workflow Forms:</Text>
+    </MyObject>
+
+    <MyObject Name="FormVersionValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="EngineVersionValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>20</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <FontStyle>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="FontStyle" />
+        </Object>
+      </FontStyle>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>
+        <String>
+          <Format>{0} (от {1}) [{2}]</Format>
+          <Items>
+            <Item>
+              <Info Type="FormsAssemblyVersionLong" />
+            </Item>
+            <Item>
+              <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                <Info Type="FormsAssemblyDateTime" />
+              </DataTypeFormat>
+            </Item>
+            <Item>
+              <Info Type="Forms-x86/x64" />
+            </Item>
+          </Items>
+        </String>
+      </Text>
+    </MyObject>
+
+    <MyObject Name="SiteLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="SiteValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Сайт разработчика:</Text>
+    </MyObject>
+
+    <MyObject Name="SiteValueLabel" Type="LinkLabel" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="FormVersionValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>35</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Link>https://wfsys.ru/?utm_source=application<![CDATA[&]]>utm_medium=desktop<![CDATA[&]]>utm_campaign=collector<![CDATA[&]]>utm_content=about</Link>
+      <Text>https://wfsys.ru</Text>
+    </MyObject>
+
+    <MyObject Name="ProgramPageLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="ProgramPageValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Страница программы:</Text>
+    </MyObject>
+
+    <MyObject Name="ProgramPageValueLabel" Type="LinkLabel" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="SiteValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>20</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Link>https://wfsys.ru/collector/?utm_source=application<![CDATA[&]]>utm_medium=desktop<![CDATA[&]]>utm_campaign=collector<![CDATA[&]]>utm_content=about</Link>
+      <Text>https://wfsys.ru/collector</Text>
+    </MyObject>
+
+    <MyObject Name="OfficePhoneLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="OfficePhoneValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Microsoft Офис:</Text>
+    </MyObject>
+
+    <MyObject Name="OfficePhoneValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="ProgramPageValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>35</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <FontStyle>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="FontStyle" />
+        </Object>
+      </FontStyle>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>+7 (800) 700-30-20</Text>
+    </MyObject>
+
+    <MyObject Name="SalesDepartmentPhoneLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="SalesDepartmentPhoneValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Отдел продаж:</Text>
+    </MyObject>
+
+    <MyObject Name="SalesDepartmentPhoneValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="OfficePhoneValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>20</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <FontStyle>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="FontStyle" />
+        </Object>
+      </FontStyle>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>+7 (950) 728-83-86 (Viber, WhatsApp)</Text>
+    </MyObject>
+
+    <MyObject Name="SupportPhoneLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Object Name="SupportPhoneValueLabel">
+          <Property Name="Top" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <TextAlign>
+        <Object Name="UpdateDateLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>Тех. поддержка:</Text>
+    </MyObject>
+
+    <MyObject Name="SupportPhoneValueLabel" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="SalesDepartmentPhoneValueLabel">
+                <Property Name="Top" />
+              </Object>
+            </Item>
+            <Item>20</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Width>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <Height>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="Height" />
+        </Object>
+      </Height>
+      <FontStyle>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="FontStyle" />
+        </Object>
+      </FontStyle>
+      <TextAlign>
+        <Object Name="UpdateDateValueLabel">
+          <Property Name="TextAlign" />
+        </Object>
+      </TextAlign>
+      <Text>+7 (922) 707-89-73 (Viber, WhatsApp)</Text>
+    </MyObject>
+  </MyObjects>
+</Form>

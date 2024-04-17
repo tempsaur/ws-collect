@@ -1,0 +1,968 @@
+<?xml version="1.0"?>
+<Form Name="CollectAutotaskFilterListForm" Width="950" Height="600" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="AutotaskFilterId" />
+    <Parameter Name="Title">Список автозадач</Parameter>
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="SelectedAutotaskFilterId" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="230" Green="230" Blue="230" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="AutotaskFilterPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AutotaskFilterSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AutotaskFilterId" />
+          <Field Name="Title" />
+          <Field Name="TaskType" />
+          <Field Name="CreateDate" />
+          <Field Name="DeadlineType" />
+          <Field Name="DeadlineDate" />
+          <Field Name="DeadlineLaterText" />
+          <Field Name="ResponsibleUserTitles" />
+          <Field Name="Description" />
+          <Field Name="Archive" />
+          <Field Name="Filter" />
+        </Fields>
+        <Filter FilterByNullValue="False">
+          <Field NativeName="Archive" />
+          <Value>
+            <Object Name="ArchiveFilterComboBox" />
+          </Value>
+          <DataType Type="BooleanDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AutotaskFilterConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="AutotaskFilterPrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="AutotaskFilterId" />
+        <Field Name="Title" />
+        <Field Name="TaskType" />
+        <Field Name="CreateDate" />
+        <Field Name="DeadlineType" />
+        <Field Name="DeadlineLaterText" />
+        <Field Name="ResponsibleUserTitles" />
+        <Field Name="Description" />
+        <Field Name="Archive" />
+        <Field Name="Filter" />
+        <Field Name="DeadlineDate" Type="Substitution" Field="AutotaskFilterId">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="AutotaskFilterId" />
+                  <Field Name="DeadlineDate" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Select>
+              <Items>
+                <Item Type="Index">0</Item>
+                <Item Type="Action">
+                  <Index>1</Index>
+                  <Actions>
+                    <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy" />
+                  </Actions>
+                </Item>
+              </Items>
+            </Select>
+          </Array>
+        </Field>
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="AutotaskFilterArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="AutotaskFilterId">
+          <Value>
+            <Object Name="AutotaskFilterDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">AutotaskFilterId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive">
+          <Value>
+            <Not>
+              <Object Name="AutotaskFilterDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Archive</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Not>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="AutotaskFilterArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="AutotaskFilterDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="AutotaskFilterDatabaseTable" />
+    </Condition>
+    
+    <Condition Name="AutotaskFilterDatabaseTableSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AutotaskFilterDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AutotaskFilterIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AutotaskFilterDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="AutotaskFilterAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAutotaskFilterEdit.xml</Xml>
+      <Multiple Allow="False" Reload="False" />
+      <Show Type="None" />
+    </Command>
+
+    <Command Name="AutotaskFilterEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAutotaskFilterEdit.xml</Xml>
+      <Multiple Allow="False" Reload="False" />
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="AutotaskFilterId">
+          <Object Name="AutotaskFilterDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">AutotaskFilterId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AutotaskFilterArchiveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AutotaskFilterArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AutotaskFilterPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AutotaskFilterPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AutotaskFilterArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="AutotaskFilterIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить автозадачу из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить автозадачу в архив?</Case>
+        </Switch>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="AutotaskFilterTrySelectMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выбор</Caption>
+      <Text>Невозможно выбрать автозадачу, т.к. она находится в архиве.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="AutotaskFilterSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AutotaskFilterDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">AutotaskFilterId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="SelectedAutotaskFilterIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedAutotaskFilterId">
+        <Object Name="AutotaskFilterDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">AutotaskFilterId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectAutotaskFilterSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedAutotaskFilterIdValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AutotaskFilterSelectRowCommand">
+          <Parameter Name="AutotaskFilterId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AutotaskFilterAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AutotaskFilterPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="AutotaskFilterSelectRowCommand">
+          <Command Name="AutotaskFilterAddFormShowCommand" Parameter="AutotaskFilterId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AutotaskFilterEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AutotaskFilterPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="AutotaskFilterSelectRowCommand">
+          <Command Name="AutotaskFilterEditFormShowCommand" Parameter="AutotaskFilterId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="AutotaskFilterDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="SelectionMode" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="AutotaskFilterIsArchiveCondition" />
+              </When>
+              <Then>
+                <Command Name="AutotaskFilterTrySelectMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="SelectAutotaskFilterSequentialCommand" />
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="AutotaskFilterEditFormShowCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AutotaskFilterArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AutotaskFilterArchiveSaveCommand" />
+        <Command Name="AutotaskFilterPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AutotaskFilterPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="Все" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>False</Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Parameter Name="SelectionMode" />
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="AutotaskFilterDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AutotaskFilterDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AutotaskFilterDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AutotaskFilterAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="AutotaskFilterConvertDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="AutotaskFilterId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="DeadlineType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="DeadlineDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="DeadlineLaterText" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="CreateDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата создания</Title>
+            <Width>100</Width>
+            <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+          </Column>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование</Title>
+            <Width>150</Width>
+          </Column>
+          <Column Name="TaskType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Тип действия</Title>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="Deadline" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Срок исполнения</Title>
+            <AutoSizeMode Value="Fill" />
+            <Calculate>
+              <Expression>IIF(DeadlineType, DeadlineDate, DeadlineLaterText)</Expression>
+            </Calculate>
+          </Column>
+          <Column Name="ResponsibleUsertitles" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Исполнители задачи</Title>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="ArchiveColor">
+            <Expression>Archive AND {0}</Expression>
+            <Items>
+              <Item>
+                <Not>
+                  <Object Name="ArchiveFilterComboBox" />
+                </Not>
+              </Item>
+            </Items>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="AutotaskFilterAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="AutotaskFilterDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AutotaskFilterDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить автозадачу...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AutotaskFilterAddFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="AutotaskFilterEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AutotaskFilterAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AutotaskFilterAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AutotaskFilterAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AutotaskFilterAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать автозадачу...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AutotaskFilterEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="AutotaskFilterIsArchiveCondition" />
+            </Not>
+            <Condition Name="AutotaskFilterDatabaseTableSelectedOneCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="AutotaskFilterDatabaseTableSelectedOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите автозадачу для редактирования.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="AutotaskFilterIsArchiveCondition" />
+              </When>
+              <Then>Для редактирования восстановите автозадачу из архива.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="AutotaskFilterArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AutotaskFilterEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AutotaskFilterAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AutotaskFilterAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AutotaskFilterAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="AutotaskFilterIsArchiveCondition" />
+              </When>
+              <Then>Восстановить автозадачу из архива</Then>
+            </Case>
+            <Case>Перенести автозадачу в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="AutotaskFilterIsArchiveCondition" />
+                  <Object Name="ArchiveFilterComboBox" />
+                </Or>
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AutotaskFilterArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="AutotaskFilterDatabaseTableSelectedOneCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="AutotaskFilterIsArchiveCondition" />
+              </When>
+              <Then>Выберите автозадачу для восстановления из архива.</Then>
+            </Case>
+            <Case>Выберите автозадачу для перемещения в архив.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+
+      <MyObject Name="SelectButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\check.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Выбрать</Text>
+        <Enabled>
+          <And>
+            <Condition Name="AutotaskFilterDatabaseTableSelectedOneCondition" />
+            <Not>
+              <Condition Name="AutotaskFilterIsArchiveCondition" />
+            </Not>
+          </And>
+        </Enabled>
+        <Commands>
+          <Command Name="SelectAutotaskFilterSequentialCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="AutotaskFilterDatabaseTableSelectedOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите нужную автозадачу в таблице.</Then>
+            </Case>
+            <Case>Невозможно выбрать автозадачу, т.к. запись находится в архиве.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

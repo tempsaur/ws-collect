@@ -1,0 +1,2603 @@
+<?xml version="1.0"?>
+<Form Name="CollectInnerOrgEditForm" Width="770" Height="675" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="InnerOrgId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование цессионария</Then>
+        </Case>
+        <Case>Добавление цессионария</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="InnerOrgPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="InnerOrgByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+          <Field Name="ShortTitle" />
+          <Field Name="LeaderPost" />
+          <Field Name="Document" />
+          <Field Name="LeaderTitle" />
+          <Field Name="LeaderGenitive" />
+          <Field Name="LeaderInitials" />
+          <Field Name="LegalAddress" />
+          <Field Name="ActualAddress" />
+          <Field Name="City" />
+          <Field Name="Inn" />
+          <Field Name="Kpp" />
+          <Field Name="Ogrn" />
+          <Field Name="PaymentAccount" />
+          <Field Name="Bank" />
+          <Field Name="BankCity" />
+          <Field Name="CorrespondentAccount" />
+          <Field Name="Bik" />
+          <Field Name="Phone" />
+          <Field Name="Fax" />
+          <Field Name="Email" />
+          <Field Name="Website" />
+          <Field Name="OrgCreateDate" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="InnerOrgId">
+            <Value>
+              <Parameter Name="InnerOrgId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="InnerOrgInsertSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Title">
+          <Value>
+            <Object Name="InnerOrgTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ShortTitle">
+          <Value>
+            <Object Name="InnerOrgShortTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderPost">
+          <Value>
+            <Object Name="InnerOrgLeaderPostTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Document">
+          <Value>
+            <Object Name="InnerOrgDocumentTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderTitle">
+          <Value>
+            <Object Name="InnerOrgLeaderTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderGenitive">
+          <Value>
+            <Object Name="InnerOrgLeaderGenitiveTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderInitials">
+          <Value>
+            <Object Name="InnerOrgLeaderInitialsTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LegalAddress">
+          <Value>
+            <Object Name="InnerOrgLegalAddressTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ActualAddress">
+          <Value>
+            <Object Name="InnerOrgActualAddressTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="City">
+          <Value>
+            <Object Name="InnerOrgBankCityTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Inn">
+          <Value>
+            <Object Name="InnerOrgInnTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Kpp">
+          <Value>
+            <Object Name="InnerOrgKppTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Ogrn">
+          <Value>
+            <Object Name="InnerOrgOgrnTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="PaymentAccount">
+          <Value>
+            <Object Name="InnerOrgPaymentAccountTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Bank">
+          <Value>
+            <Object Name="InnerOrgBankTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="BankCity">
+          <Value>
+            <Object Name="InnerOrgBankCityTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="CorrespondentAccount">
+          <Value>
+            <Object Name="InnerOrgCorrespondentAccountTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Bik">
+          <Value>
+            <Object Name="InnerOrgBikTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Phone">
+          <Value>
+            <Object Name="InnerOrgPhoneTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Fax">
+          <Value>
+            <Object Name="InnerOrgFaxTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Email">
+          <Value>
+            <Object Name="InnerOrgEmailTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Website">
+          <Value>
+            <Object Name="InnerOrgWebsiteTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="OrgCreateDate">
+          <Value>
+            <Object Name="OrgCreateDateDateTimePicker" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="InnerOrgInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="InnerOrgUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="InnerOrgId">
+          <Value>
+            <Parameter Name="InnerOrgId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Title">
+          <Value>
+            <Object Name="InnerOrgTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ShortTitle">
+          <Value>
+            <Object Name="InnerOrgShortTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderPost">
+          <Value>
+            <Object Name="InnerOrgLeaderPostTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Document">
+          <Value>
+            <Object Name="InnerOrgDocumentTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderTitle">
+          <Value>
+            <Object Name="InnerOrgLeaderTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderGenitive">
+          <Value>
+            <Object Name="InnerOrgLeaderGenitiveTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeaderInitials">
+          <Value>
+            <Object Name="InnerOrgLeaderInitialsTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LegalAddress">
+          <Value>
+            <Object Name="InnerOrgLegalAddressTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ActualAddress">
+          <Value>
+            <Object Name="InnerOrgActualAddressTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="City">
+          <Value>
+            <Object Name="InnerOrgBankCityTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Inn">
+          <Value>
+            <Object Name="InnerOrgInnTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Kpp">
+          <Value>
+            <Object Name="InnerOrgKppTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Ogrn">
+          <Value>
+            <Object Name="InnerOrgOgrnTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="PaymentAccount">
+          <Value>
+            <Object Name="InnerOrgPaymentAccountTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Bank">
+          <Value>
+            <Object Name="InnerOrgBankTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="BankCity">
+          <Value>
+            <Object Name="InnerOrgBankCityTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="CorrespondentAccount">
+          <Value>
+            <Object Name="InnerOrgCorrespondentAccountTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Bik">
+          <Value>
+            <Object Name="InnerOrgBikTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Phone">
+          <Value>
+            <Object Name="InnerOrgPhoneTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Fax">
+          <Value>
+            <Object Name="InnerOrgFaxTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Email">
+          <Value>
+            <Object Name="InnerOrgEmailTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Website">
+          <Value>
+            <Object Name="InnerOrgWebsiteTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="OrgCreateDate">
+          <Value>
+            <Object Name="OrgCreateDateDateTimePicker" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="InnerOrgUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="InnerOrgTitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgTitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnerOrgShortTitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgShortTitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnerOrgInnTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgInnTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnerOrgInnTextBoxIsINNCondition" Type="IsINNCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgInnTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnerOrgEmailTextBoxIsEmailCondition" Type="IsEmailCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgEmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnerOrgEmailTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgEmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnerOrgPhoneTextBoxStartsWithPlusCondition" Type="StartsWithCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnerOrgPhoneTextBox" />
+        </Item>
+        <Item>+</Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="InnerOrgInsertSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="InnerOrgInsertSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="InnerOrgUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="InnerOrgUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="InnerOrgIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="InnerOrgId">
+        <Command Name="InnerOrgInsertSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <If>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>
+            <Command Name="InnerOrgUpdateSaveCommand" />
+          </Then>
+          <Else>
+            <Command Name="InnerOrgInsertSaveCommand" />
+            <Command Name="InnerOrgIdValueSetCommand" />
+          </Else>
+        </If>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="InnerOrgTitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="InnerOrgTitleTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Наименование" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="InnerOrgShortTitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="InnerOrgShortTitleTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Краткое наименование" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="InnerOrgInnTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="InnerOrgInnTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="InnerOrgInnTextBoxIsINNCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный номер ИНН.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="InnerOrgEmailTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="InnerOrgEmailTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="InnerOrgEmailTextBoxIsEmailCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный адрес эл. почты.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="MainGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="OrgCreateDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Divide DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>2</Item>
+                  </Divide>
+                </Formula>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>Основные сведения</Text>
+
+        <MyObject Name="InnerOrgTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MainGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="InnerOrgTitleLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Наименование</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>36</Height>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgShortTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Краткое наименование</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgShortTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgShortTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgShortTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgShortTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ShortTitle" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderPostLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgShortTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Должность руководителя</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderPostTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgLeaderPostLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgLeaderPostLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgLeaderPostLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="LeaderPost" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgDocumentLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgLeaderPostTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>На основании чего действует руководитель</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgDocumentTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgDocumentLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgDocumentLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgDocumentLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Document" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgDocumentTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ФИО руководителя в именительном падеже</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgLeaderTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgLeaderTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgLeaderTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="LeaderTitle" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderGenitiveLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgLeaderTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Должность и ФИО в родительном падеже</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderGenitiveTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgLeaderGenitiveLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgLeaderGenitiveLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgLeaderGenitiveLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="LeaderGenitive" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderInitialsLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgLeaderGenitiveTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Фамилия и инициалы руководителя</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLeaderInitialsTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgLeaderInitialsLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgLeaderInitialsLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgLeaderInitialsLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="LeaderInitials" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLegalAddressLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgLeaderInitialsTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Юридический адрес</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgLegalAddressTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgLegalAddressLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgLegalAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="InnerOrgLegalAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>8</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="LegalAddress" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgActualAddressLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgLegalAddressTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Фактический адрес</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgActualAddressTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgActualAddressLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgActualAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>51</Height>
+          <Width>
+            <Object Name="InnerOrgActualAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>9</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ActualAddress" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgCityLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgActualAddressTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="InnerOrgTitleLabel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Город</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgCityTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgCityLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgCityLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgCityLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>10</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="City" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="OrgCreateDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgCityLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgCityLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgCityLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата регистрации юр. лица</Text>
+        </MyObject>
+
+        <MyObject Name="OrgCreateDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Top>
+            <Object Name="OrgCreateDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="OrgCreateDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="OrgCreateDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>11</TabIndex>
+          <Value>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="OrgCreateDate" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="DetailGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="MainGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MainGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="InnerOrgBikTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="MainGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Text>Реквизиты</Text>
+
+        <MyObject Name="InnerOrgInnLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DetailGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="InnerOrgInnLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>ИНН</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgInnTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Inn" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgKppLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgInnTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>КПП</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgKppTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgKppLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgKppLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgKppLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Kpp" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgOgrnLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgKppTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ОГРН</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgOgrnTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgOgrnLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgOgrnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgOgrnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Ogrn" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgPaymentAccountLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgOgrnTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Расчетный счет</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgPaymentAccountTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgPaymentAccountLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgPaymentAccountLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgPaymentAccountLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="PaymentAccount" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgBankLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgPaymentAccountTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Наименование банка</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgBankTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgBankLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgBankLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgBankLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Bank" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgBankCityLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgBankTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Город банка</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgBankCityTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgBankCityLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgBankCityLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgBankCityLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="BankCity" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgCorrespondentAccountLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgBankCityTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Корреспондентский счет</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgCorrespondentAccountTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgCorrespondentAccountLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgCorrespondentAccountLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgCorrespondentAccountLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="CorrespondentAccount" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgBikLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgCorrespondentAccountTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>БИК</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgBikTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgBikLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgBikLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgBikLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>8</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Bik" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="ContactGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DetailGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DetailGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="InnerOrgWebsiteTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="MainGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Text>Контакты</Text>
+
+        <MyObject Name="InnerOrgPhoneLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="DetailGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>40</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Телефон</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgPhoneTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <AllowedSymbols>+0123456789</AllowedSymbols>
+          <MaxLength>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="InnerOrgPhoneTextBoxStartsWithPlusCondition" />
+                </When>
+                <Then>12</Then>
+              </Case>
+              <Case>11</Case>
+            </Switch>
+          </MaxLength>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Phone" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgFaxLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgPhoneLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ContactGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="InnerOrgFaxLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Факс</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgFaxTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgFaxLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgFaxLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgFaxLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Fax" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgEmailLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgFaxTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ContactGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="InnerOrgEmailLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Адрес эл. почты</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgEmailTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgEmailLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgEmailLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgEmailLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Email" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgWebsiteLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnerOrgEmailTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgInnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="InnerOrgPhoneLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Сайт</Text>
+        </MyObject>
+
+        <MyObject Name="InnerOrgWebsiteTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnerOrgWebsiteLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnerOrgWebsiteLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnerOrgWebsiteLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Website" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="InnerOrgTitleTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Наименование" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="InnerOrgShortTitleTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Краткое наименование" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Condition Name="InnerOrgInnTextBoxIsNullOrEmptyCondition" />
+                  </Not>
+                  <Not>
+                    <Condition Name="InnerOrgInnTextBoxIsINNCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Некорректный номер ИНН.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Condition Name="InnerOrgEmailTextBoxIsNullOrEmptyCondition" />
+                  </Not>
+                  <Not>
+                    <Condition Name="InnerOrgEmailTextBoxIsEmailCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Некорректный адрес эл. почты.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

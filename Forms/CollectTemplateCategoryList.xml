@@ -1,0 +1,1009 @@
+<?xml version="1.0"?>
+<Form Name="CollectTemplateCategoryListForm" Width="400" Height="500" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="TemplateCategoryId" />
+    <Parameter Name="Title">Категории шаблонов</Parameter>
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="SelectedTemplateCategoryId" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="TemplateCategoryPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TemplateCategorySelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TemplateCategoryId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter FilterByNullValue="False">
+          <Field NativeName="Archive" />
+          <Value>
+            <Object Name="ArchiveFilterComboBox" />
+          </Value>
+          <DataType Type="BooleanDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TemplateCategoryArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TemplateCategoryId">
+          <Value>
+            <Object Name="TemplateCategoryDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">TemplateCategoryId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive">
+          <Value>
+            <Not>
+              <Object Name="TemplateCategoryDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Archive</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Not>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TemplateCategoryArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TemplateCategoryDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TemplateCategoryId">
+          <Value>
+            <Object Name="TemplateCategoryDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">TemplateCategoryId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TemplateCategoryDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="TemplateCategoryDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="TemplateCategoryDatabaseTable" />
+    </Condition>
+
+    <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateCategoryDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TemplateCategoryIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateCategoryDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="TemplateCategoryAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTemplateCategoryEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+    </Command>
+
+    <Command Name="TemplateCategoryEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTemplateCategoryEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="TemplateCategoryId">
+          <Object Name="TemplateCategoryDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">TemplateCategoryId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="TemplateCategoryArchiveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateCategoryArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateCategoryDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранную категорию?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TemplateCategoryDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateCategoryDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateCategoryPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateCategoryTryDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Категория не была удалена, т.к. она используется в программе.\rЗапись перемещена в архив.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="TemplateCategoryArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="TemplateCategoryIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить категорию из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить категорию в архив?</Case>
+        </Switch>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TemplateCategoryTrySelectMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выбор</Caption>
+      <Text>Невозможно выбрать категорию, т.к. запись находится в архиве.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="TemplateCategorySelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TemplateCategoryDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">TemplateCategoryId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="SelectedTemplateCategoryIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedTemplateCategoryId">
+        <Object Name="TemplateCategoryDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">TemplateCategoryId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectTemplateCategorySequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedTemplateCategoryIdValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateCategorySelectRowCommand">
+          <Parameter Name="TemplateCategoryId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TemplateCategoryAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="TemplateCategorySelectRowCommand">
+          <Command Name="TemplateCategoryAddFormShowCommand" Parameter="TemplateCategoryId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TemplateCategoryEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="TemplateCategorySelectRowCommand">
+          <Command Name="TemplateCategoryEditFormShowCommand" Parameter="TemplateCategoryId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TemplateCategoryDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="SelectionMode" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="TemplateCategoryIsArchiveCondition" />
+              </When>
+              <Then>
+                <Command Name="TemplateCategoryTrySelectMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="SelectTemplateCategorySequentialCommand" />
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <If>
+              <When>
+                <Object Name="TemplateCategoryEditButton">
+                  <Property Name="Enabled" />
+                </Object>
+              </When>
+              <Then>
+                <Command Name="TemplateCategoryEditFormShowCommand" />
+              </Then>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TemplateCategoryDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateCategoryDeleteSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="TemplateCategoryDeleteSaveCommand" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="TemplateCategoryTryDeleteMessageBoxCommand" />
+          </Then>
+        </If>
+        <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TemplateCategoryArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateCategoryArchiveSaveCommand" />
+        <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateCategoryPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="Все" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>False</Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Parameter Name="SelectionMode" />
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TemplateCategoryDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateCategoryDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateCategoryDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateCategoryAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="TemplateCategoryPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="TemplateCategoryId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование</Title>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="ArchiveColor">
+            <Expression>Archive AND {0}</Expression>
+            <Items>
+              <Item>
+                <Not>
+                  <Object Name="ArchiveFilterComboBox" />
+                </Not>
+              </Item>
+            </Items>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="TemplateCategoryAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateCategoryDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить категорию...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateCategoryAddFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="TemplateCategoryEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать категорию...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateCategoryEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="TemplateCategoryIsArchiveCondition" />
+            </Not>
+            <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите категорию для редактирования.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="TemplateCategoryIsArchiveCondition" />
+              </When>
+              <Then>Для редактирования восстановите категорию из архива.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="TemplateCategoryArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="TemplateCategoryIsArchiveCondition" />
+              </When>
+              <Then>Восстановить категорию из архива</Then>
+            </Case>
+            <Case>Переместить категорию в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="TemplateCategoryIsArchiveCondition" />
+                  <Object Name="ArchiveFilterComboBox" />
+                </Or>
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateCategoryArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="TemplateCategoryIsArchiveCondition" />
+              </When>
+              <Then>Выберите категорию для восстановления из архива.</Then>
+            </Case>
+            <Case>Выберите категорию для перемещения в архив.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="TemplateCategoryDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateCategoryArchiveButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateCategoryAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Hint>Удалить категорию</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateCategoryDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите категорию для удаления.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+
+      <MyObject Name="SelectButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\check.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Выбрать</Text>
+        <Enabled>
+          <And>
+            <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" />
+            <Not>
+              <Condition Name="TemplateCategoryIsArchiveCondition" />
+            </Not>
+          </And>
+        </Enabled>
+        <Commands>
+          <Command Name="SelectTemplateCategorySequentialCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="TemplateCategoryDatabaseTableSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите нужную категорию в таблице.</Then>
+            </Case>
+            <Case>Невозможно выбрать категорию, т.к. запись находится в архиве.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

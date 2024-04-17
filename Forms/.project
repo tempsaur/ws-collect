@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Collect2.0</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+		<nature>ru.wfsys.editor.nature.workflowNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>Collect.xml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Workflow/Collect.xml</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

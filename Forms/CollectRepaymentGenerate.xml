@@ -1,0 +1,1267 @@
+<?xml version="1.0"?>
+<Form Name="CollectRepaymentGenerateForm" Width="345" Height="416" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Формирование графика платежей</Parameter>
+    <Parameter Name="TotalSum" />
+    <Parameter Name="Sum" />
+    <Parameter Name="Date" />
+    <Parameter Name="IntervalQuantity" />
+    <Parameter Name="IntervalType" />
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="GenerateTypeRadioButtonBlockEqualQuantityCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GenerateTypeRadioButtonBlock" />
+        </Item>
+        <Item>quantity</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="GenerateTypeRadioButtonBlockEqualSumCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GenerateTypeRadioButtonBlock" />
+        </Item>
+        <Item>sum</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="PaymentSumNumericBoxChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PaymentSumNumericBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="IntervalQuantityNumericBoxChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="IntervalQuantityNumericBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TotalSumNumericBoxChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TotalSumNumericBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="GenerateTypeRadioButtonBlockChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GenerateTypeRadioButtonBlock" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="QuantityNotEnoughCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TotalSumNumericBox" />
+        </Item>
+        <Item>
+          <Formula>
+            <Multiply DataType="DecimalDataType">
+              <Item>
+                <Object Name="QuantityVariable" />
+              </Item>
+              <Item>
+                <Object Name="PaymentSumNumericBox" />
+              </Item>
+            </Multiply>
+          </Formula>
+        </Item>
+      </Items>
+      <DataType Type="DecimalDataType" />
+    </Condition>
+
+    <Condition Name="PaymentSumNumericBoxEqual0Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PaymentSumNumericBox" />
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="DecimalDataType" />
+    </Condition>
+
+    <Condition Name="PaymentSumNumericBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PaymentSumNumericBox" />
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="IntervalQuantityNumericBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="IntervalQuantityNumericBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="PaymentSumNumericBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="PaymentSumNumericBox">
+        <Formula>
+          <Divide DataType="DecimalDataType">
+            <Item>
+              <Object Name="TotalSumNumericBox" />
+            </Item>
+            <Item>
+              <Object Name="IntervalQuantityNumericBox" />
+            </Item>
+          </Divide>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="TotalSumValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="TotalSum">
+        <Object Name="TotalSumNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SumValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Sum">
+        <Object Name="PaymentSumNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="DateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Date">
+        <Object Name="StartDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="IntervalQuantityValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="IntervalQuantity">
+        <Object Name="IntervalQuantityNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="IntervalTypeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="IntervalType">
+        <Object Name="IntervalTypeComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="TotalSumValueSetCommand" />
+        <Command Name="SumValueSetCommand" />
+        <Command Name="DateValueSetCommand" />
+        <Command Name="IntervalQuantityValueSetCommand" />
+        <Command Name="IntervalTypeValueSetCommand" />
+        <Command Name="UpdatedValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="StartDateDateTimePickerValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="StartDateDateTimePicker">
+        <Parameter Name="Date" />
+      </Object>
+    </Command>
+
+    <Command Name="TotalSumNumericBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TotalSumNumericBox">
+        <Parameter Name="TotalSum" />
+      </Object>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="StartDateDateTimePickerValueSetCommand" />
+        <Command Name="IntervalQuantityNumericBoxValueSetCommand">
+          <Parameter Name="IntervalQuantity" />
+        </Command>
+        <Command Name="TotalSumNumericBoxValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="IntervalQuantityNumericBoxChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GenerateTypeRadioButtonBlockEqualQuantityCondition" />
+          </When>
+          <Then>
+            <Command Name="PaymentSumNumericBoxValueSetCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="PaymentSumNumericBoxChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GenerateTypeRadioButtonBlockEqualSumCondition" />
+          </When>
+          <Then>
+            <Command Name="IntervalQuantityNumericBoxValueSetCommand">
+              <Switch>
+                <Case>
+                  <When>
+                    <And>
+                      <Condition Name="QuantityNotEnoughCondition" />
+                      <Not>
+                        <Or>
+                          <Condition Name="PaymentSumNumericBoxIsNullCondition" />
+                          <Condition Name="PaymentSumNumericBoxEqual0Condition" />
+                        </Or>
+                      </Not>
+                    </And>
+                  </When>
+                  <Then>
+                    <Formula>
+                      <Plus DataType="IntegerDataType">
+                        <Item>
+                          <Object Name="QuantityVariable" />
+                        </Item>
+                        <Item>1</Item>
+                      </Plus>
+                    </Formula>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="QuantityVariable" />
+                </Case>
+              </Switch>
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TotalSumNumericBoxChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GenerateTypeRadioButtonBlockEqualQuantityCondition" />
+          </When>
+          <Then>
+            <Command Name="PaymentSumNumericBoxValueSetCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TotalSumNumericBoxChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GenerateTypeRadioButtonBlockEqualSumCondition" />
+          </When>
+          <Then>
+            <Command Name="IntervalQuantityNumericBoxValueSetCommand">
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="QuantityNotEnoughCondition" />
+                  </When>
+                  <Then>
+                    <Formula>
+                      <Plus DataType="IntegerDataType">
+                        <Item>
+                          <Object Name="QuantityVariable" />
+                        </Item>
+                        <Item>1</Item>
+                      </Plus>
+                    </Formula>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="QuantityVariable" />
+                </Case>
+              </Switch>
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="GenerateTypeRadioButtonBlockChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GenerateTypeRadioButtonBlockEqualQuantityCondition" />
+          </When>
+          <Then>
+            <Command Name="PaymentSumNumericBoxValueSetCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="GenerateTypeRadioButtonBlockChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="GenerateTypeRadioButtonBlockEqualSumCondition" />
+          </When>
+          <Then>
+            <Command Name="IntervalQuantityNumericBoxValueSetCommand">
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="QuantityNotEnoughCondition" />
+                  </When>
+                  <Then>
+                    <Formula>
+                      <Plus DataType="IntegerDataType">
+                        <Item>
+                          <Object Name="QuantityVariable" />
+                        </Item>
+                        <Item>1</Item>
+                      </Plus>
+                    </Formula>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="QuantityVariable" />
+                </Case>
+              </Switch>
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="QuantityVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Switch>
+          <Case>
+            <When>
+              <Or>
+                <Condition Name="PaymentSumNumericBoxIsNullCondition" />
+                <Condition Name="PaymentSumNumericBoxEqual0Condition" />
+              </Or>
+            </When>
+            <Then>1</Then>
+          </Case>
+          <Case>
+            <DataTypeConvert Type="IntegerDataType">
+              <Formula>
+                <Divide DataType="DecimalDataType">
+                  <Item>
+                    <Object Name="TotalSumNumericBox" />
+                  </Item>
+                  <Item>
+                    <Object Name="PaymentSumNumericBox" />
+                  </Item>
+                </Divide>
+              </Formula>
+            </DataTypeConvert>
+          </Case>
+        </Switch>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>График погашения</Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="GenerateTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="GenerateTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Тип формирования графика</Text>
+      </MyObject>
+
+      <MyObject Name="GenerateTypeRadioButtonBlock" Type="RadioButtonBlock" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>50</Height>
+        <Width>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Options>
+          <Option Name="ByQuantity">
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>25</Height>
+            <Width>
+              <Object Name="GenerateTypeRadioButtonBlock">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Text>Расчет по количеству платежей</Text>
+            <Value>quantity</Value>
+          </Option>
+          <Option Name="BySum">
+            <Top>25</Top>
+            <Left>0</Left>
+            <Height>25</Height>
+            <Width>
+              <Object Name="GenerateTypeRadioButtonBlock">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Text>Расчет по сумме платежа</Text>
+            <Value>sum</Value>
+          </Option>
+        </Options>
+        <Value>quantity</Value>
+      </MyObject>
+
+      <MyObject Name="TotalSumLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="GenerateTypeRadioButtonBlock">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма по договоренности</Text>
+      </MyObject>
+
+      <MyObject Name="TotalSumNumericBox" Type="NumericBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="TotalSumLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TotalSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TotalSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <DecimalPlaces>2</DecimalPlaces>
+        <Increment>10000</Increment>
+        <Minimum>0</Minimum>
+        <ThousandsSeparator>True</ThousandsSeparator>
+        <Value>0</Value>
+        <ReadOnly>True</ReadOnly>
+      </MyObject>
+
+      <MyObject Name="StartDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TotalSumNumericBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата первого платежа</Text>
+      </MyObject>
+
+      <MyObject Name="StartDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="StartDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="StartDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="StartDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Format>dd  MMMM  yyyy</Format>
+        <NullValue Show="False" />
+        <Value />
+      </MyObject>
+
+      <MyObject Name="QuantityLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="StartDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Multiply DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="GenerateTypeLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>2</Item>
+                  </Multiply>
+                </Formula>
+              </Item>
+              <Item>3</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Количество платежей</Text>
+      </MyObject>
+
+      <MyObject Name="IntervalQuantityNumericBox" Type="NumericBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="QuantityLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="QuantityLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="QuantityLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <DecimalPlaces>0</DecimalPlaces>
+        <Increment>1</Increment>
+        <Minimum>1</Minimum>
+        <ThousandsSeparator>True</ThousandsSeparator>
+        <Value>1</Value>
+        <ReadOnly>
+          <Condition Name="GenerateTypeRadioButtonBlockEqualSumCondition" />
+        </ReadOnly>
+      </MyObject>
+
+      <MyObject Name="IntervalTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="QuantityLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="QuantityLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="GenerateTypeLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="IntervalTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Интервал</Text>
+      </MyObject>
+
+      <MyObject Name="IntervalTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="IntervalTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="IntervalTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="IntervalTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <NullValue Show="False" />
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>M</Item>
+              <Item>месяц</Item>
+            </Row>
+            <Row>
+              <Item>d</Item>
+              <Item>день</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>M</Value>
+      </MyObject>
+
+      <MyObject Name="FinishDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="IntervalTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата последнего платежа</Text>
+      </MyObject>
+
+      <MyObject Name="FinishDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="FinishDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="StartDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="StartDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Format>dd  MMMM  yyyy</Format>
+        <NullValue Show="False" />
+        <Value>
+          <Formula>
+            <Plus DataType="DateDataType">
+              <Item>
+                <Object Name="StartDateDateTimePicker" />
+              </Item>
+              <Item>
+                <String>
+                  <Format>{0}{1}</Format>
+                  <Items>
+                    <Item>
+                      <DataTypeConvert Type="IntegerDataType">
+                        <Object Name="IntervalQuantityNumericBox" />
+                      </DataTypeConvert>
+                    </Item>
+                    <Item>
+                      <Object Name="IntervalTypeComboBox" />
+                    </Item>
+                  </Items>
+                </String>
+              </Item>
+            </Plus>
+          </Formula>
+        </Value>
+        <Enabled>False</Enabled>
+      </MyObject>
+
+      <MyObject Name="PaymentSumLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FinishDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="GenerateTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма платежа</Text>
+      </MyObject>
+
+      <MyObject Name="PaymentSumNumericBox" Type="NumericBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="PaymentSumLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="PaymentSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="PaymentSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <DecimalPlaces>2</DecimalPlaces>
+        <Increment>1000</Increment>
+        <Minimum>0</Minimum>
+        <ThousandsSeparator>True</ThousandsSeparator>
+        <Value>0</Value>
+        <ReadOnly>
+          <Condition Name="GenerateTypeRadioButtonBlockEqualQuantityCondition" />
+        </ReadOnly>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\save.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить</Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Не все обязательные поля заполнены.</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

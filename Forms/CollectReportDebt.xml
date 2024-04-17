@@ -1,0 +1,1340 @@
+<?xml version="1.0"?>
+<Form Name="CollectReportDebtForm" Width="1260" Height="650" BackColor="White" StartPosition="CenterScreen" MaximizeBox="True" FormBorderStyle="FixedSingle" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Отчет по задолженностям</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+    </FontStyles>
+  </Appearance>
+
+
+  <DataConnections>
+    <DataConnection Name="ReportPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ReportDebtForPeriodSqlQuery" Type="Select">
+        <ManualLoad>True</ManualLoad>
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanClientId" />
+          <Field Name="ClientTitle" />
+          <Field Name="CreditNumber" />
+          <Field Name="CessionTitle" />
+          <Field Name="ClaimantTitle" />
+          <Field Name="InnerOrgTitle" />
+          <Field Name="DebtBeforeStart" />
+          <Field Name="TotalPaidInFilters" />
+          <Field Name="DebtToEndFilter" />
+          <Field Name="LoanId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="DateStart">
+            <Value>
+              <Object Name="DateStartVariable" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="DateFinish">
+            <Value>
+              <Object Name="DateFinishVariable" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="ClaimantIdArray" SendAsArray="True" RefreshQuery="False">
+            <Value>
+              <Object Name="ClaimaintCheckedComboBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="CessionIdArray" SendAsArray="True" RefreshQuery="False">
+            <Value>
+              <Object Name="CessionCheckedComboBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="InnerOrgIdArray" SendAsArray="True" RefreshQuery="False">
+            <Value>
+              <Object Name="InnerOrgCheckedComboBox" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CliamantPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClaimantSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClaimantId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CessionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CessionSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CessionId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="InnerOrgPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="InnerOrgSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="InnerOrgId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="DateStartNotGreaterDateFinishCondition" Type="NotGreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DateStartDateTimePicker" />
+        </Item>
+        <Item>
+          <Object Name="DateFinishDateTimePicker" />
+        </Item>
+      </Items>
+      <DataType Type="DateTimeDataType" />
+    </Condition>
+
+    <Condition Name="DateStartEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="DateStartDateTimePicker" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="DateFinishEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="DateFinishDateTimePicker" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+
+    <Condition Name="ReportDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="ReportDatabaseTable" />
+    </Condition>
+
+    <Condition Name="RowSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ReportSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentColumnIsPayEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="LastCellDoubleClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>TotalPaidInFilters</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="ReportDatabaseTable" />
+    </Condition>
+
+    <Condition Name="ReportEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="LastCellDoubleClickedColumnName" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="DateStartVariableSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateStartVariable">
+        <Object Name="DateStartDateTimePicker" />
+      </Object>
+    </Command>
+
+    <Command Name="DateFinishVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateFinishVariable">
+        <Object Name="DateFinishDateTimePicker" />
+      </Object>
+    </Command>
+
+    <Command Name="ReportPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>ReportPrimaryGetDataConnection </DataConnections>
+    </Command>
+
+    <Command Name="ShortsDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="InnerOrgPrimaryGetDataConnection" Packet="True" />
+        <DataConnection Name="CliamantPrimaryGetDataConnection" Packet="True" />
+        <DataConnection Name="CessionPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="PeriodErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Обновление отчета</Caption>
+      <Text>Дата начала периода фильтрации не должна быть больше даты окончания.</Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="RefreshSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="DateStartNotGreaterDateFinishCondition" />
+          </When>
+          <Then>
+            <Command Name="DateStartVariableSetCommand" />
+            <Command Name="DateFinishVariableValueSetCommand" />
+            <Command Name="ReportPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+          <Else>
+            <Command Name="PeriodErrorMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="CollectLoanFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanEdit.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="LoanId">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="LoanClientId">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="CurrentTab">
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentColumnIsPayEqualCondition" />
+              </When>
+              <Then>payment</Then>
+            </Case>
+            <Case>current_loan</Case>
+          </Switch>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ExportToExcelCommand" Type="ExportToExcelCommand" Assembly="Commands">
+      <TemplateFileName>Templates\ExportReportDebt.xlsx</TemplateFileName>
+      <Parameters>
+        <!-- Variables -->
+        <Parameter Name="FirstLineTitle">
+          <Parameter Name="Title" />
+        </Parameter>
+        <Parameter Name="SecondLineTitle">
+          <String>
+            <Format>С {0} по {1}</Format>
+            <Items>
+              <Item>
+                <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                  <Object Name="DateStartVariable" />
+                </DataTypeFormat>
+              </Item>
+              <Item>
+                <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                  <Object Name="DateFinishVariable" />
+                </DataTypeFormat>
+              </Item>
+            </Items>
+          </String>
+        </Parameter>
+        <Parameter Name="RowNumberText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">RowNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClaimantTitleText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionTitleText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="InnerOrgTitleText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientTitleText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CreditNumberText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CreditNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="DebtBeforeStartText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalPaidInFiltersText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="DebtToEndFilterText">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalText">Итого:</Parameter>
+        <Parameter Name="TotalDebtBeforeStart">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnSum">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalTotalPaidInFilters">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnSum">
+              <Parameters>
+                <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalDebtToEndFilter">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnSum">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <!-- Arrays -->
+        <Parameter Name="RowNumber">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">RowNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClaimantTitle">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionTitle">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="InnerOrgTitle">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientTitle">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CreditNumber">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CreditNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="DebtBeforeStart">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalPaidInFilters">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="DebtToEndFilter">
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="DateStartEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="DateFinishEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <And>
+          <Condition Name="ReportDatabaseTableCellDoubleClickCondition" />
+          <Condition Name="ReportSelectedOneCondition" />
+        </And>
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CollectLoanFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CollectLoanFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ReportPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="ShortsDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="DateStartVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <DateTime Variable="FirstDayOfCurrMonth" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="DateFinishVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <DateTime Variable="LastDayOfCurrMonth" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="RefreshButton">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateStartLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="DateStartLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateStartDateTimePicker">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateStartLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Height>20</Height>
+        <Width>50</Width>
+        <TextAlign>MiddleRight</TextAlign>
+        <Text>С:</Text>
+      </MyObject>
+
+      <MyObject Name="DateStartDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Top>2</Top>
+        <Left>
+          <Object Name="DateStartLabel">
+            <Property Name="Right" />
+          </Object>
+        </Left>
+        <Width>140</Width>
+        <TabIndex>1</TabIndex>
+        <Format> d MMMM yyyy</Format>
+        <NullValue Show="False" />
+        <Value>
+          <Object Name="DateStartVariable" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="DateFinishLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="DateFinishDateTimePicker">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="DateStartLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="DateStartLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="DateStartLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TextAlign>
+          <Object Name="DateStartLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>По:</Text>
+      </MyObject>
+
+      <MyObject Name="DateFinishDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateStartDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Format> d MMMM yyyy</Format>
+        <NullValue Show="False" />
+        <Value>
+          <Object Name="DateFinishVariable" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="RefreshButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateFinishDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>24</Height>
+        <TabIndex>3</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <ForeColor>HeadTextColor</ForeColor>
+        <TextAlign>TopCenter</TextAlign>
+        <BackColor>White</BackColor>
+        <Text>Показать</Text>
+        <Commands>
+          <Command Name="RefreshSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="DateStartNotGreaterDateFinishCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Дата начала периода не должна быть больше даты окончания периода.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ClaimaintCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnLeft">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <NullValue Show="True" Title="[Все]" />
+        <ValueList>
+          <DataConnection SourceDataConnection="CliamantPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ClaimantId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value />
+      </MyObject>
+
+      <MyObject Name="CessionCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnLeft">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <NullValue Show="True" Title="[Все]" />
+        <ValueList>
+          <DataConnection SourceDataConnection="CessionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CessionId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value />
+      </MyObject>
+
+      <MyObject Name="InnerOrgCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnLeft">
+              <Parameters>
+                <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <NullValue Show="True" Title="[Все]" />
+        <ValueList>
+          <DataConnection SourceDataConnection="CessionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CessionId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value />
+      </MyObject>
+
+      <MyObject Name="ReportDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>
+          <Object Name="ClaimaintCheckedComboBox">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DebtBeforeStartTextBox">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ClaimaintCheckedComboBox">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>22</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ReportDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <MultiSelect Value="True" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="ReportPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="LoanClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClaimantTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цедент</Title>
+            <Width>120</Width>
+            <MinimumWidth>120</MinimumWidth>
+          </Column>
+          <Column Name="CessionTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование цессии</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="InnerOrgTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цессионарий</Title>
+            <Width>150</Width>
+            <MinimumWidth>150</MinimumWidth>
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>ФИО фигуранта</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="CreditNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№КД</Title>
+            <Width>140</Width>
+            <MinimumWidth>140</MinimumWidth>
+          </Column>
+          <Column Name="DebtBeforeStart" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Остаток задолженности на начало периода</Title>
+            <Width>150</Width>
+            <MinimumWidth>150</MinimumWidth>
+            <DataType Type="DecimalDataType" Format="N2" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+          <Column Name="TotalPaidInFilters" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сумма оплат за период</Title>
+            <Width>150</Width>
+            <MinimumWidth>150</MinimumWidth>
+            <DataType Type="DecimalDataType" Format="N2" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+          <Column Name="DebtToEndFilter" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Остаток задолженности на конец периода</Title>
+            <Width>150</Width>
+            <MinimumWidth>150</MinimumWidth>
+            <DataType Type="DecimalDataType" Format="N2" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="VarPanel" Type="Panel" Assembly="BaseControls">
+        <Visible>False</Visible>
+
+        <MyObject Name="DebtBeforeStartVariable" Type="Variable" Assembly="SimpleControls">
+          <Value>
+            <Object Name="ReportDatabaseTable">
+              <Property Name="SelectedCellsSumByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="TotalPaidInFiltersVariable" Type="Variable" Assembly="SimpleControls">
+          <Value>
+            <Object Name="ReportDatabaseTable">
+              <Property Name="SelectedCellsSumByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="DebtToEndFilterVariable" Type="Variable" Assembly="SimpleControls">
+          <Value>
+            <Object Name="ReportDatabaseTable">
+              <Property Name="SelectedCellsSumByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="DebtBeforeStartTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnLeft">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <Multiline>True</Multiline>
+        <ReadOnly>True</ReadOnly>
+        <Height>48</Height>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0}/
+{1}</Format>
+            <Items>
+              <Item>
+                <Object Name="DebtBeforeStartVariable" />
+              </Item>
+              <Item>
+                <Object Name="ReportDatabaseTable">
+                  <Property Name="ColumnSum">
+                    <Parameters>
+                      <Parameter Name="ColumnName">DebtBeforeStart</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="TotalPaidInFiltersTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnLeft">
+              <Parameters>
+                <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <Multiline>True</Multiline>
+        <ReadOnly>True</ReadOnly>
+        <Height>48</Height>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0}/
+{1}</Format>
+            <Items>
+              <Item>
+                <Object Name="DebtBeforeStartVariable" />
+              </Item>
+              <Item>
+                <Object Name="ReportDatabaseTable">
+                  <Property Name="ColumnSum">
+                    <Parameters>
+                      <Parameter Name="ColumnName">TotalPaidInFilters</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+
+
+      <MyObject Name="DebtToEndFilterTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnLeft">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ReportDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <Multiline>True</Multiline>
+        <ReadOnly>True</ReadOnly>
+        <Height>48</Height>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0}/
+{1}</Format>
+            <Items>
+              <Item>
+                <Object Name="DebtBeforeStartVariable" />
+              </Item>
+              <Item>
+                <Object Name="ReportDatabaseTable">
+                  <Property Name="ColumnSum">
+                    <Parameters>
+                      <Parameter Name="ColumnName">DebtToEndFilter</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+    </MyObject>
+
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ExportButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\file_excel.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Экспорт в Excel</Text>
+        <Commands>
+          <Command Name="ExportToExcelCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+
+  </MyObjects>
+</Form>

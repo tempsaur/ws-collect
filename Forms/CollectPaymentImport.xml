@@ -1,0 +1,2133 @@
+<?xml version="1.0"?>
+<Form Name="CollectPaymentImportForm" Width="1260" Height="650" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Updated" />
+    <Parameter Name="ImportMode">excel</Parameter>
+    <Parameter Name="Title">Загрузка оплат</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <Color Name="StatusLightRed" Red="240" Green="128" Blue="128" Alpha="255" />
+      <Color Name="StatusLightPink" Red="229" Green="184" Blue="183" Alpha="255" />
+      <Color Name="StatusLightOrange" Red="250" Green="191" Blue="143" Alpha="255" />
+      <Color Name="StatusLightYellow" Red="255" Green="252" Blue="187" Alpha="255" />
+      <Color Name="StatusLightGreen" Red="230" Green="255" Blue="230" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="LittleFont" Font="Segoe UI" Size="8" />
+      <FontStyle Name="LittleBoldFont" Font="Segoe UI" Size="8" Bold="True" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ExcelImportColumnPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>
+        <Condition Name="ImportModeEqualTxtCondition" />
+      </ManualLoad>
+      <SqlQuery Name="ExcelImportColumnSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ColumnName" />
+          <Field Name="Title" />
+          <Field Name="DataType" />
+          <Field Name="IsArray" />
+          <Field Name="NeedToParse" />
+          <Field Name="Name" />
+          <Field Name="ResultColumnNames" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ImportType">
+            <Value>payment</Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TxtImportColumnPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>
+        <Condition Name="ImportModeEqualExcelCondition" />
+      </ManualLoad>
+      <SqlQuery Name="TxtImportColumnSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ColumnName" />
+          <Field Name="Title" />
+          <Field Name="DataType" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="TempPaymentSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TempPaymentId" />
+          <Field Name="LoanClientPaymentId" />
+          <Field Name="LoanId" />
+          <Field Name="ClientId" />
+          <Field Name="ClientTitle" />
+          <Field Name="CreditNumber" />
+          <Field Name="PayerTitle" />
+          <Field Name="PaymentDate" />
+          <Field Name="PaymentSum" />
+          <Field Name="PaymentNumber" />
+          <Field Name="PaymentComment" />
+          <Field Name="ClientSimilarityText" />
+          <Field Name="PayerSimilarityText" />
+          <Field Name="LoanSimilarityText" />
+          <Field Name="RowStatus" />
+          <Field Name="CanSave" />
+          <Field Name="ToSave" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentParseUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempPaymentParseUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentAutoParseUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempPaymentAutoParseUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentReferencesUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempPaymentReferencesUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentToSaveUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ToSave" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempPaymentPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ToSave" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TempPaymentId" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempPaymentPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TempPaymentId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TempPaymentToSaveUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempPaymentSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempPaymentClearSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempPaymentClearSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ImportFromExcelCommandErrorIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="ImportFromExcelCommand" Parameter="Error" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ImportFromTxtCommandErrorIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="ImportFromTxtCommand" Parameter="Error" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ParseColumnsCountGreater0Condition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Command Name="ImportFromExcelCommand" Parameter="ParseColumns" />
+            </Source>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualNoMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>no_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualClientMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>client_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualLoanMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>loan_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualFullMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>full_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualPaymentExistsCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>payment_exists</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="TempPaymentDatabaseTableCellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="TempPaymentDatabaseTable" />
+    </Condition>
+
+    <Condition Name="SelectedColumnNameEqualToSaveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="LastCellClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>ToSave</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CanEditToSaveNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">CanSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+          <Condition Name="SelectedColumnNameEqualToSaveCondition" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ImportModeEqualExcelCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="ImportMode" />
+        </Item>
+        <Item>excel</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ImportModeEqualTxtCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="ImportMode" />
+        </Item>
+        <Item>txt</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="TempPaymentSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="LoanClientPaymentIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanClientPaymentId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TempPaymentDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="TempPaymentDatabaseTable" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="TempPaymentClearCommand" />
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="TempPaymentClearCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="TempPaymentClearCommand" />
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TempPaymentClearCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentClearSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ExcelImportColumnListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectExcelImportColumnList.xml</Xml>
+      <UpdateResult Type="Always" />
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="ImportType">payment</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ImportExcelFileDialogShowCommand" Type="FileDialogShowCommand" Assembly="Commands">
+      <Title>Выберите файл для загрузки данных</Title>
+      <Type Value="Open" />
+      <Filter>Файлы Excel (*.xlsx)|*.xlsx</Filter>
+      <InitialDirectory>
+        <Object Name="FileDialogPathVariable" />
+      </InitialDirectory>
+    </Command>
+
+    <Command Name="ImportTxtFileDialogShowCommand" Type="FileDialogShowCommand" Assembly="Commands">
+      <Title>Выберите файл для загрузки данных</Title>
+      <Type Value="Open" />
+      <Filter>Текстовые файлы (*.txt)|*.txt</Filter>
+      <InitialDirectory>
+        <Object Name="FileDialogPathVariable" />
+      </InitialDirectory>
+    </Command>
+
+    <Command Name="FileDialogPathVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FileDialogPathVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="ImportFromExcelCommand" Type="ImportFromExcelCommand" Assembly="Collect">
+      <Columns>
+        <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+          <Fields>
+            <Field Name="ColumnName" />
+            <Field Name="Title" />
+            <Field Name="DataType" />
+            <Field Name="IsArray" />
+            <Field Name="NeedToParse" />
+            <Field Name="Name" />
+            <Field Name="ResultColumnNames" />
+          </Fields>
+        </DataConnection>
+      </Columns>
+      <ImportFile>
+        <Command Name="ImportExcelFileDialogShowCommand" Parameter="FullPath" />
+      </ImportFile>
+      <TempInsertSqlQuery Name="TempPaymentInsertFromExcelSqlQuery" />
+      <Workflow Name="Collect" />
+    </Command>
+
+    <Command Name="ImportFromTxtCommand" Type="ImportFromTxtCommand" Assembly="Collect">
+      <Columns>
+        <DataConnection SourceDataConnection="TxtImportColumnPrimaryGetDataConnection">
+          <Fields>
+            <Field Name="ColumnName" />
+            <Field Name="Title" />
+            <Field Name="DataType" />
+          </Fields>
+        </DataConnection>
+      </Columns>
+      <ImportFile>
+        <Command Name="ImportTxtFileDialogShowCommand" Parameter="FullPath" />
+      </ImportFile>
+      <TempInsertSqlQuery Name="TempPaymentInsertFromTxtSqlQuery" />
+      <Workflow Name="Collect" />
+    </Command>
+
+    <Command Name="ImportFromExcelCommandErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Ошибка загрузки данных из файла</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r{1}\r{2}</Format>
+          <Items>
+            <Item>При загрузке данных из файла возникли ошибки:</Item>
+            <Item>
+              <Command Name="ImportFromExcelCommand" Parameter="ErrorShort" />
+            </Item>
+            <Item>Открыть текст с ошибками в текстовом редакторе?</Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ImportFromTxtCommandErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Ошибка загрузки данных из файла</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r{1}\r{2}</Format>
+          <Items>
+            <Item>При загрузке данных из файла возникли ошибки:</Item>
+            <Item>
+              <Command Name="ImportFromTxtCommand" Parameter="ErrorShort" />
+            </Item>
+            <Item>Открыть текст с ошибками в текстовом редакторе?</Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ImportFromExcelCommandErrorExportToTxtCommand" Type="ExportToTxtCommand" Assembly="Collect">
+      <Text>
+        <Command Name="ImportFromExcelCommand" Parameter="Error" />
+      </Text>
+    </Command>
+
+    <Command Name="ImportFromExcelCommandErrorApplicationRunCommand" Type="ApplicationRunCommand" Assembly="Commands">
+      <Application>
+        <Command Name="ImportFromExcelCommandErrorExportToTxtCommand" />
+      </Application>
+    </Command>
+
+    <Command Name="ImportFromTxtCommandErrorExportToTxtCommand" Type="ExportToTxtCommand" Assembly="Collect">
+      <Text>
+        <Command Name="ImportFromTxtCommand" Parameter="Error" />
+      </Text>
+    </Command>
+
+    <Command Name="ImportFromTxtCommandErrorApplicationRunCommand" Type="ApplicationRunCommand" Assembly="Commands">
+      <Application>
+        <Command Name="ImportFromTxtCommandErrorExportToTxtCommand" />
+      </Application>
+    </Command>
+
+    <Command Name="ExcelImportSettingsFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectExcelImportSettings.xml</Xml>
+      <Show Type="Modal" />
+      <Parameters>
+        <Parameter Name="ParseColumnList">
+          <Command Name="ImportFromExcelCommand" Parameter="ParseColumns" />
+        </Parameter>
+        <Parameter Name="ImportType">payment</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="TempPaymentPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ExcelImportColumnPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ParseColumnsSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentParseUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AutoParseColumnsSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentAutoParseUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TempPaymentReferencesUpdateCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentReferencesUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="StatusVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="StatusVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="TempPaymentToSaveUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempPaymentPrimaryGetDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="TempPaymentPrimaryGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>TempPaymentId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="TempPaymentDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">TempPaymentId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Not>
+                    <Object Name="TempPaymentDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">ToSave</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Not>
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempPaymentToSaveCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempPaymentPrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="RowIndices">
+              <DataConnection SourceDataConnection="TempPaymentPrimaryGetDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>CanSave</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Structure Type="List">
+                            <Item>True</Item>
+                          </Structure>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>True</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempPaymentToSaveUnCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempPaymentPrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>False</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempPaymentEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTempPaymentEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="TempPaymentId">
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">TempPaymentId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientId">
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="LoanId">
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="TempPaymentEditSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="TempPaymentToSaveUpdateCommand" />
+        <Command Name="TempPaymentEditFormShowCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="TempPaymentDatabaseTableSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TempPaymentDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">TempPaymentId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="TempPaymentToSaveUpdateCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentToSaveUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TempPaymentSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempPaymentSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="FormChangedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">True</Property>
+      </Form>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="TempPaymentToSaveUpdateCommand" />
+        <Command Name="TempPaymentSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempPaymentClearCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ImportExcelFileDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands Lock="True">
+        <Command Name="FileDialogPathVariableValueSetCommand">
+          <Command Name="ImportExcelFileDialogShowCommand" Parameter="Path" />
+        </Command>
+        <Command Name="ImportFromExcelCommand" />
+        <If>
+          <When>
+            <Condition Name="ImportFromExcelCommandErrorIsNotNullCondition" />
+          </When>
+          <Then>
+            <Command Name="ImportFromExcelCommandErrorMessageBoxCommand" />
+            <If>
+              <When>
+                <Command Name="ImportFromExcelCommandErrorMessageBoxCommand" Parameter="Yes" />
+              </When>
+              <Then>
+                <Command Name="ImportFromExcelCommandErrorExportToTxtCommand" />
+                <Command Name="ImportFromExcelCommandErrorApplicationRunCommand" />
+              </Then>
+            </If>
+          </Then>
+          <Else>
+            <If>
+              <When>
+                <Condition Name="ParseColumnsCountGreater0Condition" />
+              </When>
+              <Then>
+                <Command Name="ExcelImportSettingsFormShowCommand" />
+                <If>
+                  <When>
+                    <Command Name="ExcelImportSettingsFormShowCommand" Parameter="Updated" />
+                  </When>
+                  <Then>
+                    <Command Name="AutoParseColumnsSaveCommand" />
+                  </Then>
+                </If>
+              </Then>
+            </If>
+            <Command Name="TempPaymentReferencesUpdateCommand" />
+            <Command Name="TempPaymentPrimaryGetDataConnectionRefreshCommand" />
+            <Command Name="FormChangedTrueValueSetCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ImportTxtFileDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands Lock="True">
+        <Command Name="FileDialogPathVariableValueSetCommand">
+          <Command Name="ImportTxtFileDialogShowCommand" Parameter="Path" />
+        </Command>
+        <Command Name="ImportFromTxtCommand" />
+        <If>
+          <When>
+            <Condition Name="ImportFromTxtCommandErrorIsNotNullCondition" />
+          </When>
+          <Then>
+            <Command Name="ImportFromTxtCommandErrorMessageBoxCommand" />
+            <If>
+              <When>
+                <Command Name="ImportFromTxtCommandErrorMessageBoxCommand" Parameter="Yes" />
+              </When>
+              <Then>
+                <Command Name="ImportFromTxtCommandErrorExportToTxtCommand" />
+                <Command Name="ImportFromTxtCommandErrorApplicationRunCommand" />
+              </Then>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="ParseColumnsSaveCommand" />
+            <Command Name="AutoParseColumnsSaveCommand" />
+            <Command Name="TempPaymentReferencesUpdateCommand" />
+            <Command Name="TempPaymentPrimaryGetDataConnectionRefreshCommand" />
+            <Command Name="FormChangedTrueValueSetCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TempPaymentDatabaseTableCellClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="CanEditToSaveNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="TempPaymentToSaveUpdateRowCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ExcelImportColumnListFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ExcelImportColumnPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TempPaymentDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Object Name="TempPaymentEditButton">
+              <Property Name="Enabled" />
+            </Object>
+          </When>
+          <Then>
+            <Command Name="TempPaymentEditSequentialCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TempPaymentEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempPaymentPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="TempPaymentDatabaseTableSelectRowCommand">
+          <Command Name="TempPaymentEditFormShowCommand" Parameter="TempPaymentId" />
+        </Command>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="StatusVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="FileDialogPathVariable" Type="StaticVariable" Assembly="Collect" ChangeForm="False">
+      <Key Value="FileDialogPath" />
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <String>
+            <Format>{0} из {1}файла</Format>
+            <Items>
+              <Item>
+                <Parameter Name="Title" />
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="ImportModeEqualExcelCondition" />
+                    </When>
+                    <Then>Excel </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <Condition Name="ImportModeEqualTxtCondition" />
+                    </When>
+                    <Then>txt </Then>
+                  </Case>
+                  <Case />
+                </Switch>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveAllLinkLabel" Type="LinkLabel" Assembly="BaseControls" ChangeForm="False">
+        <Top>5</Top>
+        <Left>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="ColumnOffset">
+              <Parameters>
+                <Parameter Name="ColumnName">ToSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Height>15</Height>
+        <Width>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">ToSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>TitleFont</FontStyle>
+        <LinkColor>Gray100</LinkColor>
+        <ActiveLinkColor>Black</ActiveLinkColor>
+        <DisabledLinkColor>Gray200</DisabledLinkColor>
+        <Text>Все</Text>
+        <Commands>
+          <Command Name="TempPaymentToSaveCheckAllCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SaveNoneLinkLabel" Type="LinkLabel" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <TextAlign>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <FontStyle>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <LinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="LinkColor" />
+          </Object>
+        </LinkColor>
+        <ActiveLinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="ActiveLinkColor" />
+          </Object>
+        </ActiveLinkColor>
+        <DisabledLinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="DisabledLinkColor" />
+          </Object>
+        </DisabledLinkColor>
+        <Text>Очистить</Text>
+        <Commands>
+          <Command Name="TempPaymentToSaveUnCheckAllCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="TempPaymentDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SaveNoneLinkLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempPaymentDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="StatusPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="LegendPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempPaymentDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="SelectFileButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <ColumnHeadersHeight Value="40" />
+        <RowHeight Value="50" />
+        <SourceDataConnection Name="TempPaymentPrimaryGetDataConnection" />
+        <Formatting>
+          <BackColor>
+            <Expression>ClientSimilarityText <![CDATA[<>]]> ''</Expression>
+            <Color>Gray200</Color>
+            <Columns>
+              <Column Name="ClientTitle" />
+            </Columns>
+          </BackColor>
+          <BackColor>
+            <Expression>PayerSimilarityText <![CDATA[<>]]> ''</Expression>
+            <Color>Gray200</Color>
+            <Columns>
+              <Column Name="PayerTitle" />
+            </Columns>
+          </BackColor>
+          <BackColor>
+            <Expression>LoanSimilarityText <![CDATA[<>]]> ''</Expression>
+            <Color>Gray200</Color>
+            <Columns>
+              <Column Name="CreditNumber" />
+            </Columns>
+          </BackColor>
+          <BackColor Name="StatusLightYellow">
+            <Expression>RowStatus = 'client_match'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightOrange">
+            <Expression>RowStatus = 'loan_match'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightRed">
+            <Expression>RowStatus = 'no_match'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightPink">
+            <Expression>RowStatus = 'payment_exists'</Expression>
+          </BackColor>
+        </Formatting>
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>40</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="TempPaymentId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanClientPaymentId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClientSimilarityText" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="PayerSimilarityText" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanSimilarityText" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="RowStatus" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+            <Filter FilterNullValue="False">
+              <Object Name="StatusVariable" />
+            </Filter>
+          </Column>
+          <Column Name="CanSave" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ToSave" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сохранить оплату</Title>
+            <Width>70</Width>
+            <HeaderAlignment Value="MiddleCenter" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Должник</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <WrapMode Value="True" />
+            <ToolTipColumnName>ClientSimilarityText</ToolTipColumnName>
+          </Column>
+          <Column Name="CreditNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Номер КД</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <WrapMode Value="True" />
+            <ToolTipColumnName>LoanSimilarityText</ToolTipColumnName>
+          </Column>
+          <Column Name="PaymentDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата оплаты</Title>
+            <Width>150</Width>
+            <AutoSizeMode Value="None" />
+            <DataType Type="DateDataType" Format="dd.MM.yyyy" />
+          </Column>
+          <Column Name="PaymentSum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сумма оплаты</Title>
+            <Width>150</Width>
+            <AutoSizeMode Value="None" />
+            <Alignment Value="MiddleRight" />
+            <DataType Type="DecimalDataType" Format="N2" />
+          </Column>
+          <Column Name="PayerTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Плательщик</Title>
+            <Width>200</Width>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <ToolTipColumnName>PayerSimilarityText</ToolTipColumnName>
+          </Column>
+          <Column Name="PaymentNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Номер документа</Title>
+            <Width>150</Width>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+          </Column>
+          <Column Name="PaymentComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Комментарий</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="SelectFileButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempPaymentDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Выбрать файл для загрузки...</Hint>
+        <Image>Images\24x24\download.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TempPaymentClearCommand" />
+          <If>
+            <When>
+              <Condition Name="ImportModeEqualTxtCondition" />
+            </When>
+            <Then>
+              <Command Name="ImportTxtFileDialogShowCommand" />
+            </Then>
+            <Else>
+              <Command Name="ImportExcelFileDialogShowCommand" />
+            </Else>
+          </If>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="TempPaymentEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SelectFileButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="SelectFileButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="SelectFileButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SelectFileButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Hint>Изменить привязку к должнику и кредитному делу...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Enabled>
+          <And>
+            <Condition Name="TempPaymentSelectedCondition" />
+            <Condition Name="LoanClientPaymentIdIsNullCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="TempPaymentSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите оплату для редактирования.</Then>
+            </Case>
+            <Case>Указать должника и кредитное дело можно только для новых оплат.</Case>
+          </Switch>
+        </DisabledText>
+        <Commands>
+          <Command Name="TempPaymentEditSequentialCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="LegendPanel" Type="Panel" Assembly="BaseControls">
+        <Bottom>
+          <Object Name="StatusPanel">
+            <Property Name="Top" />
+          </Object>
+        </Bottom>
+        <Left>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>25</Height>
+        <Width>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabStop>False</TabStop>
+
+        <MyObject Name="SimilarityColorPanel" Type="Panel" Assembly="BaseControls">
+          <Top>
+            <Object Name="SimilarityLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SimilarityLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SimilarityColorPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="SimilarityLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>50</Width>
+          <BorderStyle>FixedSingle</BorderStyle>
+          <BackColor>Gray200</BackColor>
+        </MyObject>
+
+        <MyObject Name="SimilarityLabel" Type="Label" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="LegendPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SimilarityLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Left>
+          <Height>20</Height>
+          <Width>152</Width>
+          <FontStyle>TitleFont</FontStyle>
+          <TextAlign>MiddleRight</TextAlign>
+          <Text>  —  неполное совпадение</Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="StatusPanel" Type="Panel" Assembly="BaseControls">
+        <Bottom>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Bottom>
+        <Left>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FullMatchStatusButton">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="TempPaymentDatabaseTable">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+
+        <MyObject Name="FullMatchStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>0</Left>
+          <Height>42</Height>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="StatusPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>20</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>5</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <BackColor>White</BackColor>
+          <Text>Найдено совпадение
+по кредитному делу и должнику</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualFullMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualFullMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualFullMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualFullMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">full_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="ClientMatchStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FullMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <BackColor>StatusLightYellow</BackColor>
+          <Text>Найдено совпадение по должнику
+Необходимо указать кредитное дело</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualClientMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualClientMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualClientMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualClientMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">client_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="LoanMatchStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ClientMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <BackColor>StatusLightOrange</BackColor>
+          <Text>Найдено совпадение по КД
+Необходимо указать должника</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualLoanMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualLoanMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualLoanMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualLoanMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">loan_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="NoMatchStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="LoanMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <BackColor>StatusLightRed</BackColor>
+          <Text>Не найдено совпадений
+Необходимо указать должника и КД</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualNoMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">no_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="PaymentExistsStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="NoMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="FullMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="StatusPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PaymentExistsStatusButton">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <BackColor>StatusLightPink</BackColor>
+          <Text>Платеж с указанным номером
+уже есть в программе</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualPaymentExistsCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualPaymentExistsCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualPaymentExistsCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualPaymentExistsCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">payment_exists</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ColumnListButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>Список столбцов...</Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\list.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ExcelImportColumnListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ImportModeEqualExcelCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ColumnListButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="ColumnListButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ColumnListButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\save.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить</Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

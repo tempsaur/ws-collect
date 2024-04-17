@@ -1,0 +1,899 @@
+<?xml version="1.0"?>
+<Form Name="CollectClientJurisdictionEdit" Width="400" Height="197" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование подсудности</Then>
+        </Case>
+        <Case>Добавление подсудности</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="ID" />
+    <Parameter Name="CourtId" />
+    <Parameter Name="OspId" />
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ListCourtPermission" />
+          <Field Name="ListOspPermission" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CourtId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="CourtId" />
+              <Value>
+                <Parameter Name="CourtId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="OspPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="OspSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="OspId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="OspId" />
+              <Value>
+                <Parameter Name="OspId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ListCourtPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListCourtPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ListOspPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListOspPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="CourtIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CourtComboBox" />
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="OspIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="OspComboBox" />
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+  </Conditions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="CourtComboBox" />
+      <ConditionExpression>
+        <Condition Name="CourtIdIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Суд" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="OspComboBox" />
+      <ConditionExpression>
+        <Condition Name="OspIdIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "ОСП" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="CourtIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtId">
+        <Object Name="CourtComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="OspIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="OspId">
+        <Object Name="OspComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CourtComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CourtComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="OspComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OspComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="CourtIdValueSetCommand" />
+        <Command Name="OspIdValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="CourtPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CourtPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="OspPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="OspPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CourtListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectCourtList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="CourtId">
+          <Object Name="CourtComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OspListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectOspList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="OspId">
+          <Object Name="OspComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CourtListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="CourtListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="CourtPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="CourtListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="CourtComboBoxValueSetCommand">
+              <Command Name="CourtListFormShowCommand" Parameter="SelectedCourtId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="OspListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="OspListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="OspPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="OspListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="OspComboBoxValueSetCommand">
+              <Command Name="OspListFormShowCommand" Parameter="SelectedOspId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="CourtLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Суд</Text>
+      </MyObject>
+
+      <MyObject Name="CourtComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="CourtLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CourtLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CourtLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="CourtSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="CourtSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CourtId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="CourtId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CourtSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="CourtComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CourtComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="CourtComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CourtComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CourtListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListCourtPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="OspLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CourtComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CourtLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CourtLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="CourtLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="CourtLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="CourtLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="CourtLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>ОСП</Text>
+      </MyObject>
+
+      <MyObject Name="OspComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="OspLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="OspLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="OspLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="OspSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="OspSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="OspPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="OspId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="OspId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="OspSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="OspComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="OspComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="OspComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="OspComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="OspListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListOspPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CourtIdIsNullCondition" />
+              </When>
+              <Then>Поле "Суд" должно быть заполнено.</Then>
+            </Case>
+            <Case>Поле "ОСП" должно быть заполнено.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

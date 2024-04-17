@@ -1,0 +1,1303 @@
+<?xml version="1.0"?>
+<Form Name="CollectRepaymentEditRowForm" Width="320" Height="250" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="RepaymentData" />
+    <Parameter Name="Date" />
+    <Parameter Name="Sum">0</Parameter>
+    <Parameter Name="EditType" />
+    <Parameter Name="IntervalType" />
+    <Parameter Name="Title">Изменение графика платежей</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="RepaymentArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Parameter Name="RepaymentData" />
+      </Source>
+      <Fields>
+        <Field Name="RepaymentDate" Index="0" DataType="DateDataType" />
+        <Field Name="RepaymentSum" Index="1" DataType="DecimalDataType" />
+      </Fields>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="DateExistsCondition" Type="EqualCondition" Assembly="Conditions">
+      <Satisfy MinCount="1" MaxCount="All" />
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+            <Fields>
+              <Field Name="RepaymentDate" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>
+          <Object Name="DateDateTimePicker" />
+        </Item>
+      </Items>
+      <DataType Type="DateDataType" />
+    </Condition>
+
+    <Condition Name="DateEqualSelectedDateCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Date" />
+        </Item>
+        <Item>
+          <Object Name="DateDateTimePicker" />
+        </Item>
+      </Items>
+      <DataType Type="DateDataType" />
+    </Condition>
+
+    <Condition Name="DateGreaterMaxDateCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DateDateTimePicker" />
+        </Item>
+        <Item>
+          <Object Name="MaxDateVariable" />
+        </Item>
+      </Items>
+      <DataType Type="DateDataType" />
+    </Condition>
+
+    <Condition Name="DateLessMinDateCondition" Type="LessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DateDateTimePicker" />
+        </Item>
+        <Item>
+          <Object Name="MinDateVariable" />
+        </Item>
+      </Items>
+      <DataType Type="DateDataType" />
+    </Condition>
+
+    <Condition Name="SumGreaterMaxSumCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SumNumericBox" />
+        </Item>
+        <Item>
+          <Object Name="MaxSumVariable" />
+        </Item>
+      </Items>
+      <DataType Type="DecimalDataType" />
+    </Condition>
+
+    <Condition Name="EditTypeRadioButtonBlockEqualQuantityCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EditTypeRadioButtonBlock" />
+        </Item>
+        <Item>quantity</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="EditTypeRadioButtonBlockEqualGenerateCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EditTypeRadioButtonBlock" />
+        </Item>
+        <Item>generate</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="DateEqualFirstDateCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                <Fields>
+                  <Field Name="RepaymentDate" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Sort />
+            <First />
+          </Array>
+        </Item>
+        <Item>
+          <Parameter Name="Date" />
+        </Item>
+      </Items>
+      <DataType Type="DateDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>297</Then>
+            </Case>
+            <Case>197</Case>
+          </Switch>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="DateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Date">
+        <Object Name="DateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SumValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Sum">
+        <Object Name="SumNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="EditTypeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="EditType">
+        <Object Name="EditTypeRadioButtonBlock" />
+      </Parameter>
+    </Command>
+
+    <Command Name="IntervalTypeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="IntervalType">
+        <Object Name="IntervalTypeComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="DateValueSetCommand" />
+        <Command Name="SumValueSetCommand" />
+        <Command Name="EditTypeValueSetCommand" />
+        <Command Name="IntervalTypeValueSetCommand" />
+        <Command Name="UpdatedValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="DateDateTimePickerValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateDateTimePicker">
+        <Parameter Name="Date" />
+      </Object>
+    </Command>
+
+    <Command Name="SumNumericBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="SumNumericBox">
+        <Parameter Name="Sum" />
+      </Object>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="HelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Редактирование графика</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r{1}\r{2}\r{3}\r\r{4}\r{5}\r{6}\r\r{7}\r{8}</Format>
+          <Items>
+            <Item>Пересчет шагов.</Item>
+            <Item>При данном типе редактирования суммы платежей остаются максимально неизменными, изменяется их количество.</Item>
+            <Item>Если сумма изменяемого платежа увеличивается, последние платежи будут уменьшены или удалены (если потребуется).</Item>
+            <Item>Если сумма изменяемого платежа уменьшается, то в конец графика будут добавлены новые платежи.</Item>
+            <Item>Пересчет платежей.</Item>
+            <Item>При данном типе редактирования количество платежей, идущих после указанной даты, останется неизменным.</Item>
+            <Item>При этом суммы платежей будут изменены, чтобы общая сумма по мировому соглашению не изменилась.</Item>
+            <Item>Переформирование графика.</Item>
+            <Item>При данном типе редактирования график рассрочки будет сформирован заново, начиная с указанной даты.</Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+        <If>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>
+            <Command Name="DateDateTimePickerValueSetCommand" />
+            <Command Name="SumNumericBoxValueSetCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="DateDateTimePicker" />
+      <ConditionExpression>
+        <Or>
+          <Condition Name="DateLessMinDateCondition" />
+          <Condition Name="DateGreaterMaxDateCondition" />
+        </Or>
+      </ConditionExpression>
+      <AsteriskHint>
+        <String>
+          <Format>Дата платежа должна лежать в диапазоне c {0} по {1}.</Format>
+          <Items>
+            <Item>
+              <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+                <Object Name="MinDateVariable" />
+              </DataTypeFormat>
+            </Item>
+            <Item>
+              <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+                <Object Name="MaxDateVariable" />
+              </DataTypeFormat>
+            </Item>
+          </Items>
+        </String>
+      </AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="DateDateTimePicker" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="DateExistsCondition" />
+          <Not>
+            <Condition Name="DateEqualSelectedDateCondition" />
+          </Not>
+          <Not>
+            <Or>
+              <Condition Name="DateLessMinDateCondition" />
+              <Condition Name="DateGreaterMaxDateCondition" />
+            </Or>
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>В таблице платежей уже есть платеж на указанную дату.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="SumNumericBox" />
+      <ConditionExpression>
+        <Condition Name="SumGreaterMaxSumCondition" />
+      </ConditionExpression>
+      <AsteriskHint>
+        <String>
+          <Format>Для выбранной даты сумма платежа не должна быть больше {0}.</Format>
+          <Items>
+            <Item>
+              <DataTypeFormat Type="DecimalDataType" Format="N2">
+                <Object Name="MaxSumVariable" />
+              </DataTypeFormat>
+            </Item>
+          </Items>
+        </String>
+      </AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="MinDateVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Formula>
+          <Plus DataType="DateDataType">
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Parameter Name="Edit" />
+                  </When>
+                  <Then>
+                    <Array>
+                      <Source>
+                        <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                          <Fields>
+                            <Field Name="RepaymentDate" />
+                          </Fields>
+                        </DataConnection>
+                      </Source>
+                      <Filter Type="Less">
+                        <Index Value="0" />
+                        <DataType Type="DateDataType" />
+                        <Value>
+                          <Parameter Name="Date" />
+                        </Value>
+                      </Filter>
+                      <Sort />
+                      <Last />
+                    </Array>
+                  </Then>
+                </Case>
+                <Case>
+                  <DataTypeConvert Type="DateDataType">
+                    <Array>
+                      <Source>
+                        <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                          <Fields>
+                            <Field Name="RepaymentDate" />
+                          </Fields>
+                        </DataConnection>
+                      </Source>
+                      <Sort />
+                      <First />
+                    </Array>
+                  </DataTypeConvert>
+                </Case>
+              </Switch>
+            </Item>
+            <Item>
+              <DateTime Variable="Interval">1d</DateTime>
+            </Item>
+          </Plus>
+        </Formula>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="MaxDateVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Formula>
+          <Minus DataType="DateDataType">
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Parameter Name="Edit" />
+                  </When>
+                  <Then>
+                    <Array>
+                      <Source>
+                        <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                          <Fields>
+                            <Field Name="RepaymentDate" />
+                          </Fields>
+                        </DataConnection>
+                      </Source>
+                      <Filter Type="Greater">
+                        <Index Value="0" />
+                        <DataType Type="DateDataType" />
+                        <Value>
+                          <Parameter Name="Date" />
+                        </Value>
+                      </Filter>
+                      <Sort />
+                      <First />
+                    </Array>
+                  </Then>
+                </Case>
+                <Case>
+                  <DataTypeConvert Type="DateDataType">
+                    <Array>
+                      <Source>
+                        <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                          <Fields>
+                            <Field Name="RepaymentDate" />
+                          </Fields>
+                        </DataConnection>
+                      </Source>
+                      <Sort />
+                      <Last />
+                    </Array>
+                  </DataTypeConvert>
+                </Case>
+              </Switch>
+            </Item>
+            <Item>
+              <DateTime Variable="Interval">1d</DateTime>
+            </Item>
+          </Minus>
+        </Formula>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="MaxSumVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Formula>
+          <Minus DataType="DecimalDataType">
+            <Item>
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                    <Fields>
+                      <Field Name="RepaymentSum" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <Sum Type="DecimalDataType" />
+              </Array>
+            </Item>
+            <Item>
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="RepaymentArrayGetDataConnection">
+                    <Fields>
+                      <Field Name="RepaymentDate" />
+                      <Field Name="RepaymentSum" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <Filter Type="Less">
+                  <Index Value="0" />
+                  <DataType Type="DateDataType" />
+                  <Value>
+                    <Switch>
+                      <Case>
+                        <When>
+                          <Parameter Name="Edit" />
+                        </When>
+                        <Then>
+                          <Parameter Name="Date" />
+                        </Then>
+                      </Case>
+                      <Case>
+                        <Object Name="DateDateTimePicker" />
+                      </Case>
+                    </Switch>
+                  </Value>
+                </Filter>
+                <Sum Type="DecimalDataType" Index="1" />
+              </Array>
+            </Item>
+          </Minus>
+        </Formula>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Редактирование платежа</Then>
+            </Case>
+            <Case>Добавление платежа</Case>
+          </Switch>
+        </Text>
+
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="EditTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="EditTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Тип редактирования графика</Text>
+        <Visible>
+          <Parameter Name="Edit" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="EditTypeRadioButtonBlock" Type="RadioButtonBlock" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="EditTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="EditTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>75</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="EditTypeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="HelpButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Options>
+          <Option Name="ByQuantity">
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>25</Height>
+            <Width>
+              <Object Name="EditTypeRadioButtonBlock">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Text>Пересчет шагов</Text>
+            <Value>quantity</Value>
+          </Option>
+          <Option Name="BySum">
+            <Top>25</Top>
+            <Left>0</Left>
+            <Height>25</Height>
+            <Width>
+              <Object Name="EditTypeRadioButtonBlock">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Text>Пересчет сумм платежей</Text>
+            <Value>sum</Value>
+          </Option>
+          <Option Name="Generate">
+            <Top>50</Top>
+            <Left>0</Left>
+            <Height>25</Height>
+            <Width>
+              <Object Name="EditTypeRadioButtonBlock">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Text>Переформирование графика</Text>
+            <Value>generate</Value>
+          </Option>
+        </Options>
+        <Value>quantity</Value>
+        <Visible>
+          <Parameter Name="Edit" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="HelpButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="EditTypeRadioButtonBlock">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Object Name="EditTypeLabel">
+            <Property Name="Right" />
+          </Object>
+        </Right>
+        <Height>
+          <Object Name="DateDateTimePicker">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="HelpButton">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Text> ?</Text>
+        <Commands>
+          <Command Name="HelpMessageBoxCommand" />
+        </Commands>
+        <Visible>
+          <Parameter Name="Edit" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="DateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="EditTypeRadioButtonBlock">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="EditTypeRadioButtonBlock">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Plus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="EditTypeLabel">
+                <Property Name="Top" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="EditTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="EditTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="EditTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="EditTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="EditTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="EditTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата платежа</Text>
+      </MyObject>
+
+      <MyObject Name="DateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="DateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="DateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Format>dd  MMMM  yyyy</Format>
+        <NullValue Show="False" />
+        <Value />
+        <Enabled>
+          <Not>
+            <Condition Name="DateEqualFirstDateCondition" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="SumLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="EditTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="IntervalTypeLabel">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="EditTypeLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="IntervalTypeLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="EditTypeLabel">
+                <Property Name="Width" />
+              </Object>
+            </Case>
+          </Switch>
+        </Width>
+        <Height>
+          <Object Name="EditTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="EditTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="EditTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="EditTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма платежа</Text>
+      </MyObject>
+
+      <MyObject Name="SumNumericBox" Type="NumericBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="SumLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="SumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="SumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <DecimalPlaces>2</DecimalPlaces>
+        <Increment>1000</Increment>
+        <Minimum>0</Minimum>
+        <ThousandsSeparator>True</ThousandsSeparator>
+        <Value>0</Value>
+      </MyObject>
+
+      <MyObject Name="IntervalTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="SumLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SumLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Object Name="EditTypeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="EditTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="EditTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="EditTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="EditTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Интервал</Text>
+        <Visible>
+          <And>
+            <Parameter Name="Edit" />
+            <Or>
+              <Condition Name="EditTypeRadioButtonBlockEqualGenerateCondition" />
+              <Condition Name="EditTypeRadioButtonBlockEqualQuantityCondition" />
+            </Or>
+          </And>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="IntervalTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="IntervalTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="IntervalTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="IntervalTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <NullValue Show="False" />
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>M</Item>
+              <Item>месяц</Item>
+            </Row>
+            <Row>
+              <Item>d</Item>
+              <Item>день</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>M</Value>
+        <Visible>
+          <And>
+            <Parameter Name="Edit" />
+            <Or>
+              <Condition Name="EditTypeRadioButtonBlockEqualGenerateCondition" />
+              <Condition Name="EditTypeRadioButtonBlockEqualQuantityCondition" />
+            </Or>
+          </And>
+        </Visible>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="DateLessMinDateCondition" />
+                  <Condition Name="DateGreaterMaxDateCondition" />
+                </Or>
+              </When>
+              <Then>
+                <String>
+                  <Format>Дата платежа должна лежать в диапазоне c {0} по {1}.</Format>
+                  <Items>
+                    <Item>
+                      <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+                        <Object Name="MinDateVariable" />
+                      </DataTypeFormat>
+                    </Item>
+                    <Item>
+                      <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+                        <Object Name="MaxDateVariable" />
+                      </DataTypeFormat>
+                    </Item>
+                  </Items>
+                </String>
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="DateExistsCondition" />
+                  <Not>
+                    <Condition Name="DateEqualSelectedDateCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>В таблице платежей уже есть платеж на указанную дату.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="SumGreaterMaxSumCondition" />
+              </When>
+              <Then>
+                <String>
+                  <Format>Для выбранной даты сумма платежа не должна быть больше {0}.</Format>
+                  <Items>
+                    <Item>
+                      <DataTypeFormat Type="DecimalDataType" Format="N2">
+                        <Object Name="MaxSumVariable" />
+                      </DataTypeFormat>
+                    </Item>
+                  </Items>
+                </String>
+              </Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

@@ -1,0 +1,1806 @@
+<?xml version="1.0"?>
+<Form Name="CollectReportApplicationTaxPaymentForm" Width="1260" Height="650" BackColor="White" StartPosition="CenterScreen" MaximizeBox="True" FormBorderStyle="FixedSingle" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Отчет по оплатам госпошлин заявлений</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ReportApplicationTaxPaymentPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="ReportApplicationTaxPaymentSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanId" />
+          <Field Name="LoanClientId" />
+          <Field Name="LoanClientCollectionId" />
+          <Field Name="ClaimantId" />
+          <Field Name="InnerOrgId" />
+          <Field Name="CessionTitle" />
+          <Field Name="ClientTitle" />
+          <Field Name="CourtId" />
+          <Field Name="ApplicationTypeId" />
+          <Field Name="TaxSum" />
+          <Field Name="PaymentExportNum" />
+          <Field Name="PaymentExportDate" />
+          <Field Name="UserId" />
+
+          <Field Name="CanExport" />
+          <Field Name="Error" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="DateStart" RefreshQuery="False">
+            <Value>
+              <Object Name="DateStartVariable" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="DateFinish" RefreshQuery="False">
+            <Value>
+              <Object Name="DateFinishVariable" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="OnlyMainCourt" RefreshQuery="False">
+            <Value>
+              <Object Name="OnlyMainCourtCheckBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="TaxIsCalculated" RefreshQuery="False">
+            <Value>
+              <Object Name="TaxIsCalculatedCheckBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="PaymentWasExported" RefreshQuery="False">
+            <Value>
+              <Object Name="PaymentWasExportedCheckBox" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ReportApplicationTaxPaymentConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="ReportApplicationTaxPaymentPrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="ToExport" Type="Value">False</Field>
+        <Field Name="LoanId" />
+        <Field Name="LoanClientId" />
+        <Field Name="LoanClientCollectionId" />
+        <Field Name="ClaimantId" />
+        <Field Name="InnerOrgId" />
+        <Field Name="CessionTitle" />
+        <Field Name="ClientTitle" />
+        <Field Name="CourtId" />
+        <Field Name="ApplicationTypeId" />
+        <Field Name="TaxSum" />
+        <Field Name="PaymentExportNum" />
+        <Field Name="PaymentExportDate" />
+        <Field Name="UserId" />
+
+        <Field Name="CanExport" />
+        <Field Name="Error" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="ReportApplicationTaxPaymentToExportSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ReportApplicationTaxPaymentConvertDataConnection" />
+      <Filter>
+        <Field NativeName="ToExport" />
+        <Value>True</Value>
+        <DataType Type="BooleanDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="InnerOrgPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="InnerOrgSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="InnerOrgId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClaimantPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClaimantSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClaimantId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ApplicationTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ApplicationTypeId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CourtId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="PaymentExportToTxtPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="PaymentExportToTxtSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ExportText" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="LoanClientCollectionIds" SendAsArray="True" RefreshQuery="False">
+            <Value>
+              <DataConnection SourceDataConnection="ReportApplicationTaxPaymentToExportSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="LoanClientCollectionId" />
+                </Fields>
+              </DataConnection>
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="FileByGuidPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="FileByGuidSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="FileId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="GUID" RefreshQuery="False">
+            <Value>
+              <Command Name="PaymentExportToTxtUploadFileCommand" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTaxPaymentExportSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="FileId">
+          <Value>
+            <DataConnection SourceDataConnection="FileByGuidPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="FileId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LoanClientCollectionIds" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="ReportApplicationTaxPaymentToExportSecondaryGetDataConnection">
+              <Fields>
+                <Field Name="LoanClientCollectionId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ApplicationTaxPaymentExportSaveSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="UserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="DateStartNotGreaterDateFinishCondition" Type="NotGreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DateStartDateTimePicker" />
+        </Item>
+        <Item>
+          <Object Name="DateFinishDateTimePicker" />
+        </Item>
+      </Items>
+      <DataType Type="DateTimeDataType" />
+    </Condition>
+
+    <Condition Name="DateStartEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="DateStartDateTimePicker" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="DateFinishEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="DateFinishDateTimePicker" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+
+    <Condition Name="ReportApplicationTaxPaymentDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="ReportApplicationTaxPaymentDatabaseTable" />
+    </Condition>
+
+    <Condition Name="ReportApplicationTaxPaymentDatabaseTableCellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="ReportApplicationTaxPaymentDatabaseTable" />
+    </Condition>
+
+    <Condition Name="SelectedColumnNameEqualToExportCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="LastCellClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>ToExport</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ReportApplicationTaxPaymentToExportGreaterZeroCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="ReportApplicationTaxPaymentToExportSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="PaymentCanExportEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">CanExport</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PaymentExportErrorEmptyTaxEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Error</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>EmptyTax</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PaymentExportErrorWithoutCourtEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Error</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>WithoutCourt</Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="DateStartVariableSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateStartVariable">
+        <Object Name="DateStartDateTimePicker" />
+      </Object>
+    </Command>
+
+    <Command Name="DateFinishVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateFinishVariable">
+        <Object Name="DateFinishDateTimePicker" />
+      </Object>
+    </Command>
+
+    <Command Name="ReportApplicationTaxPaymentPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ReportApplicationTaxPaymentPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="PaymentExportToTxtDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="PaymentExportToTxtPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="FileByGuidDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="FileByGuidPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="PeriodErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Обновление отчета</Caption>
+      <Text>Дата начала периода фильтрации не должна быть больше даты окончания.</Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="RefreshSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="DateStartNotGreaterDateFinishCondition" />
+          </When>
+          <Then>
+            <Command Name="DateStartVariableSetCommand" />
+            <Command Name="DateFinishVariableValueSetCommand" />
+            <Command Name="ReportApplicationTaxPaymentPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+          <Else>
+            <Command Name="PeriodErrorMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="ExportReportApplicationTaxPaymentToExcelCommand" Type="ExportToExcelCommand" Assembly="Commands">
+      <TemplateFileName>Templates\ExportReportApplicationTaxPayment.xlsx</TemplateFileName>
+      <Parameters>
+        <Parameter Name="LineTitle">
+          <Parameter Name="Title" />
+        </Parameter>
+        <Parameter Name="RowNumberTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">RowNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClaimantTitleTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="InnerOrgTitleTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionTitleTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientTitleTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CourtTitleTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CourtTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ApplicationTypeTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ApplicationType</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TaxSumTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">TaxSum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentExportNumTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">PaymentExportNum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentExportDateTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">PaymentExportDate</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="UserTitleTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">UserTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="RowNumber">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">RowNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClaimantTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="InnerOrgTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CourtTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CourtTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ApplicationType">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ApplicationType</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TaxSum">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">TaxSum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentExportNum">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">PaymentExportNum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentExportDate">
+          <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+            <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+              <Property Name="Column">
+                <Parameters>
+                  <Parameter Name="ColumnName">PaymentExportDate</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </DataTypeFormat>
+        </Parameter>
+        <Parameter Name="UserTitle">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">UserTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="LoanEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="CurrentTab">collection</Parameter>
+        <Parameter Name="LoanId">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="LoanClientId">
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PaymentToExportUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ReportApplicationTaxPaymentConvertDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="ReportApplicationTaxPaymentConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>LoanClientCollectionId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">LoanClientCollectionId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToExport</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Not>
+                    <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">ToExport</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Not>
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PaymentToExportCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ReportApplicationTaxPaymentConvertDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="RowIndices">
+              <DataConnection SourceDataConnection="ReportApplicationTaxPaymentConvertDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>CanExport</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Structure Type="List">
+                            <Item>True</Item>
+                          </Structure>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToExport</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>True</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PaymentToExportUnCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ReportApplicationTaxPaymentConvertDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToExport</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>False</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PaymentExportErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выгрузка в банк</Caption>
+      <Text>
+        <String>
+          <Format>Невозможно создать выгрузку в банк по этому взысканию, так как {0}.</Format>
+          <Items>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="PaymentExportErrorEmptyTaxEqualCondition" />
+                  </When>
+                  <Then>не рассчитана госпошлина</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="PaymentExportErrorWithoutCourtEqualCondition" />
+                  </When>
+                  <Then>не указан суд</Then>
+                </Case>
+                <Case>произошла неизвестная ошибка</Case>
+              </Switch>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="ImportTxtFolderDialogShowCommand" Type="FolderDialogShowCommand" Assembly="Commands">
+      <Title>Выбор папки для выгрузки файла</Title>
+      <SelectedPath>
+        <Command Name="ImportTxtFolderDialogShowCommand" Parameter="Path" />
+      </SelectedPath>
+    </Command>
+
+    <Command Name="PaymentExportToTxtCommand" Type="ExportToTxtCommand" Assembly="Collect">
+      <FilePath>
+        <String>
+          <Format>{0}\{1}.txt</Format>
+          <Items>
+            <Item>
+              <Command Name="ImportTxtFolderDialogShowCommand" Parameter="Path" />
+            </Item>
+            <Item>
+              <DataTypeFormat Type="DateDataType" Format="ddMMyyy">
+                <DateTime Variable="NowDate" />
+              </DataTypeFormat>
+            </Item>
+          </Items>
+        </String>
+      </FilePath>
+      <Text>
+        <DataConnection SourceDataConnection="PaymentExportToTxtPrimaryGetDataConnection">
+          <Fields>
+            <Field Name="ExportText" />
+          </Fields>
+        </DataConnection>
+      </Text>
+    </Command>
+
+    <Command Name="PaymentExportToTxtCommandApplicationRunCommand" Type="ApplicationRunCommand" Assembly="Commands">
+      <Application>
+        <Command Name="PaymentExportToTxtCommand" />
+      </Application>
+    </Command>
+
+    <Command Name="PaymentExportToTxtUploadFileCommand" Type="UploadFileCommand" Assembly="Commands">
+      <FileName>
+        <Command Name="PaymentExportToTxtCommand" />
+      </FileName>
+    </Command>
+
+    <Command Name="ApplicationTaxPaymentExportSaveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ApplicationTaxPaymentExportSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ReportApplicationTaxPaymentPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="DateStartEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="DateFinishEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ReportApplicationTaxPaymentDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="LoanEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ReportApplicationTaxPaymentDatabaseTableCellClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="SelectedColumnNameEqualToExportCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="PaymentCanExportEqualCondition" />
+              </When>
+              <Then>
+                <Command Name="PaymentToExportUpdateRowCommand" />
+              </Then>
+              <Else>
+                <Command Name="PaymentExportErrorMessageBoxCommand" />
+              </Else>
+            </If>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="LoanEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ReportApplicationTaxPaymentPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ImportTxtFolderDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="PaymentExportToTxtDataConnectionRefreshCommand" />
+        <Command Name="PaymentExportToTxtCommand" />
+        <Command Name="PaymentExportToTxtCommandApplicationRunCommand" />
+        <Command Name="PaymentExportToTxtUploadFileCommand" />
+        <Command Name="FileByGuidDataConnectionRefreshCommand" />
+        <Command Name="ApplicationTaxPaymentExportSaveSaveCommand" />
+        <Command Name="ReportApplicationTaxPaymentPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="DateStartVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <DateTime Variable="FirstDayOfCurrMonth" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="DateFinishVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <DateTime Variable="LastDayOfCurrMonth" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="RefreshButton">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateFilterPanel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="OnlyMainCourtCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Top>2</Top>
+        <Right>
+          <Object Name="DateFilterPanel">
+            <Property Name="Left" />
+          </Object>
+        </Right>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>Только основные суды</Text>
+        <Hint>Выбрать взыскания только по основным судам дел.</Hint>
+        <Value>True</Value>
+      </MyObject>
+
+      <MyObject Name="TaxIsCalculatedCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="OnlyMainCourtCheckBox">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="OnlyMainCourtCheckBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="OnlyMainCourtCheckBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Text>Госпошлина рассчитана</Text>
+        <Hint>Выбрать взыскания, в заявлениях которых была рассчитана госпошлина.</Hint>
+        <Value>True</Value>
+      </MyObject>
+
+      <MyObject Name="PaymentWasExportedCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="TaxIsCalculatedCheckBox">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="OnlyMainCourtCheckBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="OnlyMainCourtCheckBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Text>Была выгрузка документа</Text>
+        <Hint>Выбрать взыскания, у которых была выгрузка платежного документа в указанный период.</Hint>
+        <Value>False</Value>
+      </MyObject>
+
+      <MyObject Name="DateFilterPanel" Type="Panel" Assembly="BaseControls">
+        <Top>2</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateFinishDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateStartDateTimePicker">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateStartDateTimePicker">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateStartLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>4</TabIndex>
+
+        <MyObject Name="DateStartLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="DateStartDateTimePicker">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>0</Left>
+          <Height>20</Height>
+          <Width>50</Width>
+          <TextAlign>MiddleRight</TextAlign>
+          <Text>С:</Text>
+        </MyObject>
+
+        <MyObject Name="DateStartDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Top>0</Top>
+          <Left>
+            <Object Name="DateStartLabel">
+              <Property Name="Right" />
+            </Object>
+          </Left>
+          <Width>140</Width>
+          <TabIndex>1</TabIndex>
+          <Format> d MMMM yyyy</Format>
+          <NullValue Show="False" />
+          <Value>
+            <Object Name="DateStartVariable" />
+          </Value>
+          <Enabled>
+            <Object Name="PaymentWasExportedCheckBox" />
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="DateFinishLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="DateFinishDateTimePicker">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DateStartLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="DateStartLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="DateStartLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TextAlign>
+            <Object Name="DateStartLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>По:</Text>
+        </MyObject>
+
+        <MyObject Name="DateFinishDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DateStartDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>1</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="DateStartDateTimePicker">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DateStartDateTimePicker">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Format> d MMMM yyyy</Format>
+          <NullValue Show="False" />
+          <Value>
+            <Object Name="DateFinishVariable" />
+          </Value>
+          <Enabled>
+            <Object Name="PaymentWasExportedCheckBox" />
+          </Enabled>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="RefreshButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateFilterPanel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Right>
+          <Object Name="DateFilterPanel">
+            <Property Name="Right" />
+          </Object>
+        </Right>
+        <Width>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>24</Height>
+        <TabIndex>3</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <ForeColor>HeadTextColor</ForeColor>
+        <TextAlign>TopCenter</TextAlign>
+        <BackColor>White</BackColor>
+        <Text>Показать</Text>
+        <Commands>
+          <Command Name="RefreshSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="DateStartNotGreaterDateFinishCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Дата начала периода не должна быть больше даты окончания периода.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveAllLinkLabel" Type="LinkLabel" Assembly="BaseControls" ChangeForm="False">
+        <Top>5</Top>
+        <Left>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnOffset">
+              <Parameters>
+                <Parameter Name="ColumnName">ToExport</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Height>15</Height>
+        <Width>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">ToExport</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>TitleFont</FontStyle>
+        <LinkColor>Gray100</LinkColor>
+        <ActiveLinkColor>Black</ActiveLinkColor>
+        <DisabledLinkColor>Gray200</DisabledLinkColor>
+        <Text>Все</Text>
+        <Commands>
+          <Command Name="PaymentToExportCheckAllCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SaveNoneLinkLabel" Type="LinkLabel" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <TextAlign>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <FontStyle>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <LinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="LinkColor" />
+          </Object>
+        </LinkColor>
+        <ActiveLinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="ActiveLinkColor" />
+          </Object>
+        </ActiveLinkColor>
+        <DisabledLinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="DisabledLinkColor" />
+          </Object>
+        </DisabledLinkColor>
+        <Text>Очистить</Text>
+        <Commands>
+          <Command Name="PaymentToExportUnCheckAllCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="DetailCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DetailCheckBox">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Top>
+        <Right>
+          <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+            <Property Name="Right" />
+          </Object>
+        </Right>
+        <Height>20</Height>
+        <Width>85</Width>
+        <TabIndex>3</TabIndex>
+        <Text>Подробно</Text>
+        <Value>False</Value>
+      </MyObject>
+
+      <MyObject Name="ReportApplicationTaxPaymentDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SaveNoneLinkLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ReportApplicationTaxPaymentDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <MultiSelect Value="True" />
+        <ShowCellHints Value="True" />
+        <ColumnHeadersHeight Value="38" />
+        <ColumnHeadersAlignment Value="MiddleCenter" />
+        <SourceDataConnection Name="ReportApplicationTaxPaymentConvertDataConnection" />
+        <Columns>
+          <Column Name="LoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanClientCollectionId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="InnerOrgId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClaimantId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ApplicationTypeId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="CourtId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="CanExport" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Error" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="UserId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>80</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ToExport" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Title>Выгрузить</Title>
+            <Width>70</Width>
+            <HeaderAlignment Value="MiddleCenter" />
+            <AutoSizeMode Value="None" />
+            <Alignment Value="TopRight" />
+          </Column>
+          <Column Name="ClaimantTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цедент</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Substitution SourceColumn="ClaimantId">
+              <DataConnection SourceDataConnection="ClaimantPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClaimantId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+            <Visible>
+              <Object Name="DetailCheckBox" />
+            </Visible>
+          </Column>
+          <Column Name="InnerOrgTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цессионарий</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Substitution SourceColumn="InnerOrgId">
+              <DataConnection SourceDataConnection="InnerOrgPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="InnerOrgId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+            <Visible>
+              <Object Name="DetailCheckBox" />
+            </Visible>
+          </Column>
+          <Column Name="CessionTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цессия</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <Visible>
+              <Object Name="DetailCheckBox" />
+            </Visible>
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>ФИО фигуранта</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="CourtTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование суда</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Substitution SourceColumn="CourtId">
+              <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="CourtId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+          </Column>
+          <Column Name="ApplicationType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Тип заявления</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Substitution SourceColumn="ApplicationTypeId">
+              <DataConnection SourceDataConnection="ApplicationTypePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ApplicationTypeId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+          </Column>
+          <Column Name="TaxSum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сумма госпошлины</Title>
+            <MinimumWidth>100</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Alignment Value="MiddleRight" />
+            <DataType Type="DecimalDataType" Format="N2" />
+          </Column>
+          <Column Name="PaymentExportNum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Номер выгрузки</Title>
+            <Hint>Номер выгрузки в банк</Hint>
+            <MinimumWidth>55</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Alignment Value="MiddleCenter" />
+          </Column>
+          <Column Name="PaymentExportDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата выгрузки</Title>
+            <MinimumWidth>100</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            <Alignment Value="MiddleCenter" />
+          </Column>
+          <Column Name="UserTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сотрудник</Title>
+            <MinimumWidth>120</MinimumWidth>
+            <AutoSizeMode Value="None" />
+            <Substitution SourceColumn="UserId">
+              <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="UserId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+          </Column>
+        </Columns>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+
+      <MyObject Name="ExportToExcelButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ExportToTxtButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ExportToTxtButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>30</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="ExportToTxtButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ExportToTxtButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>
+          <Object Name="ExportToTxtButton">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <FontStyle>
+          <Object Name="ExportToTxtButton">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ImageAlign>
+          <Object Name="ExportToTxtButton">
+            <Property Name="ImageAlign" />
+          </Object>
+        </ImageAlign>
+        <Image>Images\24x24\export.png</Image>
+        <FlatStyle>
+          <Object Name="ExportToTxtButton">
+            <Property Name="FlatStyle" />
+          </Object>
+        </FlatStyle>
+        <FlatBorderSize>
+          <Object Name="ExportToTxtButton">
+            <Property Name="FlatBorderSize" />
+          </Object>
+        </FlatBorderSize>
+        <FlatBorderColor>
+          <Object Name="ExportToTxtButton">
+            <Property Name="FlatBorderColor" />
+          </Object>
+        </FlatBorderColor>
+        <FlatMouseDownBackColor>
+          <Object Name="ExportToTxtButton">
+            <Property Name="FlatMouseDownBackColor" />
+          </Object>
+        </FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Object Name="ExportToTxtButton">
+            <Property Name="FlatMouseOverBackColor" />
+          </Object>
+        </FlatMouseOverBackColor>
+        <Text>Экспорт в Excel</Text>
+        <Commands>
+          <Command Name="ExportReportApplicationTaxPaymentToExcelCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ExportToTxtButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>2</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\24x24\export.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Создать выгрузку</Text>
+        <Commands>
+          <Command Name="ImportTxtFolderDialogShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ReportApplicationTaxPaymentToExportGreaterZeroCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Для создания выгрузки выберите госпошлину.</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

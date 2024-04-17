@@ -1,0 +1,1199 @@
+<?xml version="1.0"?>
+<Form Name="CollectTempAudioFileEditForm" Width="550" Height="400" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="TempAudioFileId" />
+    <Parameter Name="Guid" />
+    <Parameter Name="ClientPhoneNumber" />
+    <Parameter Name="Title">Привязка аудиозаписи</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="TempAudioFilePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TempAudioFileByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClientId" />
+          <Field Name="LoanId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TempAudioFileId">
+            <Value>
+              <Parameter Name="TempAudioFileId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClientSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClientId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="LoanPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="LoanSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanId" />
+          <Field Name="CreditNumber" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TempAudioFileUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TempAudioFileId">
+          <Value>
+            <Parameter Name="TempAudioFileId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ClientId" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ClientId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LoanId" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="LoanId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ChangedManually">
+          <Value>
+            <Not>
+              <Condition Name="BeforeIdsEqualAfterIdsCondition" />
+            </Not>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TempAudioFileUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="ClientPhoneInsertSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ClientId">
+          <Value>
+            <Object Name="TempAudioFileReferenceDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">ClientId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ClientPhoneNumber">
+          <Value>
+            <Parameter Name="ClientPhoneNumber" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ClientPhoneFromTempAudioInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="BeforeIdsEqualAfterIdsCondition" Type="EqualCondition" Assembly="Conditions">
+      <Comparison Type="Outer" />
+      <Satisfy MinCount="All" MaxCount="All" />
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="BeforeIdsArrayVariable" />
+            </Source>
+            <Order>
+              <By Index="0" />
+              <By Index="1" />
+            </Order>
+          </Array>
+        </Item>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                  <Field Name="LoanId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Order>
+              <By Index="0" />
+              <By Index="1" />
+            </Order>
+          </Array>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TempAudioFileReferenceSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempAudioFileReferenceDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TempAudioFileReferenceDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="TempAudioFileReferenceDatabaseTable" />
+    </Condition>
+
+    <Condition Name="TempAudioFileHasReferencesCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="GuidIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Guid" />
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TempAudioFileUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempAudioFileUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="TempAudioFileUpdateSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="DownloadTempAudioFileCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <ReadOnly>False</ReadOnly>
+      <FileGuid>
+        <Parameter Name="Guid" />
+      </FileGuid>
+    </Command>
+
+    <Command Name="TempAudioFileReferenceAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanClientReferenceEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Mode">audio</Parameter>
+        <Parameter Name="ClientIds">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Distinct />
+          </Array>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="TempAudioFileReferenceEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanClientReferenceEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="Mode">audio</Parameter>
+        <Parameter Name="ClientId">
+          <Object Name="TempAudioFileReferenceDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientIds">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Distinct />
+          </Array>
+        </Parameter>
+        <Parameter Name="LoanIds">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                  <Field Name="LoanId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="IntegerDataType" />
+              <Value>
+                <Object Name="TempAudioFileReferenceDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">ClientId</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Value>
+            </Filter>
+            <Select>
+              <Items>
+                <Item Type="Index">1</Item>
+              </Items>
+            </Select>
+          </Array>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BeforeIdsArrayVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="BeforeIdsArrayVariable">
+        <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+          <Fields>
+            <Field Name="ClientId" />
+            <Field Name="LoanId" />
+          </Fields>
+        </DataConnection>
+      </Object>
+    </Command>
+
+    <Command Name="TempAudioFileReferenceDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление привязок аудиозаписи к делам</Caption>
+      <Text>Вы действительно хотите удалить выбранные привязки к делам?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ClientPhoneAddMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Добавление номера телефона</Caption>
+      <Text>
+        <String>
+          <Format>Вы действительно хотите добавить номер телефона {0} выбранному должнику?</Format>
+          <Items>
+            <Item>
+              <Parameter Name="ClientPhoneNumber" />
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ClientPhoneAddSuccessMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Добавление номера телефона</Caption>
+      <Text>Номер телефона добавлен в карточку должника.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="TempAudioFileReferenceSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TempAudioFileReferenceDatabaseTable">
+        <Property Name="SelectedRowsIndices">
+          <Object Name="TempAudioFileReferenceDatabaseTable">
+            <Property Name="RowsIndicesOf">
+              <Parameters>
+                <Parameter Name="ColumnNames">
+                  <Structure Type="List">
+                    <Item>ClientId</Item>
+                  </Structure>
+                </Parameter>
+                <Parameter Name="Values">
+                  <Structure Type="List">
+                    <Item>
+                      <Input />
+                    </Item>
+                  </Structure>
+                </Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="TempAudioFileDeleteRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempAudioFilePrimaryGetDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ClientId</Item>
+                        <Item>LoanId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="TempAudioFileReferenceDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">ClientId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                        <Item>
+                          <Object Name="TempAudioFileReferenceDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">LoanId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempAudioFileDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempAudioFilePrimaryGetDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ClientId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Input />
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempAudioFileAddRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempAudioFilePrimaryGetDataConnection">
+        <Property Name="AddRows">
+          <Parameters>
+            <Parameter Name="RawValues">True</Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ClientId</Item>
+                <Item>LoanId</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Array>
+                <Source>
+                  <Input Name="LoanIds" />
+                </Source>
+                <Select>
+                  <Items>
+                    <Item Type="Value">
+                      <Input Name="ClientId" />
+                    </Item>
+                    <Item Type="Index">0</Item>
+                  </Items>
+                </Select>
+              </Array>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ClientPhoneInsertCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ClientPhoneInsertSetDataConnection" />
+      </DataConnections>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="BeforeIdsArrayVariableValueSetCommand" />
+        <If>
+          <When>
+            <Not>
+              <Condition Name="TempAudioFileHasReferencesCondition" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="TempAudioFileReferenceAddFormShowCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TempAudioFileReferenceDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempAudioFileReferenceEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TempAudioFileReferenceAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempAudioFileDeleteRowsCommand">
+          <Command Name="TempAudioFileReferenceAddFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="TempAudioFileAddRowsCommand">
+          <Input Name="LoanIds">
+            <Command Name="TempAudioFileReferenceAddFormShowCommand" Parameter="LoanIds" />
+          </Input>
+          <Input Name="ClientId">
+            <Command Name="TempAudioFileReferenceAddFormShowCommand" Parameter="ClientId" />
+          </Input>
+        </Command>
+        <Command Name="TempAudioFileReferenceSelectRowCommand">
+          <Command Name="TempAudioFileReferenceAddFormShowCommand" Parameter="ClientId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TempAudioFileReferenceEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempAudioFileDeleteRowsCommand">
+          <Command Name="TempAudioFileReferenceEditFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="TempAudioFileAddRowsCommand">
+          <Input Name="LoanIds">
+            <Command Name="TempAudioFileReferenceEditFormShowCommand" Parameter="LoanIds" />
+          </Input>
+          <Input Name="ClientId">
+            <Command Name="TempAudioFileReferenceEditFormShowCommand" Parameter="ClientId" />
+          </Input>
+        </Command>
+        <Command Name="TempAudioFileReferenceSelectRowCommand">
+          <Command Name="TempAudioFileReferenceEditFormShowCommand" Parameter="ClientId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TempAudioFileReferenceDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempAudioFileDeleteRowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ClientPhoneAddMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientPhoneInsertCommand" />
+        <Command Name="ClientPhoneAddSuccessMessageBoxCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="BeforeIdsArrayVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TempAudioFileReferenceDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempAudioFileReferenceDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempAudioFileReferenceDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempAudioFileReferenceAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="TempAudioFilePrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanId" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>ФИО должника</Title>
+            <Width>200</Width>
+            <Substitution SourceColumn="ClientId">
+              <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="LoanTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Номер КД</Title>
+            <Width>200</Width>
+            <Substitution SourceColumn="LoanId">
+              <DataConnection SourceDataConnection="LoanPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="LoanId" />
+                  <Field Name="CreditNumber" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileReferenceAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TempAudioFileReferenceDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileReferenceDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить привязку аудиозаписи к делам...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TempAudioFileReferenceAddFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileReferenceEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileReferenceAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать привязку аудиозаписи к делам...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TempAudioFileReferenceEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TempAudioFileReferenceSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выделите в таблице запись, которую следует отредактировать.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileReferenceDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileReferenceEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Удалить привязку аудиозаписи к делу</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TempAudioFileReferenceDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TempAudioFileReferenceSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите в таблице запись для удаления.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileOpenButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileReferenceDeleteButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>25</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Image>Images\24x24\audio_file_open.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Прослушать аудиозапись</Hint>
+        <Enabled>
+          <Condition Name="GuidIsNotNullCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="DownloadTempAudioFileCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Не найден файл аудиозаписи.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileOpenButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Hint>
+          <String>
+            <Format>Добавить номер телефона {0} в карточку должника</Format>
+            <Items>
+              <Item>
+                <Parameter Name="ClientPhoneNumber" />
+              </Item>
+            </Items>
+          </String>
+        </Hint>
+        <Image>Images\24x24\phone_add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ClientPhoneAddMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TempAudioFileReferenceSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите должника, которому следует добавить номер телефона.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>Сохранить</Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\save.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Не все обязательные поля заполнены.</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

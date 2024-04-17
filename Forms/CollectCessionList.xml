@@ -1,0 +1,1705 @@
+<?xml version="1.0"?>
+<Form Name="CollectCessionListForm" Width="1100" Height="500" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="CessionId" />
+    <Parameter Name="Title">Список цессий</Parameter>
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="MergeMode">False</Parameter>
+    <Parameter Name="MergeCessionIds" />
+    <Parameter Name="ExcludeCessionId" />
+    <Parameter Name="SelectedCessionId" />
+    <Parameter Name="SelectedCessionTitle" />
+    <Parameter Name="SelectedCessionDate" />
+    <Parameter Name="SelectedCessionClaimantTitle" />
+    <Parameter Name="SelectedCessionInnerOrgTitle" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="CessionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CessionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CessionId" />
+          <Field Name="Title" />
+          <Field Name="CessionTypeTitle" />
+          <Field Name="CessionDate" />
+          <Field Name="LoanQuantity" />
+          <Field Name="LoanTotalDebtSum" />
+          <Field Name="ClaimantTitle" />
+          <Field Name="InnerOrgTitle" />
+          <Field Name="AddressRegionTitle" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <And>
+            <Filter FilterByNullValue="False">
+              <Field NativeName="Archive" />
+              <Value>
+                <Object Name="ArchiveFilterComboBox" />
+              </Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="NotLess">
+              <Enabled>
+                <Parameter Name="SelectionMode" />
+              </Enabled>
+              <Field NativeName="CessionId" />
+              <Value>0</Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+            <Filter Type="NotEqual">
+              <Enabled>
+                <Parameter Name="SelectionMode" />
+              </Enabled>
+              <Field NativeName="CessionId" />
+              <Value>
+                <Parameter Name="ExcludeCessionId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Enabled>
+                <Parameter Name="MergeMode" />
+              </Enabled>
+              <Field NativeName="CessionId" />
+              <Value>
+                <Parameter Name="MergeCessionIds" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </And>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CessionArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="CessionId">
+          <Value>
+            <Object Name="CessionDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">CessionId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive">
+          <Value>
+            <Not>
+              <Object Name="CessionDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Archive</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Not>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="CessionArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="CessionDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="CessionId" SendAsArray="True">
+          <Value>
+            <Array>
+              <Source>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="SelectedRowsCellValuesByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">CessionId</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Source>
+              <Filter Type="Greater">
+                <Index Value="0" />
+                <DataType Type="IntegerDataType" />
+                <Value>0</Value>
+              </Filter>
+            </Array>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="CessionDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="CessionMergeSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MergeCessionIds" SendAsArray="True">
+          <Value>
+            <Parameter Name="MergeCessionIds" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="CessionId">
+          <Value>
+            <Object Name="CessionDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">CessionId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="CessionMergeSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="CessionDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="CessionDatabaseTable" />
+    </Condition>
+
+    <Condition Name="CessionDatabaseTableSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="CessionDatabaseTable">
+                <Property Name="SelectedRowsCellValuesByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">CessionId</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Source>
+            <Filter Type="Greater">
+              <Index Value="0" />
+              <DataType Type="IntegerDataType" />
+              <Value>0</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CessionSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="CessionDatabaseTable">
+                <Property Name="SelectedRowsCellValuesByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">CessionId</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Source>
+            <Filter Type="Greater">
+              <Index Value="0" />
+              <DataType Type="IntegerDataType" />
+              <Value>0</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CessionDatabaseTableSelectedAnyOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CessionDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CessionDatabaseTableSelectedGreaterOneCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="CessionDatabaseTable">
+                <Property Name="SelectedRowsCellValuesByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">CessionId</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Source>
+            <Filter Type="Greater">
+              <Index Value="0" />
+              <DataType Type="IntegerDataType" />
+              <Value>0</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CessionIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CessionDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="CessionAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectCessionEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+    </Command>
+
+    <Command Name="CessionEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectCessionEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="CessionId">
+          <Object Name="CessionDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CessionArchiveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CessionArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CessionMergeSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CessionMergeSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CessionDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранные цессии?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="CessionDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CessionDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CessionPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CessionTryDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Одна или несколько цессий не были удалены, т.к. они используются в программе.\rЭти цессии были перемещены в архив.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="CessionArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="CessionIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить цессию из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить цессию в архив?</Case>
+        </Switch>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="CessionTrySelectMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выбор цессии</Caption>
+      <Text>Невозможно выбрать цессию, т.к. запись находится в архиве.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="CessionSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CessionDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">CessionId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="SelectedCessionIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedCessionId">
+        <Object Name="CessionDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">CessionId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedCessionTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedCessionTitle">
+        <Object Name="CessionDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">Title</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedCessionDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedCessionDate">
+        <Object Name="CessionDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">CessionDate</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedCessionClaimantTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedCessionClaimantTitle">
+        <Object Name="CessionDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedCessionInnerOrgTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedCessionInnerOrgTitle">
+        <Object Name="CessionDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">InnerOrgTitle</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectCessionSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedCessionIdValueSetCommand" />
+        <Command Name="SelectedCessionTitleValueSetCommand" />
+        <Command Name="SelectedCessionDateValueSetCommand" />
+        <Command Name="SelectedCessionClaimantTitleValueSetCommand" />
+        <Command Name="SelectedCessionInnerOrgTitleValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="CessionDatabaseTableMultiSelectValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CessionDatabaseTable">
+        <Property Name="MultiSelect">False</Property>
+      </Object>
+    </Command>
+
+    <Command Name="CessionListMergeFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectCessionList.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="MergeMode">True</Parameter>
+        <Parameter Name="MergeCessionIds">
+          <Array>
+            <Source>
+              <Object Name="CessionDatabaseTable">
+                <Property Name="SelectedRowsCellValuesByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">CessionId</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Source>
+            <Filter Type="Greater">
+              <Index Value="0" />
+              <DataType Type="IntegerDataType" />
+              <Value>0</Value>
+            </Filter>
+          </Array>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CessionMergeMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Объединение цессий</Caption>
+      <Text>
+        <String>
+          <Format>При объединении цессий в делах будет указана цессия № {0}, остальные цессии и данные по ним будут удалены.\r\rПродолжить?</Format>
+          <Items>
+            <Item>
+              <Object Name="CessionDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Title</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Or>
+              <Parameter Name="SelectionMode" />
+              <Parameter Name="MergeMode" />
+            </Or>
+          </When>
+          <Then>
+            <Command Name="CessionDatabaseTableMultiSelectValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="CessionSelectRowCommand">
+          <Parameter Name="CessionId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="CessionSelectRowCommand">
+          <Command Name="CessionAddFormShowCommand" Parameter="CessionId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="CessionSelectRowCommand">
+          <Command Name="CessionEditFormShowCommand" Parameter="CessionId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CessionDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="SelectionMode" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="CessionIsArchiveCondition" />
+              </When>
+              <Then>
+                <Command Name="CessionTrySelectMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="SelectCessionSequentialCommand" />
+              </Else>
+            </If>
+          </Then>
+          <ElseIf>
+            <When>
+              <Parameter Name="MergeMode" />
+            </When>
+            <Then>
+              <Command Name="CessionMergeMessageBoxCommand" />
+            </Then>
+          </ElseIf>
+          <Else>
+            <If>
+              <When>
+                <Object Name="CessionEditButton">
+                  <Property Name="Enabled" />
+                </Object>
+              </When>
+              <Then>
+                <Command Name="CessionEditFormShowCommand" />
+              </Then>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionDeleteSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="CessionDeleteSaveCommand" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="CessionTryDeleteMessageBoxCommand" />
+          </Then>
+        </If>
+        <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionArchiveSaveCommand" />
+        <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionMergeMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionMergeSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionListMergeFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CessionPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Выбор основной цессии</Then>
+            </Case>
+            <Case>
+              <Parameter Name="Title" />
+            </Case>
+          </Switch>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="Все" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>False</Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Or>
+                <Parameter Name="SelectionMode" />
+                <Parameter Name="MergeMode" />
+              </Or>
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="CessionDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="LoanQuantityTotalTextBox">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>12</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="CessionDatabaseTable">
+                        <Property Name="Left" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ContentPanel">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="CessionDatabaseTable">
+                      <Property Name="Left" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="CessionAddButton">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>20</Item>
+                </Minus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <MultiSelect Value="True" />
+        <SourceDataConnection Name="CessionPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CessionId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование цессии</Title>
+            <Width>170</Width>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="CessionTypeTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Тип цессии</Title>
+            <Width>120</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CessionDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата цессии</Title>
+            <Width>90</Width>
+            <AutoSizeMode Value="None" />
+            <DataType Type="DateDataType" Format="dd.MM.yyyy" />
+          </Column>
+          <Column Name="ClaimantTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цедент</Title>
+            <Width>120</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="InnerOrgTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цессионарий</Title>
+            <Width>120</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="AddressRegionTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Регион</Title>
+            <Width>190</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="LoanQuantity" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Кол-во договоров</Title>
+            <Width>120</Width>
+            <AutoSizeMode Value="None" />
+            <DataType Type="IntegerDataType" Format="N0" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+          <Column Name="LoanTotalDebtSum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сумма цессии</Title>
+            <Width>100</Width>
+            <AutoSizeMode Value="None" />
+            <DataType Type="DecimalDataType" Format="N2" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="ArchiveColor">
+            <Expression>Archive AND {0}</Expression>
+            <Items>
+              <Item>
+                <Not>
+                  <Object Name="ArchiveFilterComboBox" />
+                </Not>
+              </Item>
+            </Items>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="CessionAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="CessionDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить цессию...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CessionAddFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CessionEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CessionAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="CessionAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CessionAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать цессию...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CessionEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="CessionIsArchiveCondition" />
+            </Not>
+            <Condition Name="CessionDatabaseTableSelectedAnyOneCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="CessionDatabaseTableSelectedAnyOneCondition" />
+                </Not>
+              </When>
+              <Then>Выберите цессию для редактирования.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="CessionIsArchiveCondition" />
+              </When>
+              <Then>Для редактирования восстановите цессию из архива.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CessionMergeButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CessionAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="CessionAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CessionAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Объединить цессии...</Hint>
+        <Image>Images\24x24\merge.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CessionListMergeFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="CessionDatabaseTableSelectedGreaterOneCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите в таблице цессии, которые следует объединить (запись "БЕЗ ЦЕССИИ" не участвует в объединении).</DisabledText>
+        <Visible>
+          <Not>
+            <Or>
+              <Parameter Name="SelectionMode" />
+              <Parameter Name="MergeMode" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CessionArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="CessionMergeButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="CessionMergeButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="CessionEditButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CessionAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="CessionAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CessionAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CessionIsArchiveCondition" />
+              </When>
+              <Then>Восстановить цессию из архива</Then>
+            </Case>
+            <Case>Переместить цессию в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="CessionIsArchiveCondition" />
+                  <Object Name="ArchiveFilterComboBox" />
+                </Or>
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CessionArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="CessionSelectedOneCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CessionIsArchiveCondition" />
+              </When>
+              <Then>Выберите цессию для восстановления из архива.</Then>
+            </Case>
+            <Case>Выберите цессию для перемещения в архив.</Case>
+          </Switch>
+        </DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CessionDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionArchiveButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CessionAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="CessionAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CessionAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Hint>Удалить цессии</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CessionDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="CessionDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите цессии для удаления.</DisabledText>
+        <Visible>
+          <Not>
+            <Parameter Name="MergeMode" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="LoanQuantityTotalTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="ColumnOffset">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanQuantity</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="ColumnWidth">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanQuantity</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Width>
+        <TabStop>False</TabStop>
+        <ReadOnly>True</ReadOnly>
+        <Multiline>True</Multiline>
+        <FontStyle>TitleSmallFont</FontStyle>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0} /
+{1}</Format>
+            <Items>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N0">
+                  <Object Name="CessionDatabaseTable">
+                    <Property Name="SelectedCellsSumByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">LoanQuantity</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </DataTypeFormat>
+              </Item>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N0">
+                  <Object Name="CessionDatabaseTable">
+                    <Property Name="ColumnSum">
+                      <Parameters>
+                        <Parameter Name="ColumnName">LoanQuantity</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </DataTypeFormat>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+        <BackColor>White</BackColor>
+      </MyObject>
+
+      <MyObject Name="LoanTotalDebtSumTotalTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="ColumnOffset">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanTotalDebtSum</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionDatabaseTable">
+                  <Property Name="ColumnWidth">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanTotalDebtSum</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Width>
+        <TabStop>False</TabStop>
+        <ReadOnly>True</ReadOnly>
+        <Multiline>True</Multiline>
+        <FontStyle>TitleSmallFont</FontStyle>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0} /
+{1}</Format>
+            <Items>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Object Name="CessionDatabaseTable">
+                    <Property Name="SelectedCellsSumByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">LoanTotalDebtSum</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </DataTypeFormat>
+              </Item>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Object Name="CessionDatabaseTable">
+                    <Property Name="ColumnSum">
+                      <Parameters>
+                        <Parameter Name="ColumnName">LoanTotalDebtSum</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </DataTypeFormat>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+        <BackColor>White</BackColor>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Or>
+          <Parameter Name="SelectionMode" />
+          <Parameter Name="MergeMode" />
+        </Or>
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Visible>
+        <Or>
+          <Parameter Name="SelectionMode" />
+          <Parameter Name="MergeMode" />
+        </Or>
+      </Visible>
+
+      <MyObject Name="SelectButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Images\18x18\merge.png</Then>
+            </Case>
+            <Case>Images\18x18\check.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="MergeMode" />
+              </When>
+              <Then>Объединить цессии</Then>
+            </Case>
+            <Case>Выбрать</Case>
+          </Switch>
+        </Text>
+        <Enabled>
+          <And>
+            <Condition Name="CessionDatabaseTableSelectedCondition" />
+            <Or>
+              <Parameter Name="MergeMode" />
+              <Not>
+                <Condition Name="CessionIsArchiveCondition" />
+              </Not>
+            </Or>
+          </And>
+        </Enabled>
+        <Commands>
+          <If>
+            <When>
+              <Parameter Name="MergeMode" />
+            </When>
+            <Then>
+              <Command Name="CessionMergeMessageBoxCommand" />
+            </Then>
+            <Else>
+              <Command Name="SelectCessionSequentialCommand" />
+            </Else>
+          </If>
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="CessionDatabaseTableSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите нужную цессию в таблице.</Then>
+            </Case>
+            <Case>Невозможно выбрать цессию, т.к. запись находится в архиве.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

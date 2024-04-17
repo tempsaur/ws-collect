@@ -1,0 +1,1122 @@
+<?xml version="1.0"?>
+<Form Name="CollectCessionHistoryEditForm" Width="350" Height="341" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ID" />
+    <Parameter Name="Date" />
+    <Parameter Name="Sum" />
+    <Parameter Name="ClaimantTitle" />
+    <Parameter Name="InnerOrgTitle" />
+    <Parameter Name="CessionTitle" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование записи в истории</Then>
+        </Case>
+        <Case>Добавление записи в историю</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ListClaimantPermission" />
+          <Field Name="ListInnerOrgPermission" />
+          <Field Name="ListCessionPermission" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ClaimantTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClaimantTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ListClaimantPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListClaimantPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ListInnerOrgPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListInnerOrgPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ListCessionPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListCessionPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="ClaimantListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectClaimantList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="InnerOrgListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectInnerOrgList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CessionListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectCessionList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ClaimantTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ClaimantTextBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="InnerOrgTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="InnerOrgTextBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="CessionTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CessionTextBox">
+        <Command Name="CessionListFormShowCommand" Parameter="SelectedCessionTitle" />
+      </Object>
+    </Command>
+
+    <Command Name="DateDateTimePickerValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateDateTimePicker">
+        <Command Name="CessionListFormShowCommand" Parameter="SelectedCessionDate" />
+      </Object>
+    </Command>
+
+    <Command Name="DateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Date">
+        <Object Name="DateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SumValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Sum">
+        <Object Name="SumNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="ClaimantTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ClaimantTitle">
+        <Object Name="ClaimantTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="InnerOrgTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="InnerOrgTitle">
+        <Object Name="InnerOrgTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CessionTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CessionTitle">
+        <Object Name="CessionTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="DateValueSetCommand" />
+        <Command Name="SumValueSetCommand" />
+        <Command Name="ClaimantTitleValueSetCommand" />
+        <Command Name="InnerOrgTitleValueSetCommand" />
+        <Command Name="CessionTitleValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ClaimantListFormShowCommand" Parameter="Selected" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClaimantTextBoxValueSetCommand">
+          <Command Name="ClaimantListFormShowCommand" Parameter="SelectedClaimantTitle" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="InnerOrgListFormShowCommand" Parameter="Selected" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="InnerOrgTextBoxValueSetCommand">
+          <Command Name="InnerOrgListFormShowCommand" Parameter="SelectedInnerOrgTitle" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CessionListFormShowCommand" Parameter="Selected" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="DateDateTimePickerValueSetCommand" />
+        <Command Name="ClaimantTextBoxValueSetCommand">
+          <Command Name="CessionListFormShowCommand" Parameter="SelectedCessionClaimantTitle" />
+        </Command>
+        <Command Name="InnerOrgTextBoxValueSetCommand">
+          <Command Name="CessionListFormShowCommand" Parameter="SelectedCessionInnerOrgTitle" />
+        </Command>
+        <Command Name="CessionTextBoxValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="ClaimantTextBox" />
+      <ConditionExpression>
+        <Condition Name="ClaimantTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Цедент" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="DateLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Дата переуступки</Text>
+      </MyObject>
+
+      <MyObject Name="DateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="DateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="DateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="Date" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="SumLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="DateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="DateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="DateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="DateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма на момент переуступки</Text>
+      </MyObject>
+
+      <MyObject Name="SumNumericBox" Type="NumericBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="SumLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="SumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="SumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <DecimalPlaces>2</DecimalPlaces>
+        <Increment>10000</Increment>
+        <Minimum>0</Minimum>
+        <ThousandsSeparator>True</ThousandsSeparator>
+        <Value>
+          <Parameter Name="Sum" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="ClaimantLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SumNumericBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="DateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="DateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="DateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="DateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Цедент</Text>
+      </MyObject>
+
+      <MyObject Name="ClaimantTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="ClaimantLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClaimantLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClaimantLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ClaimantSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ClaimantSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Text>
+          <Parameter Name="ClaimantTitle" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ClaimantSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ClaimantTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClaimantTextBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="ClaimantTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ClaimantTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Выбрать цедента...</Hint>
+        <Commands>
+          <Command Name="ClaimantListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListClaimantPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="InnerOrgLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClaimantTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="DateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="DateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="DateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="DateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Цессионарий</Text>
+      </MyObject>
+
+      <MyObject Name="InnerOrgTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="InnerOrgLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="InnerOrgLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="InnerOrgLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="InnerOrgSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="InnerOrgSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Text>
+          <Parameter Name="InnerOrgTitle" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="InnerOrgSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="InnerOrgTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="InnerOrgTextBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="InnerOrgTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="InnerOrgTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Выбрать цессионарий...</Hint>
+        <Commands>
+          <Command Name="InnerOrgListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListInnerOrgPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CessionLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="InnerOrgTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="DateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="DateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="DateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="DateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Номер Цессии</Text>
+      </MyObject>
+
+      <MyObject Name="CessionTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="CessionLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CessionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="CessionSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="CessionSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <Text>
+          <Parameter Name="CessionTitle" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="CessionSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="CessionTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CessionTextBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="CessionTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CessionTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>8</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Выбрать цессию...</Hint>
+        <Commands>
+          <Command Name="CessionListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListCessionPermissionCondition" />
+        </Visible>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ClaimantTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Цедент" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

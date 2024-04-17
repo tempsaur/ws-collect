@@ -1,0 +1,2956 @@
+<?xml version="1.0"?>
+<Form Name="CollectCourtEditForm" Width="900" Height="505" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="CourtId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование суда</Then>
+        </Case>
+        <Case>Добавление суда</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ListAddressPermission" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+          <Field Name="TitleGenitive" />
+          <Field Name="Address" />
+          <Field Name="AddressRegionId" />
+          <Field Name="Receiver" />
+          <Field Name="ReceiverBank" />
+          <Field Name="ReceiverBankCity" />
+          <Field Name="Inn" />
+          <Field Name="Kpp" />
+          <Field Name="CorrespondentAccount" />
+          <Field Name="Account" />
+          <Field Name="Bik" />
+          <Field Name="Oktmo" />
+          <Field Name="Kbk" />
+          <Field Name="Phone" />
+          <Field Name="Email" />
+          <Field Name="Site" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="CourtId">
+            <Value>
+              <Parameter Name="CourtId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressRegionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressRegionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressRegionId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Model">
+          <Value>
+            <Command Name="CourtDictionarySerializeToJsonCommand" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="CourtSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="CourtAddressPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtAddressByCourtIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressId" />
+          <Field Name="Address" />
+          <Field Name="AddressString" />
+          <Field Name="AddressIndex" />
+          <Field Name="AddressRegionId" />
+          <Field Name="AddressDistrictId" />
+          <Field Name="AddressCityDistrict" />
+          <Field Name="AddressCityTypeId" />
+          <Field Name="AddressCityId" />
+          <Field Name="AddressStreetTypeId" />
+          <Field Name="AddressStreetId" />
+          <Field Name="AddressBuilding" />
+          <Field Name="AddressBlock" />
+          <Field Name="AddressStructure" />
+          <Field Name="AddressFlat" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="CourtId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="CourtId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtAddressConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="CourtAddressPrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="ID" Type="Value">
+          <Object Name="CounterVariable" />
+        </Field>
+        <Field Name="AddressId" />
+        <Field Name="Address" />
+        <Field Name="AddressString" />
+        <Field Name="AddressIndex" />
+        <Field Name="AddressRegionId" />
+        <Field Name="AddressDistrictId" />
+        <Field Name="AddressDistrict" Type="Value" DataType="StringDataType" />
+        <Field Name="AddressCityDistrict" />
+        <Field Name="AddressCityTypeId" />
+        <Field Name="AddressCityId" />
+        <Field Name="AddressCity" Type="Value" DataType="StringDataType" />
+        <Field Name="AddressStreetTypeId" />
+        <Field Name="AddressStreetId" />
+        <Field Name="AddressStreet" Type="Value" DataType="StringDataType" />
+        <Field Name="AddressBuilding" />
+        <Field Name="AddressBlock" />
+        <Field Name="AddressStructure" />
+        <Field Name="AddressFlat" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="CourtAddressByIDSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="CourtAddressConvertDataConnection" />
+      <Filter>
+        <Field NativeName="ID" />
+        <Value>
+          <Object Name="CourtAddressDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ID</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="CourtTitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CourtTitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ListAddressPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListAddressPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="CourtAddressDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="CourtAddressDatabaseTable" />
+    </Condition>
+
+    <Condition Name="CourtAddressSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CourtAddressDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="EmailTextBoxIsEmailCondition" Type="IsEmailCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="EmailTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailTextBox" />
+        </Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="PhoneTextBoxStartsWithPlusCondition" Type="StartsWithCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PhoneTextBox" />
+        </Item>
+        <Item>+</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnTextBoxIsINNCondition" Type="IsINNCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="InnTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="InnTextBox" />
+        </Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="KppTextBoxIsKPPCondition" Type="IsKPPCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="KppTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="KppTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="KppTextBox" />
+        </Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="FormChangedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">
+          <Input />
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="CourtDictionaryVariableRefreshCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CourtDictionaryVariable">
+        <Property Name="Refresh" />
+      </Object>
+    </Command>
+
+    <Command Name="CourtDictionarySerializeToJsonCommand" Type="SerializeToJsonCommand" Assembly="Commands">
+      <Variable>
+        <Object Name="CourtDictionaryVariable" />
+      </Variable>
+    </Command>
+
+    <Command Name="CourtSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CourtSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CourtIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtId">
+        <Command Name="CourtSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="CourtDictionaryVariableRefreshCommand" />
+        <Command Name="CourtDictionarySerializeToJsonCommand" />
+        <Command Name="CourtSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Parameter Name="Edit" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="CourtIdValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="CourtRegionComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CourtRegionComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="AddressRegionListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressRegionList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="AddressRegionId">
+          <Object Name="CourtRegionComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CourtAddressAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Type">court</Parameter>
+        <Parameter Name="CurrentAddress">
+          <DataConnection SourceDataConnection="CourtAddressConvertDataConnection">
+            <Fields>
+              <Field Name="Address" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CourtAddressEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Type">court</Parameter>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="CurrentAddress">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="CourtAddressConvertDataConnection">
+                <Fields>
+                  <Field Name="ID" />
+                  <Field Name="Address" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter Type="NotEqual">
+              <Index Value="0" />
+              <DataType Type="IntegerDataType" />
+              <Value>
+                <Object Name="CourtAddressDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">ID</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Value>
+            </Filter>
+            <Select>
+              <Items>
+                <Item Type="Index">1</Item>
+              </Items>
+            </Select>
+          </Array>
+        </Parameter>
+        <Parameter Name="ID">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ID" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressString">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressString" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressIndex">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressIndex" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressRegionId">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressRegionId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressDistrictId">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressDistrictId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressDistrict">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressDistrict" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressCityTypeId">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressCityTypeId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressCityId">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressCityId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressCity">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressCity" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressCityDistrict">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressCityDistrict" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressStreetTypeId">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressStreetTypeId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressStreetId">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressStreetId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressStreet">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressStreet" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressBuilding">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressBuilding" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressBlock">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressBlock" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressStructure">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressStructure" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AddressFlat">
+          <DataConnection SourceDataConnection="CourtAddressByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressFlat" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CourtAddressSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CourtAddressDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">ID</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="CourtAddressAddRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="CourtAddressConvertDataConnection">
+        <Property Name="AddRow">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ID</Item>
+                <Item>AddressString</Item>
+                <Item>AddressIndex</Item>
+                <Item>AddressRegionId</Item>
+                <Item>AddressDistrictId</Item>
+                <Item>AddressDistrict</Item>
+                <Item>AddressCityTypeId</Item>
+                <Item>AddressCityId</Item>
+                <Item>AddressCity</Item>
+                <Item>AddressCityDistrict</Item>
+                <Item>AddressStreetTypeId</Item>
+                <Item>AddressStreetId</Item>
+                <Item>AddressStreet</Item>
+                <Item>AddressBuilding</Item>
+                <Item>AddressBlock</Item>
+                <Item>AddressStructure</Item>
+                <Item>AddressFlat</Item>
+                <Item>Address</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Input />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressString" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressIndex" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressRegionId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressDistrictId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressDistrict" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressCityTypeId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressCityId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressCity" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressCityDistrict" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressStreetTypeId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressStreetId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressStreet" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressBuilding" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressBlock" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressStructure" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="AddressFlat" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressAddFormShowCommand" Parameter="Address" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="CourtAddressUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="CourtAddressConvertDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="CourtAddressConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Command Name="CourtAddressEditFormShowCommand" Parameter="ID" />
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>AddressString</Item>
+                <Item>AddressIndex</Item>
+                <Item>AddressRegionId</Item>
+                <Item>AddressDistrictId</Item>
+                <Item>AddressDistrict</Item>
+                <Item>AddressCityTypeId</Item>
+                <Item>AddressCityId</Item>
+                <Item>AddressCity</Item>
+                <Item>AddressCityDistrict</Item>
+                <Item>AddressStreetTypeId</Item>
+                <Item>AddressStreetId</Item>
+                <Item>AddressStreet</Item>
+                <Item>AddressBuilding</Item>
+                <Item>AddressBlock</Item>
+                <Item>AddressStructure</Item>
+                <Item>AddressFlat</Item>
+                <Item>Address</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressString" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressIndex" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressRegionId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressDistrictId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressDistrict" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressCityTypeId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressCityId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressCity" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressCityDistrict" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressStreetTypeId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressStreetId" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressStreet" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressBuilding" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressBlock" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressStructure" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="AddressFlat" />
+                </Item>
+                <Item>
+                  <Command Name="CourtAddressEditFormShowCommand" Parameter="Address" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="CourtAddressDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="CourtAddressConvertDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="CourtAddressConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="CourtAddressDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">ID</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="CourtAddressDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранный адрес?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressRegionListFormShowCommand" Parameter="Selected" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CourtRegionComboBoxValueSetCommand">
+          <Command Name="AddressRegionListFormShowCommand" Parameter="SelectedAddressRegionId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CourtAddressDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CourtAddressEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CourtAddressAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CourtAddressAddRowCommand">
+          <Object Name="CounterVariable" />
+        </Command>
+        <Command Name="CourtAddressSelectRowCommand">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="CourtAddressConvertDataConnection">
+                <Fields>
+                  <Field Name="ID" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Max Type="IntegerDataType" />
+          </Array>
+        </Command>
+        <Command Name="FormChangedValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CourtAddressEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CourtAddressUpdateRowCommand" />
+        <Command Name="CourtAddressSelectRowCommand">
+          <Command Name="CourtAddressEditFormShowCommand" Parameter="ID" />
+        </Command>
+        <Command Name="FormChangedValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CourtAddressDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CourtAddressDeleteRowsCommand" />
+        <Command Name="FormChangedValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="CourtTitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="CourtTitleTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Наименование" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="EmailTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="EmailTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="EmailTextBoxIsEmailCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный адрес эл. почты.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="InnTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="InnTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="InnTextBoxIsINNCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный ИНН.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="KppTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="KppTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="KppTextBoxIsKPPCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный КПП.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="CourtDictionaryVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="Dictionary" Refresh="False">
+          <Key Name="common">
+            <Structure Type="Dictionary" Refresh="False">
+              <Key Name="court_id">
+                <DataTypeConvert Type="IntegerDataType">
+                  <Parameter Name="CourtId" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="title">
+                <Object Name="CourtTitleTextBox" Refresh="False" />
+              </Key>
+              <Key Name="title_genitive">
+                <Object Name="CourtTitleGenitiveTextBox" Refresh="False" />
+              </Key>
+              <Key Name="address">
+                <Object Name="CourtAddressTextBox" Refresh="False" />
+              </Key>
+              <Key Name="address_region_id">
+                <DataTypeConvert Type="IntegerDataType" AllowNull="True">
+                  <Object Name="CourtRegionComboBox" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="receiver">
+                <Object Name="ReceiverTextBox" Refresh="False" />
+              </Key>
+              <Key Name="receiver_bank">
+                <Object Name="ReceiverBankTextBox" Refresh="False" />
+              </Key>
+              <Key Name="receiver_bank_city">
+                <Object Name="ReceiverBankCityTextBox" Refresh="False" />
+              </Key>
+              <Key Name="inn">
+                <Object Name="InnTextBox" Refresh="False" />
+              </Key>
+              <Key Name="kpp">
+                <Object Name="KppTextBox" Refresh="False" />
+              </Key>
+              <Key Name="correspondent_account">
+                <Object Name="CorrespondentAccountTextBox" Refresh="False" />
+              </Key>
+              <Key Name="account">
+                <Object Name="AccountTextBox" Refresh="False" />
+              </Key>
+              <Key Name="bik">
+                <Object Name="BikTextBox" Refresh="False" />
+              </Key>
+              <Key Name="oktmo">
+                <Object Name="OktmoTextBox" Refresh="False" />
+              </Key>
+              <Key Name="kbk">
+                <Object Name="KbkTextBox" Refresh="False" />
+              </Key>
+              <Key Name="phone">
+                <Object Name="PhoneTextBox" Refresh="False" />
+              </Key>
+              <Key Name="email">
+                <Object Name="EmailTextBox" Refresh="False" />
+              </Key>
+              <Key Name="site">
+                <Object Name="SiteTextBox" Refresh="False" />
+              </Key>
+            </Structure>
+          </Key>
+          <Key Name="address_list">
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="CourtAddressConvertDataConnection" Refresh="False">
+                  <Fields>
+                    <Field Name="AddressId" />
+                    <Field Name="AddressString" />
+                    <Field Name="AddressIndex" />
+                    <Field Name="AddressRegionId" />
+                    <Field Name="AddressDistrictId" />
+                    <Field Name="AddressDistrict" />
+                    <Field Name="AddressCityDistrict" />
+                    <Field Name="AddressCityTypeId" />
+                    <Field Name="AddressCityId" />
+                    <Field Name="AddressCity" />
+                    <Field Name="AddressStreetTypeId" />
+                    <Field Name="AddressStreetId" />
+                    <Field Name="AddressStreet" />
+                    <Field Name="AddressBuilding" />
+                    <Field Name="AddressBlock" />
+                    <Field Name="AddressStructure" />
+                    <Field Name="AddressFlat" />
+                    <Field Name="ID" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <ToDictionary>
+                <Key Name="address_id" Index="0" />
+                <Key Name="address_string" Index="1" />
+                <Key Name="address_index" Index="2" />
+                <Key Name="address_region_id" Index="3" />
+                <Key Name="address_district_id" Index="4" />
+                <Key Name="address_district" Index="5" />
+                <Key Name="address_city_district" Index="6" />
+                <Key Name="address_city_type_id" Index="7" />
+                <Key Name="address_city_id" Index="8" />
+                <Key Name="address_city" Index="9" />
+                <Key Name="address_street_type_id" Index="10" />
+                <Key Name="address_street_id" Index="11" />
+                <Key Name="address_street" Index="12" />
+                <Key Name="address_building" Index="13" />
+                <Key Name="address_block" Index="14" />
+                <Key Name="address_structure" Index="15" />
+                <Key Name="address_flat" Index="16" />
+                <Key Name="id" Index="17" />
+              </ToDictionary>
+            </Array>
+          </Key>
+        </Structure>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="CounterVariable" Type="CounterVariable" Assembly="WorkflowServer" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="MainGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Divide DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>2</Item>
+                  </Divide>
+                </Formula>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <TabIndex>1</TabIndex>
+        <Text>Основные данные</Text>
+
+        <MyObject Name="CourtTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MainGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CourtTitleLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Наименование</Text>
+        </MyObject>
+
+        <MyObject Name="CourtTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="CourtTitleGenitiveLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CourtTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CourtTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CourtTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Наименование в родительном падеже</Text>
+        </MyObject>
+
+        <MyObject Name="CourtTitleGenitiveTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="CourtTitleGenitiveLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CourtTitleGenitiveLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CourtTitleGenitiveLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TitleGenitive" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="CourtRegionLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtTitleGenitiveTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CourtTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CourtTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CourtTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Регион</Text>
+        </MyObject>
+
+        <MyObject Name="CourtRegionComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="True" />
+          <Top>
+            <Object Name="CourtRegionLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CourtRegionLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtRegionLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Object Name="CourtRegionSelectButton">
+                          <Property Name="Visible" />
+                        </Object>
+                      </When>
+                      <Then>
+                        <Formula>
+                          <Plus DataType="IntegerDataType">
+                            <Item>
+                              <Object Name="CourtRegionSelectButton">
+                                <Property Name="Width" />
+                              </Object>
+                            </Item>
+                            <Item>5</Item>
+                          </Plus>
+                        </Formula>
+                      </Then>
+                    </Case>
+                    <Case>0</Case>
+                  </Switch>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <ValueList>
+            <DataConnection SourceDataConnection="AddressRegionPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="AddressRegionId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="AddressRegionId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="CourtRegionSelectButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="CourtRegionComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtRegionComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CourtRegionComboBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CourtRegionComboBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Image>Images\11x11\list.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="AddressRegionListFormShowCommand" />
+          </Commands>
+          <Visible>
+            <Condition Name="ListAddressPermissionCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="CourtAddressLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtRegionComboBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CourtTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CourtTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CourtTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Адрес</Text>
+        </MyObject>
+
+        <MyObject Name="CourtAddressTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="CourtAddressLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CourtAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>34</Height>
+          <Width>
+            <Object Name="CourtAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Address" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="CourtJurisdictionLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtAddressTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CourtTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CourtTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CourtTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Территориальная подсудность</Text>
+        </MyObject>
+
+        <MyObject Name="CourtAddressDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+          <Top>
+            <Object Name="CourtJurisdictionLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>10</Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MainGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CourtAddressDatabaseTable">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MainGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CourtAddressDatabaseTable">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CourtAddressAddButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>15</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <AllowInsert>False</AllowInsert>
+          <AllowUpdate>False</AllowUpdate>
+          <AllowDelete>False</AllowDelete>
+          <AllowResizeRows Value="False" />
+          <AutoSizeColumnsMode Value="Fill" />
+          <BorderStyle Value="Fixed3D" />
+          <BackgroundColor Value="Gray200" />
+          <SelectionColor Name="SelectionColor" />
+          <ShowCellHints Value="True" />
+          <SourceDataConnection Name="CourtAddressConvertDataConnection" />
+          <Columns>
+            <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>№</Title>
+              <Width>30</Width>
+              <AutoFill Type="RowNumber" />
+              <AutoSizeMode Value="None" />
+            </Column>
+            <Column Name="ID" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="Address" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Адрес</Title>
+              <Width>200</Width>
+              <AutoSizeMode Value="Fill" />
+            </Column>
+          </Columns>
+        </MyObject>
+
+        <MyObject Name="CourtAddressAddButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="CourtAddressDatabaseTable">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtAddressDatabaseTable">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>30</Height>
+          <Width>30</Width>
+          <TabIndex>7</TabIndex>
+          <Hint>Добавить адрес...</Hint>
+          <Image>Images\18x18\add.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="CourtAddressAddFormShowCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="CourtAddressEditButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtAddressAddButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CourtAddressAddButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="CourtAddressAddButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CourtAddressAddButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>8</TabIndex>
+          <Hint>Редактировать адрес...</Hint>
+          <Image>Images\18x18\edit.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="CourtAddressEditFormShowCommand" />
+          </Commands>
+          <Enabled>
+            <Condition Name="CourtAddressSelectedCondition" />
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Выберите адрес для редактирования.</DisabledText>
+        </MyObject>
+
+        <MyObject Name="CourtAddressDeleteButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CourtAddressEditButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CourtAddressAddButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="CourtAddressAddButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CourtAddressAddButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>9</TabIndex>
+          <Hint>Удалить адрес</Hint>
+          <Image>Images\18x18\delete.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="CourtAddressDeleteMessageBoxCommand" />
+          </Commands>
+          <Enabled>
+            <Condition Name="CourtAddressSelectedCondition" />
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Выберите адрес для удаления.</DisabledText>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="RequisitsGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="MainGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MainGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="MainGroupBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MainGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Text>Реквизиты</Text>
+
+        <MyObject Name="ReceiverLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CourtTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CourtTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CourtTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CourtTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Получатель</Text>
+        </MyObject>
+
+        <MyObject Name="ReceiverTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="ReceiverLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ReceiverLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Receiver" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="ReceiverBankLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReceiverTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReceiverLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Divide DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="ReceiverLabel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>2</Item>
+                    </Divide>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Банк получателя</Text>
+        </MyObject>
+
+        <MyObject Name="ReceiverBankTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="ReceiverBankLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ReceiverBankLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverBankLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ReceiverBank" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="ReceiverBankCityLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="ReceiverBankLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReceiverBankLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReceiverLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ReceiverBankCityLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Город банка получателя</Text>
+        </MyObject>
+
+        <MyObject Name="ReceiverBankCityTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="ReceiverBankCityLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ReceiverBankCityLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverBankCityLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ReceiverBankCity" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="InnLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReceiverBankTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReceiverBankLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverBankLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ИНН</Text>
+        </MyObject>
+
+        <MyObject Name="InnTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="InnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Inn" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="KppLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="InnLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ReceiverBankCityLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverBankCityLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>КПП</Text>
+        </MyObject>
+
+        <MyObject Name="KppTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="KppLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="KppLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="KppLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Kpp" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="CorrespondentAccountLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="InnTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Единый казначейский счет</Text>
+        </MyObject>
+
+        <MyObject Name="CorrespondentAccountTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="CorrespondentAccountLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CorrespondentAccountLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CorrespondentAccountLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="CorrespondentAccount" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="AccountLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CorrespondentAccountLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="KppLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="KppLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Счет получателя</Text>
+        </MyObject>
+
+        <MyObject Name="AccountTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="AccountLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="AccountLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="AccountLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Account" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="BikLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CorrespondentAccountTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="InnLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="InnLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>БИК</Text>
+        </MyObject>
+
+        <MyObject Name="BikTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="BikLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="BikLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="BikLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>8</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Bik" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="OktmoLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="BikLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="KppLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="KppLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ОКТМО</Text>
+        </MyObject>
+
+        <MyObject Name="OktmoTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="OktmoLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="OktmoLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="OktmoLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>9</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Oktmo" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="KbkLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BikTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReceiverLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>КБК</Text>
+        </MyObject>
+
+        <MyObject Name="KbkTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="KbkLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="KbkLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="KbkLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>10</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Kbk" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <AllowedSymbols>0123456789 </AllowedSymbols>
+        </MyObject>
+
+        <MyObject Name="PhoneLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="KbkTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReceiverLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="BikLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Телефон</Text>
+        </MyObject>
+
+        <MyObject Name="PhoneTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="PhoneLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PhoneLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PhoneLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>11</TabIndex>
+          <AllowedSymbols>+0123456789</AllowedSymbols>
+          <MaxLength>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="PhoneTextBoxStartsWithPlusCondition" />
+                </When>
+                <Then>12</Then>
+              </Case>
+              <Case>11</Case>
+            </Switch>
+          </MaxLength>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Phone" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="EmailLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="KbkTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="OktmoLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="OktmoLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Адрес эл. почты</Text>
+        </MyObject>
+
+        <MyObject Name="EmailTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="EmailLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="EmailLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>12</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Email" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="SiteLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReceiverLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReceiverLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="ReceiverLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ReceiverLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ReceiverLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ReceiverLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Сайт</Text>
+        </MyObject>
+
+        <MyObject Name="SiteTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="SiteLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SiteLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SiteLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>13</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="CourtPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Site" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CourtTitleTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Наименование" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

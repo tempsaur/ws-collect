@@ -1,0 +1,1814 @@
+<?xml version="1.0"?>
+<Form Name="CollectTempAudioFileListForm" Width="1100" Height="600" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Сохранение загруженных аудиозаписей</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <Color Name="StatusLightPink" Red="229" Green="184" Blue="183" Alpha="255" />
+      <Color Name="StatusDarkPink" Red="217" Green="149" Blue="148" Alpha="255" />
+      <Color Name="StatusLightOrange" Red="250" Green="191" Blue="143" Alpha="255" />
+      <Color Name="StatusLightYellow" Red="255" Green="252" Blue="187" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="LittleFont" Font="Segoe UI" Size="8" />
+      <FontStyle Name="LittleBoldFont" Font="Segoe UI" Size="8" Bold="True" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="TempAudioFilePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TempAudioFileSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TempAudioFileId" />
+          <Field Name="ToSave" />
+          <Field Name="Guid" />
+          <Field Name="ClientPhoneNumber" />
+          <Field Name="UserPhoneNumber" />
+          <Field Name="CallTime" />
+          <Field Name="CallDirection" />
+          <Field Name="CallDuration" />
+          <Field Name="Status" />
+          <Field Name="MatchString" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="UpdateData" RefreshQuery="False">
+            <Value>
+              <Object Name="UpdateDataVariable" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TempAudioFileToSaveUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ToSave" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ToSave" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TempAudioFileId" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TempAudioFileId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TempAudioFileToSaveUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempAudioFileSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ToSave" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ToSave" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TempAudioFileId" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TempAudioFileId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="DeleteAll">
+          <Value>
+            <Object Name="DeleteAllCheckBox" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TempAudioFileSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempAudioFileDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TempAudioFileId" SendAsArray="True">
+          <Value>
+            <Object Name="TempAudioFileDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">TempAudioFileId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TempAudioFileDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="SelectedRowCanSaveEqualCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Status</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>
+          <Structure Type="List">
+            <Item>has_client_no_loan</Item>
+            <Item>no_loan</Item>
+          </Structure>
+        </Item>
+      </Items>
+      <Satisfy MinCount="All" MaxCount="All" />
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="SelectedColumnNameEqualToSaveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="LastCellClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>ToSave</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CanEditToSaveColumnNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Condition Name="SelectedRowCanSaveEqualCondition" />
+          <Condition Name="SelectedColumnNameEqualToSaveCondition" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="TempAudioFileSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TempAudioFileSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TempAudioFileDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="TempAudioFileDatabaseTable" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualHasClientNoLoanCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>has_client_no_loan</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualNoLoanCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>no_loan</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualManualInputCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>manual_input</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualMultipleClientCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>multiple_client</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="GuidsToDeleteVariableIsNotEmptyCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="GuidsToDeleteVariable" />
+            </Source>
+            <Filter Type="IsNotNull">
+              <Index Value="0" />
+            </Filter>
+            <Filter Type="NotEqual">
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value />
+            </Filter>
+            <Distinct />
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TempAudioFileDatabaseTableCellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="TempAudioFileDatabaseTable" />
+    </Condition>
+
+    <Condition Name="TempAudioFileCountGreater0Condition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TempAudioFilePrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempAudioFilePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="TempAudioFileToSaveUpdateCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempAudioFileToSaveUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TempAudioFileSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempAudioFileSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TempAudioFileDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление аудиозаписей</Caption>
+      <Text>Вы действительно хотите удалить выбранные аудиозаписи?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TempAudioFileDeleteCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempAudioFileDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="TempAudioFileSaveCommand" />
+        <If>
+          <When>
+            <Object Name="DeleteAllCheckBox" />
+          </When>
+          <Then>
+            <Command Name="GuidsToDeleteVariableAddGuidCommand">
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="ToSave" />
+                      <Field Name="Guid" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <Filter>
+                  <Index Value="0" />
+                  <DataType Type="BooleanDataType" />
+                  <Value>False</Value>
+                </Filter>
+                <Select>
+                  <Items>
+                    <Item Type="Index">1</Item>
+                  </Items>
+                </Select>
+              </Array>
+            </Command>
+            <Command Name="DeleteFileCommand" />
+            <Command Name="GuidsToDeleteVariableResetCommand" />
+            <Command Name="UpdatedTrueValueSetCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="UpdateDataVariableValueSetFalseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="UpdateDataVariable">False</Object>
+    </Command>
+
+    <Command Name="TempAudioFileEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTempAudioFileEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="TempAudioFileId">
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">TempAudioFileId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="Guid">
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Guid</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientPhoneNumber">
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientPhoneNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="DownloadTempAudioFileCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <ReadOnly>False</ReadOnly>
+      <FileGuid>
+        <Object Name="TempAudioFileDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">Guid</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </FileGuid>
+    </Command>
+
+    <Command Name="TempAudioFileCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempAudioFilePrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="RowIndices">
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="SearchWithArrays">True</Parameter>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>Status</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Structure Type="List">
+                            <Item>manual_input</Item>
+                            <Item>multiple_client</Item>
+                            <Item>match</Item>
+                          </Structure>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>True</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempAudioFileUnCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempAudioFilePrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>False</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="StatusVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="StatusVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="TempAudioFileUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempAudioFilePrimaryGetDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>TempAudioFileId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="TempAudioFileDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">TempAudioFileId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Not>
+                    <Object Name="TempAudioFileDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">ToSave</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Not>
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempAudioFileSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TempAudioFileDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">TempAudioFileId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="DeleteFileCommand" Type="DeleteFileCommand" Assembly="Commands">
+      <Condition Name="GuidsToDeleteVariableIsNotEmptyCondition" />
+      <ThrowException>False</ThrowException>
+      <FileGuid>
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Filter Type="IsNotNull">
+            <Index Value="0" />
+          </Filter>
+          <Filter Type="NotEqual">
+            <Index Value="0" />
+            <DataType Type="StringDataType" />
+            <Value />
+          </Filter>
+          <Distinct />
+        </Array>
+      </FileGuid>
+    </Command>
+
+    <Command Name="GuidsToDeleteVariableAddGuidCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidsToDeleteVariable">
+        <Array>
+          <Source>
+            <Object Name="GuidsToDeleteVariable" />
+          </Source>
+          <Add>
+            <Input />
+          </Add>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="GuidsToDeleteVariableResetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="GuidsToDeleteVariable">
+        <Structure Type="List" />
+      </Object>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="TempAudioFileCountGreater0Condition" />
+          </When>
+          <Then>
+            <Command Name="TempAudioFileSelectRowCommand">
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="TempAudioFilePrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="TempAudioFileId" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <First />
+              </Array>
+            </Command>
+          </Then>
+        </If>
+        <Command Name="UpdateDataVariableValueSetFalseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TempAudioFileDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempAudioFileEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TempAudioFileEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempAudioFileToSaveUpdateCommand" />
+        <Command Name="TempAudioFilePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="TempAudioFileSelectRowCommand">
+          <Command Name="TempAudioFileEditFormShowCommand" Parameter="TempAudioFileId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TempAudioFileDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="GuidsToDeleteVariableAddGuidCommand">
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Guid</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Command>
+        <Command Name="TempAudioFileDeleteCommand" />
+        <Command Name="DeleteFileCommand" />
+        <Command Name="GuidsToDeleteVariableResetCommand" />
+        <Command Name="TempAudioFileToSaveUpdateCommand" />
+        <Command Name="TempAudioFilePrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TempAudioFileDatabaseTableCellClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="CanEditToSaveColumnNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="TempAudioFileUpdateRowCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="GuidsToDeleteVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="List" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="StatusVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="UpdateDataVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>True</Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TempAudioFileDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempAudioFileDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="StatusPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempAudioFileDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempAudioFileEditButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <RowHeight Value="50" />
+        <ColumnHeadersHeight Value="40" />
+        <SourceDataConnection Name="TempAudioFilePrimaryGetDataConnection" />
+        <Formatting>
+          <BackColor Name="StatusLightPink">
+            <Expression>Status = 'has_client_no_loan'</Expression>
+          </BackColor>
+          <BackColor Name="StatusDarkPink">
+            <Expression>Status = 'no_loan'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightYellow">
+            <Expression>Status = 'manual_input'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightOrange">
+            <Expression>Status = 'multiple_client'</Expression>
+          </BackColor>
+        </Formatting>
+        <Columns>
+          <Column Name="ToSave" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Title />
+            <Width>30</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="TempAudioFileId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Guid" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Status" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+            <Filter FilterNullValue="False">
+              <Object Name="StatusVariable" />
+            </Filter>
+          </Column>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>40</Width>
+            <ReadOnly>True</ReadOnly>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ClientPhoneNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Телефон должника</Title>
+            <Width>120</Width>
+            <ReadOnly>True</ReadOnly>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="UserPhoneNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Телефон специалиста</Title>
+            <Width>120</Width>
+            <ReadOnly>True</ReadOnly>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CallTime" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата и время звонка</Title>
+            <Width>140</Width>
+            <ReadOnly>True</ReadOnly>
+            <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm:ss" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CallDirection" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Направление звонка</Title>
+            <Width>100</Width>
+            <ReadOnly>True</ReadOnly>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CallDuration" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Продолжительность звонка (сек.)</Title>
+            <Width>130</Width>
+            <ReadOnly>True</ReadOnly>
+            <Alignment Value="MiddleRight" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="MatchString" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Привязка к должникам/делам</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <ReadOnly>True</ReadOnly>
+            <WrapMode Value="True" />
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Изменить привязку аудиозаписи к делу</Hint>
+        <Enabled>
+          <Condition Name="TempAudioFileSelectedOneCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="TempAudioFileEditFormShowCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите аудиозапись для редактирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileOpenButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TempAudioFileEditButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TempAudioFileEditButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileEditButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Image>Images\24x24\audio_file_open.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Прослушать аудиозапись</Hint>
+        <Enabled>
+          <Condition Name="TempAudioFileSelectedOneCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="DownloadTempAudioFileCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите аудиозапись для прослушивания.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileOpenButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TempAudioFileEditButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TempAudioFileEditButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileEditButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Удалить аудиозаписи</Hint>
+        <Enabled>
+          <Condition Name="TempAudioFileSelectedCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="TempAudioFileDeleteMessageBoxCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите аудиозаписи для удаления.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="StatusPanel" Type="Panel" Assembly="BaseControls">
+        <Bottom>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Bottom>
+        <Left>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MatchStatusButton">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="TempAudioFileDatabaseTable">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+
+        <MyObject Name="MatchStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>0</Left>
+          <Height>42</Height>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="StatusPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>20</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>5</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <BackColor>White</BackColor>
+          <Text>Найдено совпадение по номеру</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="MultipleClientStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="MatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="MatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="MatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <BackColor>StatusLightOrange</BackColor>
+          <Text>Найдено совпадение по номеру
+у нескольких должников</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualMultipleClientCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualMultipleClientCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualMultipleClientCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualMultipleClientCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">multiple_client</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="ManualInputStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="MatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MultipleClientStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="MatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="MatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <BackColor>StatusLightYellow</BackColor>
+          <Text>Аудиозапись привязана к делам вручную</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualManualInputCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualManualInputCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualManualInputCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualManualInputCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">manual_input</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="HasClientNoLoanStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="MatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ManualInputStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="MatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="MatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <BackColor>StatusLightPink</BackColor>
+          <Text>Найдено совпадение по номеру, аудиозапись не привязана</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualHasClientNoLoanCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualHasClientNoLoanCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualHasClientNoLoanCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualHasClientNoLoanCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">has_client_no_loan</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="NoLoanStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="MatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="HasClientNoLoanStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="MatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="StatusPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="NoLoanStatusButton">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <BackColor>StatusDarkPink</BackColor>
+          <Text>Не найдено совпадений по номеру</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoLoanCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoLoanCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoLoanCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualNoLoanCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">no_loan</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="DeleteAllCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Top>10</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileCheckAllButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Width>240</Width>
+        <TabIndex>1</TabIndex>
+        <Text>Удалить несохраненные аудиозаписи</Text>
+        <Value>False</Value>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileCheckAllButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempAudioFileUnCheckAllButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="SaveButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>150</Width>
+        <TabIndex>2</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\check_all.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>        Отметить все</Text>
+        <Hint>Отметить все доступные для сохранения аудиозаписи</Hint>
+        <Commands>
+          <Command Name="TempAudioFileCheckAllCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="TempAudioFileUnCheckAllButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SaveButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="SaveButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>180</Width>
+        <TabIndex>3</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\remove_all.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>        Убрать все отметки</Text>
+        <Hint>Убрать все отметки о сохранении аудиозаписей</Hint>
+        <Commands>
+          <Command Name="TempAudioFileUnCheckAllCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>210</Width>
+        <TabIndex>4</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\save.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>        Сохранить отмеченное</Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Не все обязательные поля заполнены.</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

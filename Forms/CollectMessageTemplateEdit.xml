@@ -1,0 +1,896 @@
+<?xml version="1.0"?>
+<Form Name="CollectMessageTemplateEditForm" Width="460" Height="375" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="MessageTemplateId" />
+    <Parameter Name="Title">
+      <String>
+        <Format>{0} {1}</Format>
+        <Items>
+          <Item>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="MessageTemplateIdIsNullCondition" />
+                </When>
+                <Then>
+                  <Text Id="FormTitleAdd">Добавление шаблона</Text>
+                </Then>
+              </Case>
+              <Case>
+                <Text Id="FormTitleEdit">Редактирование шаблона</Text>
+              </Case>
+            </Switch>
+          </Item>
+          <Item>SMS</Item>
+        </Items>
+      </String>
+
+    </Parameter>
+    <Parameter Name="MessageTemplateTitle" />
+    <Parameter Name="MessageTemplateText" />
+    <Parameter Name="MessageType" />
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="Gray225" Red="225" Green="225" Blue="225" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <Color Name="StatusLightPink" Red="229" Green="184" Blue="183" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TabButtonFont" Font="Segoe UI" Size="12" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="MessageTemplatePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="MessageTemplateByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+          <Field Name="Text" />
+          <Field Name="System" />
+          <Field Name="Variables" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="MessageTemplateId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="MessageTemplateId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplateInsertSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Title">
+          <Value>
+            <Object Name="MessageTemplateTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Text">
+          <Value>
+            <Object Name="MessageTemplateTextTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="MessageType">
+          <Value>
+            <Parameter Name="MessageType" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageTemplateInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplateUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MessageTemplateId">
+          <Value>
+            <Parameter Name="MessageTemplateId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Title">
+          <Value>
+            <Object Name="MessageTemplateTitleTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Text">
+          <Value>
+            <Object Name="MessageTemplateTextTextBox" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageTemplateUpdateSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormClosingNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <AlwaysChange Value="True" />
+      <ConditionExpression>
+        <Or>
+          <Condition Name="FormClosingCondition" />
+          <Condition Name="FormEscapeKeyDownCondition" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTemplateIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateIdVariable" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="MessageTemplateTitleIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateTitleTextBox" />
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="MessageTemplateTextIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateTextTextBox" />
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="SMSTemplateCostIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="SMSTemplateGetCostCallCommand" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTypeIsSMSEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="MessageType" />
+        </Item>
+        <Item>sms</Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="MessageTemplateInsertSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageTemplateInsertSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageTemplateUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageTemplateUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageTemplateIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="MessageTemplateId">
+        <Command Name="MessageTemplateInsertSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <If>
+          <When>
+            <Condition Name="MessageTemplateIdIsNullCondition" />
+          </When>
+          <Then>
+            <Command Name="MessageTemplateInsertSaveCommand" />
+            <Command Name="MessageTemplateIdValueSetCommand" />
+          </Then>
+          <Else>
+            <Command Name="MessageTemplateUpdateSaveCommand" />
+          </Else>
+        </If>
+        <Command Name="UpdatedTrueValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="SMSTemplateGetCostCallCommand" Type="CallCommand" Assembly="Commands">
+      <Async Value="True" />
+      <Workflow Name="Collect" />
+      <Command Name="SMSTemplateGetCostCommand" />
+      <Parameters>
+        <Parameter Name="MessageTemplateText">
+          <Object Name="MessageTemplateTextTextBox" />
+        </Parameter>
+      </Parameters>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <And>
+          <Condition Name="FormClosingNestedCondition" />
+          <Condition Name="FormChangedTrueEqualCondition" />
+        </And>
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="SaveOnCloseMessageBoxCommand" />
+          </Then>
+          <Else>
+            <Command Name="CloseOnCloseMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="SaveSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Or>
+          <And>
+            <Condition Name="FormClosingNestedCondition" />
+            <Not>
+              <Condition Name="FormChangedTrueEqualCondition" />
+            </Not>
+          </And>
+          <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+          <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+        </Or>
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="MessageTemplateTitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="MessageTemplateTitleIsEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Название шаблона" должно быть заполнено</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="MessageTemplateTextTextBox" />
+      <ConditionExpression>
+        <Condition Name="MessageTemplateTextIsEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Текст шаблона" должно быть заполнено</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="SMSModuleCurrencyVariable" Type="StaticVariable" Assembly="Collect" ChangeForm="False">
+      <Key Value="SMSModuleCurrency" />
+      <Value />
+    </MyObject>
+
+    <MyObject Name="MessageTemplateIdVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Parameter Name="MessageTemplateId" Refresh="False" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>300</Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>88</Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="MessageTemplateTitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>5</Left>
+        <Width>125</Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Название шаблона</Text>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateTitleTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="MessageTemplateTitleTextBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="MessageTemplateIdIsNullCondition" />
+              </When>
+              <Then>
+                <Parameter Name="MessageTemplateTitle" />
+              </Then>
+            </Case>
+            <Case>
+              <DataConnection SourceDataConnection="MessageTemplatePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Case>
+          </Switch>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateTextLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MessageTemplateTitleTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TextAlign>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <Text>Текст сообщения</Text>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateTextTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="MessageTemplateTextLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateTitleTextBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>61</Height>
+        <Width>
+          <Object Name="MessageTemplateTitleTextBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="MessageTemplateIdIsNullCondition" />
+              </When>
+              <Then>
+                <Parameter Name="MessageTemplateText" />
+              </Then>
+            </Case>
+            <Case>
+              <DataConnection SourceDataConnection="MessageTemplatePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Text" />
+                </Fields>
+              </DataConnection>
+            </Case>
+          </Switch>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateVariablesLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MessageTemplateTextTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TextAlign>
+          <Object Name="MessageTemplateTitleLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <Text>Поля шаблона</Text>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateVariablesTextBox" Type="TextBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="MessageTemplateVariablesLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="MessageTemplateTitleTextBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>50</Height>
+        <Width>
+          <Object Name="MessageTemplateTitleTextBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Multiline>True</Multiline>
+        <ReadOnly>True</ReadOnly>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="MessageTemplateIdIsNullCondition" />
+              </When>
+              <Then>[Должник]</Then>
+            </Case>
+            <Case>
+              <DataConnection SourceDataConnection="MessageTemplatePrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="Variables" />
+                </Fields>
+              </DataConnection>
+            </Case>
+          </Switch>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="SMSMessagePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="MessageTemplateVariablesTextBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="MessageTemplateVariablesTextBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>2</Item>
+                  </Plus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="MessageTemplateVariablesTextBox">
+                      <Property Name="Top" />
+                    </Object>
+                  </Item>
+                  <Item>3</Item>
+                </Minus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="SMessageTemplateCostButton">
+            <Property Name="Bottom" />
+          </Object>
+        </Height>
+        <Width>
+          <Form>
+            <Property Name="Width" />
+          </Form>
+        </Width>
+        <Visible>
+          <Condition Name="MessageTypeIsSMSEqualCondition" />
+        </Visible>
+
+        <MyObject Name="SMSTemplateCostLabel" Type="Label" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>
+            <Object Name="MessageTemplateTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="SMSTemplateCostValueLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="SMSMessagePanel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TextAlign>
+            <Object Name="MessageTemplateTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <Text>Примерная стоимость</Text>
+        </MyObject>
+
+        <MyObject Name="SMSTemplateCostValueLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="SMSTemplateCostLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="MessageTemplateTitleTextBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>18</Height>
+          <Width>
+            <Object Name="MessageTemplateTitleTextBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <FontStyle>TitleBoldFont</FontStyle>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="SMSTemplateCostIsNotNullCondition" />
+                </When>
+                <Then>
+                  <String>
+                    <Format>{0} {1}</Format>
+                    <Items>
+                      <Item>
+                        <DataTypeFormat Type="DecimalDataType" Format="N2">
+                          <Command Name="SMSTemplateGetCostCallCommand" />
+                        </DataTypeFormat>
+                      </Item>
+                      <Item>
+                        <Object Name="SMSModuleCurrencyVariable" />
+                      </Item>
+                    </Items>
+                  </String>
+                </Then>
+              </Case>
+              <Case>рассчитайте</Case>
+            </Switch>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="SMessageTemplateCostButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SMSTemplateCostValueLabel">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="MessageTemplateTitleTextBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>30</Height>
+          <Width>100</Width>
+          <TabIndex>4</TabIndex>
+          <FontStyle>ButtonFont</FontStyle>
+          <ImageAlign>MiddleCenter</ImageAlign>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Text>Рассчитать</Text>
+          <Commands>
+            <Command Name="SMSTemplateGetCostCallCommand" />
+          </Commands>
+          <Enabled>
+            <Not>
+              <Condition Name="MessageTemplateTextIsEmptyCondition" />
+            </Not>
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Заполните текст сообщения</DisabledText>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ChooseButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\save.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить</Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+            <Or>
+              <Condition Name="FormChangedTrueEqualCondition" />
+              <Condition Name="MessageTemplateIdIsNullCondition" />
+            </Or>
+          </And>
+        </Enabled>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

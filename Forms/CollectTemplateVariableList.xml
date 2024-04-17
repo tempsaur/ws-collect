@@ -1,0 +1,748 @@
+<?xml version="1.0"?>
+<Form Name="CollectTemplateVariableListForm" Width="1200" Height="600" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Список переменных</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="Yellow" Red="242" Green="234" Blue="158" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="TemplateVariablePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TemplateVariableSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Closed" />
+          <Field Name="Main" />
+          <Field Name="HasChildren" />
+          <Field Name="TreeStateId" />
+          <Field Name="ItemPath" />
+          <Field Name="VariableTitle" />
+          <Field Name="Description" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TreeStateInsertSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ItemPath">
+          <Value>
+            <Object Name="CurrentTreeItemPathVariable" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="FormName">
+          <Value>TemplateVariableList</Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TreeStateInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TreeStateDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TreeStateId">
+          <Value>
+            <Object Name="CurrentTreeStateIdVariable" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TreeStateDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <!-- проверка что выбранная строка в левом дереве является узлом дерева -->
+    <Condition Name="TreeSelectedRowHasChildrenCondition" Type="EqualCondition" Assembly="Conditions">
+      <AlwaysChange Value="True" />
+      <Items>
+        <Item>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="TemplateVariableDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">HasChildren</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <!-- проверка что в левой таблице нажали на ячейку State -->
+    <Condition Name="LastCellClickedLeftTreeColumnNameEqualStateCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="LastCellClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>State</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <!-- проверка что нажали на ячейку левую таблицу -->
+    <Condition Name="TreeCellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="TemplateVariableDatabaseTable" />
+    </Condition>
+
+    <!-- проверка, что узел дерева свернут -->
+    <Condition Name="TreeLastClickedRowClosedEqualTrueCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="TemplateVariableDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">Closed</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="TemplateVariableSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TemplateVariableDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="TemplateVariableDatabaseTable" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+
+    <Condition Name="VariableTitleIsNotEmptyCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">VariableTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="TreeLoadingVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TreeLoadingVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- установка пути текущего узла -->
+    <Command Name="CurrentTreeItemPathVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentTreeItemPathVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- установка текущего состояния узла -->
+    <Command Name="CurrentTreeStateIdVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentTreeStateIdVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- установка всех переменных значеними из дерева -->
+    <Command Name="TreeVariableSetSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="CurrentTreeItemPathVariableValueSetCommand">
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="TemplateVariableDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">ItemPath</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Command>
+        <Command Name="CurrentTreeStateIdVariableValueSetCommand">
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="TemplateVariableDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">TreeStateId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Command>
+      </Commands>
+    </Command>
+
+    <Command Name="TreeStateAddSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TreeStateInsertSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TreeStateRemoveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TreeStateDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateVariableDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TemplateVariablePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TemplateVariableClipboardSetCommand" Type="ClipboardSetCommand" Assembly="Commands">
+      <ClipboardText>
+        <Object Name="TemplateVariableDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">VariableTitle</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </ClipboardText>
+    </Command>
+
+    <Command Name="TemplateVariableClipboardMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Копирование переменной</Caption>
+      <Text>Переменная скопирована в буфер обмена.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="TemplateVariableClipboardSetSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="VariableTitleIsNotEmptyCondition" />
+          </When>
+          <Then>
+            <Command Name="TemplateVariableClipboardSetCommand" />
+            <Command Name="TemplateVariableClipboardMessageBoxCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="TemplateVariableExportToDocxCommand" Type="ExportToDocxCommand" Assembly="Commands">
+      <InsertPictures Value="False" />
+      <TemplateFileName>Templates\ExportVariable.docx</TemplateFileName>
+      <Parameters>
+        <Parameter Name="Title">Список переменных для шаблонов документов</Parameter>
+        <Parameter Name="VariableTitleTitle">
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">VariableTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="DescriptionTitle">
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">Description</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="VariableTitle">
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">VariableTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="Description">
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">Description</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="HelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Список переменных</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r\r{1}\r\r{2}\r\r{3}\r{4}\r{5}\r{6}\r{7}\r{8}\r{9}\r\r{10}</Format>
+          <Items>
+            <Item>I. Для копирования переменной можно использовать соответствующую кнопку выше или двойной клик по строке.</Item>
+            <Item>II. <![CDATA[<#ИмяПеременной#>]]> - скалярные переменные, предназначены для вывода одиночных значений.</Item>
+            <Item>III. <![CDATA[<%ИмяПеременной%>]]> - табличные переменные, предназначены для использования в таблицах; одна переменная представляет собой один столбец с данными.</Item>
+            <Item>IV. <![CDATA[<@<#ИмяПеременной#>@>]]> - переменные изображений и фото. При использовании таких переменных, можно добавлять дополнительные параметры:</Item>
+            <Item>    1. Width - необязательный параметр ширины изображения (в пикселях).</Item>
+            <Item>    2. Height - необязательный параметр высоты изображения (в пикселях).</Item>
+            <Item>    3. Mode - необязательный параметр типа растяжения изображения (по умолчанию "zoom").</Item>
+            <Item>        3.1. Zoom: растягивание изображения до указанной ширины и высоты (в большую или меньшую сторону), сохраняя пропорции изображения.</Item>
+            <Item>        3.2. ZoomLess: растягивание изображения до указанной ширины и высоты (только в меньшую сторону), сохраняя пропорции изображения.</Item>
+            <Item>        3.3. Stretch: растягивание изображения до указанной ширины и высоты без сохранения пропорций изображения.</Item>
+            <Item>Пример: <![CDATA[ <@<#ClientMainPhoto#>?width=320?height=320?mode=stretch@>]]></Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="None" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TreeCellClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <And>
+              <Not>
+                <Object Name="TreeLoadingVariable" />
+              </Not>
+              <Condition Name="TreeSelectedRowHasChildrenCondition" />
+              <Condition Name="LastCellClickedLeftTreeColumnNameEqualStateCondition" />
+            </And>
+          </When>
+          <Then>
+            <Command Name="TreeLoadingVariableValueSetCommand">True</Command>
+            <Command Name="TreeVariableSetSequentialCommand" />
+            <If>
+              <When>
+                <Condition Name="TreeLastClickedRowClosedEqualTrueCondition" />
+              </When>
+              <Then>
+                <Command Name="TreeStateRemoveSaveCommand" />
+              </Then>
+              <Else>
+                <Command Name="TreeStateAddSaveCommand" />
+              </Else>
+            </If>
+            <Command Name="TemplateVariableDataConnectionRefreshCommand" />
+            <Command Name="TreeLoadingVariableValueSetCommand">False</Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TemplateVariableDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateVariableClipboardSetSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateVariableDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <!-- флаг, что дерево загружаются -->
+    <MyObject Name="TreeLoadingVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <!-- путь выбранного узла -->
+    <MyObject Name="CurrentTreeItemPathVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <!-- состояние выбранного узла -->
+    <MyObject Name="CurrentTreeStateIdVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TemplateVariableDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateVariableDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateVariableDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TemplateVariableCopyButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="TemplateVariablePrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="State" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Width>30</Width>
+            <Title />
+            <Calculate>
+              <Expression>IIF(HasChildren, IIF(Closed, '+', '‒'), '')</Expression>
+            </Calculate>
+            <Alignment Value="MiddleCenter" />
+            <AllowSort Value="False" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="Closed" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="HasChildren" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Main" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="TreeStateId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ItemPath" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="VariableTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование переменной</Title>
+            <Width>350</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="Description" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Описание</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="Gray200">
+            <Expression>HasChildren AND NOT Main</Expression>
+          </BackColor>
+          <BackColor Name="Yellow">
+            <Expression>Main</Expression>
+          </BackColor>
+          <FontStyle Name="TitleBoldFont">
+            <Expression>Main</Expression>
+          </FontStyle>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="TemplateVariableCopyButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateVariableDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Скопировать переменную в буфер обмена</Hint>
+        <Image>Images\24x24\copy.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Enabled>
+          <Condition Name="TemplateVariableSelectedCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="TemplateVariableClipboardSetSequentialCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите переменную для копирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="TemplateVariableExportButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TemplateVariableCopyButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TemplateVariableCopyButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TemplateVariableCopyButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateVariableCopyButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Экспорт списка переменных в Word</Hint>
+        <Image>Images\24x24\file_word.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TemplateVariableExportToDocxCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="HelpButton" Type="Button" Assembly="BaseControls">
+        <Bottom>
+          <Object Name="TemplateVariableDatabaseTable">
+            <Property Name="Bottom" />
+          </Object>
+        </Bottom>
+        <Left>
+          <Object Name="TemplateVariableCopyButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TemplateVariableCopyButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TemplateVariableCopyButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <Image>Images\24x24\help.png</Image>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Commands>
+          <Command Name="HelpMessageBoxCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

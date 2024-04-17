@@ -1,0 +1,1370 @@
+<?xml version="1.0"?>
+<Form Name="CollectReportPaymentForm" Width="1260" Height="650" BackColor="White" StartPosition="CenterScreen" MaximizeBox="True" FormBorderStyle="FixedSingle" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Отчет по оплатам</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ReportPaymentPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ReportPaymentSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanClientPaymentId" />
+          <Field Name="LoanClientId" />
+          <Field Name="LoanId" />
+          <Field Name="PaymentDate" />
+          <Field Name="ClientTitle" />
+          <Field Name="CreditNumber" />
+          <Field Name="UserTitle" />
+          <Field Name="ClaimantTitle" />
+          <Field Name="CessionTitle" />
+          <Field Name="CessionRegionTitle" />
+          <Field Name="PaymentSum" />
+          <Field Name="LoanClientTotalDebtRestSum" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="DateStart" RefreshQuery="False">
+            <Value>
+              <Object Name="DateStartVariable" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="DateFinish" RefreshQuery="False">
+            <Value>
+              <Object Name="DateFinishVariable" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="PaymentDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="LoanClientPaymentId" SendAsArray="True">
+          <Value>
+            <Object Name="ReportPaymentDatabaseTable">
+              <Property Name="SelectedRowsCellValuesByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">LoanClientPaymentId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="PaymentDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="DateStartNotGreaterDateFinishCondition" Type="NotGreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DateStartDateTimePicker" />
+        </Item>
+        <Item>
+          <Object Name="DateFinishDateTimePicker" />
+        </Item>
+      </Items>
+      <DataType Type="DateTimeDataType" />
+    </Condition>
+
+    <Condition Name="DateStartEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="DateStartDateTimePicker" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="DateFinishEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="DateFinishDateTimePicker" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+
+    <Condition Name="ReportPaymentDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="ReportPaymentDatabaseTable" />
+    </Condition>
+
+    <Condition Name="PaymentSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="PaymentSelectedOneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="DateStartVariableSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateStartVariable">
+        <Object Name="DateStartDateTimePicker" />
+      </Object>
+    </Command>
+
+    <Command Name="DateFinishVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="DateFinishVariable">
+        <Object Name="DateFinishDateTimePicker" />
+      </Object>
+    </Command>
+
+    <Command Name="ReportPaymentPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ReportPaymentPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="PeriodErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Обновление отчета</Caption>
+      <Text>Дата начала периода фильтрации не должна быть больше даты окончания.</Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="RefreshSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="DateStartNotGreaterDateFinishCondition" />
+          </When>
+          <Then>
+            <Command Name="DateStartVariableSetCommand" />
+            <Command Name="DateFinishVariableValueSetCommand" />
+            <Command Name="ReportPaymentPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+          <Else>
+            <Command Name="PeriodErrorMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="ExportReportPaymentToExcelCommand" Type="ExportToExcelCommand" Assembly="Commands">
+      <TemplateFileName>Templates\ExportReportPayment.xlsx</TemplateFileName>
+      <Parameters>
+        <Parameter Name="FirstLineTitle">
+          <Parameter Name="Title" />
+        </Parameter>
+        <Parameter Name="SecondLineTitle">
+          <String>
+            <Format>с {0} г. по {1} г.</Format>
+            <Items>
+              <Item>
+                <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                  <Object Name="DateStartVariable" />
+                </DataTypeFormat>
+              </Item>
+              <Item>
+                <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy">
+                  <Object Name="DateFinishVariable" />
+                </DataTypeFormat>
+              </Item>
+            </Items>
+          </String>
+        </Parameter>
+        <Parameter Name="RowNumberTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">RowNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentDateTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">PaymentDate</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientTitleTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CreditNumberTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CreditNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="UserTitleTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">UserTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClaimantTitleTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionTitleTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionRegionTitleTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionRegionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentSumTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">PaymentSum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="LoanClientTotalDebtRestSumTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanClientTotalDebtRestSum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalTitle">ИТОГО:</Parameter>
+        <Parameter Name="RowNumber">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">RowNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentDate">
+          <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+            <Object Name="ReportPaymentDatabaseTable">
+              <Property Name="Column">
+                <Parameters>
+                  <Parameter Name="ColumnName">PaymentDate</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </DataTypeFormat>
+        </Parameter>
+        <Parameter Name="ClientTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CreditNumber">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CreditNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="UserTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">UserTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClaimantTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClaimantTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="CessionRegionTitle">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">CessionRegionTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="PaymentSum">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">PaymentSum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="LoanClientTotalDebtRestSum">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanClientTotalDebtRestSum</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="TotalDebtRest">
+          <Object Name="TotalDebtRestVariable"/>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PaymentAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPaymentEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Type">common</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PaymentEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPaymentEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="Type">common</Parameter>
+        <Parameter Name="LoanClientPaymentId">
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanClientPaymentId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PaymentDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранные оплаты?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="PaymentDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="PaymentDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="PaymentSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ReportPaymentDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">LoanClientPaymentId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="DateStartEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="DateFinishEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="RefreshSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ReportPaymentDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="PaymentEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="PaymentDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="PaymentDeleteSaveCommand" />
+        <Command Name="ReportPaymentPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="PaymentAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ReportPaymentPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="PaymentSelectRowCommand">
+          <Command Name="PaymentAddFormShowCommand" Parameter="LoanClientPaymentId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="PaymentEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ReportPaymentPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="PaymentSelectRowCommand">
+          <Command Name="PaymentEditFormShowCommand" Parameter="LoanClientPaymentId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="DateStartVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <DateTime Variable="FirstDayOfCurrMonth" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="DateFinishVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <DateTime Variable="LastDayOfCurrMonth" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="RefreshButton">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateStartLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="DateStartLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateStartDateTimePicker">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DateStartLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Height>20</Height>
+        <Width>50</Width>
+        <TextAlign>MiddleRight</TextAlign>
+        <Text>С:</Text>
+      </MyObject>
+
+      <MyObject Name="DateStartDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Top>2</Top>
+        <Left>
+          <Object Name="DateStartLabel">
+            <Property Name="Right" />
+          </Object>
+        </Left>
+        <Width>140</Width>
+        <TabIndex>1</TabIndex>
+        <Format> d MMMM yyyy</Format>
+        <NullValue Show="False" />
+        <Value>
+          <Object Name="DateStartVariable" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="DateFinishLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="DateFinishDateTimePicker">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="DateStartLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="DateStartLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="DateStartLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TextAlign>
+          <Object Name="DateStartLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>По:</Text>
+      </MyObject>
+
+      <MyObject Name="DateFinishDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateStartDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Format> d MMMM yyyy</Format>
+        <NullValue Show="False" />
+        <Value>
+          <Object Name="DateFinishVariable" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="RefreshButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DateFinishDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DateStartDateTimePicker">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>24</Height>
+        <TabIndex>3</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <ForeColor>HeadTextColor</ForeColor>
+        <TextAlign>TopCenter</TextAlign>
+        <BackColor>White</BackColor>
+        <Text>Показать</Text>
+        <Commands>
+          <Command Name="RefreshSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="DateStartNotGreaterDateFinishCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Дата начала периода не должна быть больше даты окончания периода.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ReportPaymentDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PaymentSumTotalTextBox">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>7</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PaymentAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <MultiSelect Value="True" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="ReportPaymentPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="LoanClientPaymentId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="PaymentDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата</Title>
+            <Width>80</Width>
+            <AutoSizeMode Value="None" />
+            <DataType Type="DateDataType" Format="dd.MM.yyyy" />
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Должник</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="CreditNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Номер КД</Title>
+            <MinimumWidth>100</MinimumWidth>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="UserTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Специалист</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="ClaimantTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Цедент</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CessionTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование цессии</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="CessionRegionTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Регион цессии</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="PaymentSum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Сумма оплаты</Title>
+            <Width>100</Width>
+            <AutoSizeMode Value="None" />
+            <Alignment Value="MiddleRight" />
+            <DataType Type="DecimalDataType" Format="N2" />
+          </Column>
+          <Column Name="LoanClientTotalDebtRestSum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Остаток долга</Title>
+            <Width>100</Width>
+            <AutoSizeMode Value="None" />
+            <Alignment Value="MiddleRight" />
+            <DataType Type="DecimalDataType" Format="N2" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="PaymentAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ReportPaymentDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить оплату...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="PaymentAddFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="PaymentEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PaymentAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PaymentAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="PaymentAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="PaymentAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать оплату...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="PaymentEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="PaymentSelectedOneCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите оплату для редактирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="PaymentDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PaymentEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="PaymentAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="PaymentAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="PaymentAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Удалить оплаты</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="PaymentDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="PaymentSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите оплаты для удаления.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="PaymentSumTotalTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="ColumnOffset">
+                    <Parameters>
+                      <Parameter Name="ColumnName">PaymentSum</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="ColumnWidth">
+                    <Parameters>
+                      <Parameter Name="ColumnName">PaymentSum</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Width>
+        <TabStop>False</TabStop>
+        <ReadOnly>True</ReadOnly>
+        <Multiline>True</Multiline>
+        <FontStyle>TitleSmallFont</FontStyle>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0} /
+{1}</Format>
+            <Items>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Object Name="ReportPaymentDatabaseTable">
+                    <Property Name="SelectedCellsSumByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">PaymentSum</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </DataTypeFormat>
+              </Item>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Object Name="ReportPaymentDatabaseTable">
+                    <Property Name="ColumnSum">
+                      <Parameters>
+                        <Parameter Name="ColumnName">PaymentSum</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </DataTypeFormat>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+        <BackColor>White</BackColor>
+      </MyObject>
+
+      <MyObject Name="UnicLoanClientArrayVariable" Type="Variable" Assembly="SimpleControls">
+        <Value>
+          <Array>
+            <Source>
+              <Object Name="ReportPaymentDatabaseTable">
+                <Property Name="DictionaryArrayData" />
+              </Object>
+            </Source>
+            <Select>
+              <Items>
+                <Item Type="Field">LoanClientId</Item>
+                <Item Type="Field">LoanClientTotalDebtRestSum</Item>
+              </Items>
+            </Select>
+            <Distinct>
+              <On Index="0" />
+            </Distinct>
+          </Array>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="SelectedDebtRestVariable" Type="Variable" Assembly="SimpleControls">
+        <Value>
+          <Array>
+            <Source>
+              <Object Name="UnicLoanClientArrayVariable" />
+            </Source>
+            <Filter Type="In">
+              <Index Value="0" />
+              <Value>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="SelectedRowsCellValuesByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanClientId</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Value>
+            </Filter>
+            <Sum Type="DecimalDataType" Index="1" />
+          </Array>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="TotalDebtRestVariable" Type="Variable" Assembly="SimpleControls">
+        <Value>
+          <Array>
+            <Source>
+              <Object Name="UnicLoanClientArrayVariable" />
+            </Source>
+            <Sum Type="DecimalDataType" Index="1" />
+          </Array>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="LoanClientTotalDebtRestSumTotalTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>2</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="ColumnOffset">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanClientTotalDebtRestSum</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportPaymentDatabaseTable">
+                  <Property Name="ColumnWidth">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanClientTotalDebtRestSum</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Width>
+        <TabStop>False</TabStop>
+        <ReadOnly>True</ReadOnly>
+        <Multiline>True</Multiline>
+        <FontStyle>TitleSmallFont</FontStyle>
+        <TextAlign>Right</TextAlign>
+        <Text>
+          <String>
+            <Format>{0} /
+{1}</Format>
+            <Items>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Object Name="SelectedDebtRestVariable" />
+                </DataTypeFormat>
+              </Item>
+              <Item>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Object Name="TotalDebtRestVariable" />
+                </DataTypeFormat>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+        <Hint>В итоговом значении остаток долга по одному фигуранту дела учитывается один раз</Hint>
+        <BackColor>White</BackColor>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ExportButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\file_excel.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Экспорт в Excel</Text>
+        <Commands>
+          <Command Name="ExportReportPaymentToExcelCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

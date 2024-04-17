@@ -1,0 +1,2423 @@
+<?xml version="1.0"?>
+<Form Name="CollectSMSMailingEditForm" Width="1240" Height="680" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="MessageMailingId" />
+    <Parameter Name="Copy">False</Parameter>
+    <Parameter Name="FormTitle">
+      <String>
+        <Format>{0} {1}</Format>
+        <Items>
+          <Item>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="MessageMailingIdVariableIsNullCondition" />
+                </When>
+                <Then>Добавление рассылки</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Parameter Name="Copy" />
+                </When>
+                <Then>Копирование рассылки</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Condition Name="MessageMailingIsDraftCondition" />
+                </When>
+                <Then>Редактирование рассылки</Then>
+              </Case>
+              <Case>Просмотр рассылки</Case>
+            </Switch>
+          </Item>
+          <Item>SMS</Item>
+        </Items>
+      </String>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <Color Name="StatusLightPink" Red="229" Green="184" Blue="183" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="TabButtonFont" Font="Segoe UI" Size="12" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserIsAdministrator" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageMailingPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="MessageMailingByIdSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="DateSending" />
+          <Field Name="MessageTemplateId" />
+          <Field Name="MessageTemplateText" />
+          <Field Name="Draft" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="MessageMailingId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="MessageMailingId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageMailingAddedPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>
+        <Not>
+          <Parameter Name="Copy" />
+        </Not>
+      </ManualLoad>
+      <SqlQuery Name="MessageMailingAddedSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Added" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="MessageMailingId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="MessageMailingId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="SMSMailingMessagePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="SMSMailingMessageSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="SMSMailingMessageId" />
+          <Field Name="ClientId" />
+          <Field Name="ClientTitle" />
+          <Field Name="Phone" />
+          <Field Name="Cost" />
+          <Field Name="SMSStatusTitle" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="MessageMailingId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="MessageMailingId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplatePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="MessageTemplateSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="MessageTemplateId" />
+          <Field Name="Title" />
+          <Field Name="Text" />
+          <Field Name="SystemForSelect" />
+          <Field Name="Archive" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="MessageTemplateName">
+            <Value>
+              <Object Name="MessageTemplateNameVariable" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="SMSVisible">
+            <Value>True</Value>
+          </Parameter>
+          <Parameter NativeName="EmailVisible">
+            <Value>False</Value>
+          </Parameter>
+        </Parameters>
+        <Filter Type="Nested">
+          <And>
+            <Filter FilterByNullValue="False">
+              <Field NativeName="SystemForSelect" />
+              <Value>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="AllowEditNestedCondition" />
+                    </When>
+                    <Then>False</Then>
+                  </Case>
+                </Switch>
+              </Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Or>
+              <Filter>
+                <Field NativeName="Archive" />
+                <Value>False</Value>
+                <DataType Type="BooleanDataType" />
+              </Filter>
+              <Filter>
+                <Field NativeName="MessageTemplateId" />
+                <Value>
+                  <DataConnection SourceDataConnection="MessageMailingPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="MessageTemplateId" />
+                    </Fields>
+                  </DataConnection>
+                </Value>
+                <DataType Type="IntegerDataType" />
+              </Filter>
+            </Or>
+          </And>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageTemplateSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="MessageTemplatePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="MessageTemplateId" />
+        <Value>
+          <Object Name="MessageTemplateComboBox" />
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="MessageMailingInsertEmptySetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MessageTemplateId">
+          <Value>
+            <Object Name="MessageTemplateComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="MessageTemplateText">
+          <Value>
+            <Object Name="MessageTemplateTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="DateSending">
+          <Value>
+            <Object Name="DateSendingDateTimePicker" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Draft">
+          <Value>
+            <Object Name="IsDraftVariable" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageMailingInsertEmptySqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="MessageMailingUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MessageMailingId">
+          <Value>
+            <Parameter Name="MessageMailingId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="MessageTemplateId">
+          <Value>
+            <Object Name="MessageTemplateComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="MessageTemplateText">
+          <Value>
+            <Object Name="MessageTemplateTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="DateSending">
+          <Value>
+            <Object Name="DateSendingDateTimePicker" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Draft">
+          <Value>
+            <Object Name="IsDraftVariable" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageMailingUpdateSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="AddresseeDatabaseTableSetDataConnection" Type="DatabaseTableSetDataConnection" Assembly="ComplexDataConnections">
+      <Workflow Name="Collect" />
+      <DatabaseTable Name="AddresseeDatabaseTable" />
+      <Parameters>
+        <Parameter NativeName="MessageMailingId">
+          <Parameter Name="MessageMailingId" />
+        </Parameter>
+        <Parameter NativeName="SMSMailingMessageId">
+          <Column Name="SMSMailingMessageId" />
+        </Parameter>
+        <Parameter NativeName="ClientId">
+          <Column Name="ClientId" />
+        </Parameter>
+        <Parameter NativeName="ClientTitle">
+          <Column Name="ClientTitle" />
+        </Parameter>
+        <Parameter NativeName="Phone">
+          <Column Name="Phone" />
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="SMSMailingMessageInsertSqlQuery" Type="Insert" />
+        <SqlQuery Name="SMSMailingMessageDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="SMSSettingsCheckPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="SMSSettingsCheckSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Ok" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="MessageMailingDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="MessageMailingId">
+          <Value>
+            <Parameter Name="MessageMailingId" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="MessageMailingDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormClosingNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <AlwaysChange Value="True" />
+      <ConditionExpression>
+        <Or>
+          <Condition Name="FormClosingCondition" />
+          <Condition Name="FormEscapeKeyDownCondition" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UserIsAdministrator" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MessageMailingIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="MessageMailingId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageMailingIdVariableIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageMailingIdVariable" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageMailingIsDraftCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="MessageMailingPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Draft" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="AllowEditNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Or>
+          <Condition Name="MessageMailingIdVariableIsNullCondition" />
+          <Condition Name="MessageMailingIsDraftCondition" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="MessageMailingIsNotAddedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="MessageMailingAddedPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Added" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>False</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddresseeCountEqual0Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddresseeDatabaseTable">
+            <Property Name="RowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddresseeSelectedCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddresseeDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTemplateIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTemplateIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateTextBox" />
+        </Item>
+        <Item />
+      </Items>
+    </Condition>
+
+    <Condition Name="MessageTemplateChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="MessageTemplateComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="SMSBalanceIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="SMSGetBalanceCallCommand" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="SMSMailingCostIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="SMSMailingGetCostCallCommand" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="SMSSettingsCheckOkCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="SMSSettingsCheckPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Ok" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Title">
+          <String>
+            <Format>WS - {0}</Format>
+            <Items>
+              <Item>
+                <Parameter Name="FormTitle" />
+              </Item>
+            </Items>
+          </String>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>
+        <Text Id="SaveOnCloseMessageBoxCaption">Сохранение</Text>
+      </Caption>
+      <Text>
+        <Text Id="SaveOnCloseMessageBoxText">Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>
+        <Text Id="CloseOnCloseMessageBoxCaption">Закрытие</Text>
+      </Caption>
+      <Text>
+        <Text Id="CloseOnCloseMessageBoxText">При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="MessageMailingDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageMailingDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageTemplateTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="MessageTemplateTextBox">
+        <DataConnection SourceDataConnection="MessageTemplateSecondaryGetDataConnection">
+          <Fields>
+            <Field Name="Text" />
+          </Fields>
+        </DataConnection>
+      </Object>
+    </Command>
+
+    <Command Name="MessageMailingClientFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectMessageMailingClientContactList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="ClientContactArray">
+          <Array>
+            <Source>
+              <Object Name="AddresseeDatabaseTable">
+                <Property Name="Column">
+                  <Parameters>
+                    <Parameter Name="ColumnName">ClientId</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Source>
+            <Zip>
+              <Object Name="AddresseeDatabaseTable">
+                <Property Name="Column">
+                  <Parameters>
+                    <Parameter Name="ColumnName">ClientTitle</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Zip>
+            <Zip>
+              <Object Name="AddresseeDatabaseTable">
+                <Property Name="Column">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Phone</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Zip>
+            <Select>
+              <Items>
+                <Item Type="Index">0</Item>
+                <Item Type="Index">1</Item>
+                <Item Type="Index">2</Item>
+                <Item Type="Format">{0}/{2}</Item>
+              </Items>
+            </Select>
+          </Array>
+        </Parameter>
+        <Parameter Name="ContactType">sms</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddresseeDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddresseeDatabaseTable">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="AddresseeAddRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddresseeDatabaseTable">
+        <Property Name="AddRows">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ClientId</Item>
+                <Item>ClientTitle</Item>
+                <Item>Phone</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Command Name="MessageMailingClientFormShowCommand" Parameter="ClientContactArray" />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="MessageTemplateAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectMessageTemplateEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="True" />
+      <Parameters>
+        <Parameter Name="MessageTemplateTitle">
+          <Object Name="MessageTemplateComboBox">
+            <Property Name="Text" />
+          </Object>
+        </Parameter>
+        <Parameter Name="MessageTemplateText">
+          <Object Name="MessageTemplateTextBox" />
+        </Parameter>
+        <Parameter Name="MessageType">sms</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="MessageTemplateEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectMessageTemplateEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="True" />
+      <Parameters>
+        <Parameter Name="MessageTemplateId">
+          <Object Name="MessageTemplateComboBox" />
+        </Parameter>
+        <Parameter Name="MessageType">sms</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="MessageTemplateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="MessageTemplateComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="MessageTemplatesFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectMessageTemplateList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="Select">True</Parameter>
+        <Parameter Name="MessageTemplateId">
+          <Object Name="MessageTemplateComboBox" />
+        </Parameter>
+        <Parameter Name="MessageTemplateName">
+          <Object Name="MessageTemplateNameVariable" />
+        </Parameter>
+        <Parameter Name="MessageTemplateTitle">
+          <Object Name="MessageTemplateComboBox">
+            <Property Name="Text" />
+          </Object>
+        </Parameter>
+        <Parameter Name="MessageTemplateText">
+          <Object Name="MessageTemplateTextBox" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="MessageTemplateDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageTemplatePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="SMSGetBalanceCallCommand" Type="CallCommand" Assembly="Commands">
+      <Async Value="True" />
+      <Workflow Name="Collect" />
+      <Command Name="SMSGetBalanceCommand" />
+    </Command>
+
+    <Command Name="SMSMailingGetCostCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="SMSMailingGetCostCommand" />
+      <Parameters>
+        <Parameter Name="ClientTitles" SendAsArray="True">
+          <Object Name="AddresseeDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="Phones" SendAsArray="True">
+          <Object Name="AddresseeDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">Phone</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="MessageTemplateText">
+          <Object Name="MessageTemplateTextBox" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="MessageMailingInsertSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageMailingInsertEmptySetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageMailingUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageMailingUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageMailingIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="MessageMailingId">
+        <Command Name="MessageMailingInsertSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddresseeSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddresseeDatabaseTableSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="MessageMailingAddedDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="MessageMailingAddedPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <If>
+          <When>
+            <Condition Name="MessageMailingIdIsNullCondition" />
+          </When>
+          <Then>
+            <Command Name="MessageMailingInsertSaveCommand" />
+            <Command Name="MessageMailingIdValueSetCommand" />
+          </Then>
+          <Else>
+            <Command Name="MessageMailingUpdateSaveCommand" />
+            <If>
+              <When>
+                <Parameter Name="Copy" />
+              </When>
+              <Then>
+                <Command Name="MessageMailingAddedDataConnectionRefreshCommand" />
+              </Then>
+            </If>
+          </Else>
+        </If>
+        <Command Name="AddresseeSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="SMSSettingsCheckDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="SMSSettingsCheckPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="SMSMailingSendCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="SMSMailingSendCommand" />
+      <Parameters>
+        <Parameter Name="MessageMailingId">
+          <Parameter Name="MessageMailingId" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="SMSSendingWarningMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>
+        <Parameter Name="FormTitle" />
+      </Caption>
+      <Text>
+        <Input />
+      </Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="SendSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="SaveSequentialCommand" />
+        <Command Name="SMSMailingMessageDataConnectionRefreshCommand" />
+        <Command Name="SMSSettingsCheckDataConnectionRefreshCommand" />
+        <If>
+          <When>
+            <Condition Name="SMSSettingsCheckOkCondition" />
+          </When>
+          <Then>
+            <Command Name="SMSMailingSendCallCommand" />
+            <Command Name="FormCloseCommand" />
+          </Then>
+          <Else>
+            <Command Name="SMSSendingWarningMessageBoxCommand">
+              <Text Id="SMSSendingWarningMessageBoxCommand.NoSettings">Не заданы настройки отправки SMS.</Text>
+            </Command>
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SMSGetStatusCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="SMSGetStatusCommand" />
+      <Parameters>
+        <Parameter Name="MessageMailingId" SendAsArray="True">
+          <Parameter Name="MessageMailingId" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="SMSMailingMessageDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="SMSMailingMessagePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="IsDraftVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="IsDraftVariable">
+        <Input />
+      </Object>
+    </Command>
+  </Commands>
+
+  <Executions>
+
+    <Execution>
+      <ConditionExpression>
+        <And>
+          <Condition Name="FormClosingNestedCondition" />
+          <Condition Name="FormChangedTrueEqualCondition" />
+        </And>
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="SaveOnCloseMessageBoxCommand" />
+          </Then>
+          <Else>
+            <Command Name="CloseOnCloseMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormTitleValueSetCommand" />
+        <Command Name="SMSGetBalanceCallCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="SaveSequentialCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Or>
+          <And>
+            <Condition Name="FormClosingNestedCondition" />
+            <Not>
+              <Condition Name="FormChangedTrueEqualCondition" />
+            </Not>
+          </And>
+          <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+          <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+        </Or>
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <And>
+              <Parameter Name="Copy" />
+              <Condition Name="MessageMailingIsNotAddedCondition" />
+            </And>
+          </When>
+          <Then Lock="True">
+            <Command Name="MessageMailingDeleteSaveCommand" />
+          </Then>
+        </If>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="MessageTemplateChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateTextValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageMailingClientFormShowCommand" Parameter="Selected" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddresseeDeleteRowsCommand" />
+        <Command Name="AddresseeAddRowsCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplateAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateDataConnectionRefreshCommand" />
+        <Command Name="MessageTemplateValueSetCommand">
+          <Command Name="MessageTemplateAddFormShowCommand" Parameter="MessageTemplateId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplateEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="MessageTemplateDataConnectionRefreshCommand" />
+        <Command Name="MessageTemplateTextValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="MessageTemplatesFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="MessageTemplatesFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="MessageTemplateDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="MessageTemplatesFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="MessageTemplateValueSetCommand">
+              <Command Name="MessageTemplatesFormShowCommand" Parameter="SelectedMessageTemplateId" />
+            </Command>
+          </Then>
+          <ElseIf>
+            <When>
+              <Not>
+                <Condition Name="MessageTemplateIdIsNullCondition" />
+              </Not>
+            </When>
+            <Then>
+              <Command Name="MessageTemplateTextValueSetCommand" />
+            </Then>
+          </ElseIf>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="AddresseeDatabaseTable" />
+      <ConditionExpression>
+        <Condition Name="AddresseeCountEqual0Condition" />
+      </ConditionExpression>
+      <AsteriskHint>Добавьте получателей</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="MessageTemplateTextBox" />
+      <ConditionExpression>
+        <Condition Name="MessageTemplateIsEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Заполните текст сообщения</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="IsDraftVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="SMSModuleCurrencyVariable" Type="StaticVariable" Assembly="Collect" ChangeForm="False">
+      <Key Value="SMSModuleCurrency" />
+      <Value />
+    </MyObject>
+
+    <MyObject Name="MessageMailingIdVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Parameter Name="MessageMailingId" Refresh="False" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="MessageTemplateNameVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>birthday</Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Form>
+            <Property Name="Width" />
+          </Form>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="FormTitle" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="AddresseeGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>5</Left>
+        <Height>350</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>Получатели</Text>
+        <BackColor>BackThemeColor</BackColor>
+
+        <MyObject Name="AddresseeDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+          <Change User="True" Source="False" ValueSet="True" />
+          <Top>25</Top>
+          <Left>5</Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="AddresseeGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>30</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="AddresseeGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Condition Name="AllowEditNestedCondition" />
+                      </When>
+                      <Then>
+                        <Formula>
+                          <Plus DataType="IntegerDataType">
+                            <Item>
+                              <Object Name="AddButton">
+                                <Property Name="Width" />
+                              </Object>
+                            </Item>
+                            <Item>5</Item>
+                          </Plus>
+                        </Formula>
+                      </Then>
+                    </Case>
+                  </Switch>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <BorderStyle Value="Fixed3D" />
+          <BackgroundColor Value="Gray200" />
+          <SelectionColor Name="SelectionColor" />
+          <RowHeadersVisible Value="False" />
+          <ColumnHeadersHeight Value="22" />
+          <RowHeight Value="18" />
+          <AllowInsert>False</AllowInsert>
+          <AllowUpdate>False</AllowUpdate>
+          <AllowDelete>False</AllowDelete>
+          <AllowResizeColumns Value="False" />
+          <AllowResizeRows Value="False" />
+          <ShowCellHints Value="True" />
+          <AutoSizeColumnsMode Value="Fill" />
+          <MultiSelect Value="True" />
+          <AllowFilterColumns Value="False" />
+          <SourceDataConnection Name="SMSMailingMessagePrimaryGetDataConnection" />
+          <Columns>
+            <Column Name="SMSMailingMessageId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="ClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+              <DataType Type="IntegerDataType" />
+            </Column>
+            <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>№</Title>
+              <Width>35</Width>
+              <AutoFill Type="RowNumber" />
+              <AutoSizeMode Value="None" />
+            </Column>
+            <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>
+                <Text Id="ClientTitle">Клиент</Text>
+              </Title>
+            </Column>
+            <Column Name="Phone" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>
+                <Text Id="Phone">Телефон</Text>
+              </Title>
+              <Width>100</Width>
+              <AutoSizeMode Value="None" />
+            </Column>
+            <Column Name="Cost" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>
+                <Text Id="Cost">Стоимость</Text>
+              </Title>
+              <Width>70</Width>
+              <AutoSizeMode Value="None" />
+              <Alignment Value="MiddleRight" />
+              <DataType Type="DecimalDataType" />
+              <Visible>
+                <Not>
+                  <Condition Name="AllowEditNestedCondition" />
+                </Not>
+              </Visible>
+            </Column>
+            <Column Name="SMSStatusTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>
+                <Text Id="Status">Статус</Text>
+              </Title>
+              <Width>190</Width>
+              <AutoSizeMode Value="None" />
+              <Visible>
+                <Not>
+                  <Condition Name="AllowEditNestedCondition" />
+                </Not>
+              </Visible>
+            </Column>
+          </Columns>
+        </MyObject>
+
+        <MyObject Name="AddButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="AddresseeDatabaseTable">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="AddresseeDatabaseTable">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>30</Height>
+          <Width>30</Width>
+          <TabIndex>2</TabIndex>
+          <Image>Images\24x24\add.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Hint>Добавить...</Hint>
+          <Commands>
+            <Command Name="MessageMailingClientFormShowCommand" />
+          </Commands>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="DeleteButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="AddButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="AddButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="AddButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="AddButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Image>Images\24x24\delete.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Hint>Удалить</Hint>
+          <Commands>
+            <Command Name="AddresseeDeleteRowsCommand">
+              <Object Name="AddresseeDatabaseTable">
+                <Property Name="SelectedRowsIndices" />
+              </Object>
+            </Command>
+          </Commands>
+          <Enabled>
+            <Condition Name="AddresseeSelectedCondition" />
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Выберите записи для удаления.</DisabledText>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="AddresseeCheckingPanel" Type="Panel" Assembly="BaseControls">
+          <Bottom>
+            <Object Name="AddresseeDatabaseTable">
+              <Property Name="Bottom" />
+            </Object>
+          </Bottom>
+          <Left>
+            <Object Name="AddresseeDatabaseTable">
+              <Property Name="Right" />
+            </Object>
+          </Left>
+          <Height>12</Height>
+          <Width>1</Width>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="MessageTemplateGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddresseeGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddresseeGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="MessageTemplateGroupBox">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SMSCostGroupBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Text>Шаблон рассылки</Text>
+
+        <MyObject Name="DateSendingLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>5</Left>
+          <Width>
+            <Calculate>
+              <Expression>{0} - {1}</Expression>
+              <Items>
+                <Item>
+                  <Object Name="MessageTemplatesButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="DateSendingLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Items>
+            </Calculate>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Дата отправки</Text>
+        </MyObject>
+
+        <MyObject Name="DateSendingDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Top>
+            <Object Name="DateSendingLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DateSendingLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>200</Width>
+          <TabIndex>1</TabIndex>
+          <Format>dd MMM yyyy HH:mm</Format>
+          <ShowCalendar>True</ShowCalendar>
+          <NullValue Show="True" />
+          <Value>
+            <DataConnection SourceDataConnection="MessageMailingPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="DateSending" />
+              </Fields>
+            </DataConnection>
+          </Value>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="DateSendingTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <ReadOnly>True</ReadOnly>
+          <Text>
+            <DataTypeFormat Type="DateTimeDataType" Format="dd MMM yyyy HH:mm">
+              <DataConnection SourceDataConnection="MessageMailingPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="DateSending" />
+                </Fields>
+              </DataConnection>
+            </DataTypeFormat>
+          </Text>
+          <Visible>
+            <Not>
+              <Condition Name="AllowEditNestedCondition" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DateSendingDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="DateSendingLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DateSendingLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Шаблон</Text>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="MessageTemplateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <ValueList>
+            <DataConnection SourceDataConnection="MessageTemplatePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="MessageTemplateId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <DataConnection SourceDataConnection="MessageMailingPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="MessageTemplateId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="MessageTemplateComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <ReadOnly>True</ReadOnly>
+          <Text>
+            <DataConnection SourceDataConnection="MessageTemplateSecondaryGetDataConnection">
+              <Fields>
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <Visible>
+            <Not>
+              <Condition Name="AllowEditNestedCondition" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateEditButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="MessageTemplateComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>21</Height>
+          <Width>21</Width>
+          <TabIndex>3</TabIndex>
+          <BackgroundImage>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="MessageTemplateIdIsNullCondition" />
+                </When>
+                <Then>Images\24x24\add.png</Then>
+              </Case>
+              <Case>Images\24x24\edit.png</Case>
+            </Switch>
+          </BackgroundImage>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <BackgroundImageLayout>Zoom</BackgroundImageLayout>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="MessageTemplateIdIsNullCondition" />
+              </When>
+              <Then>
+                <Command Name="MessageTemplateAddFormShowCommand" />
+              </Then>
+              <Else>
+                <Command Name="MessageTemplateEditFormShowCommand" />
+              </Else>
+            </If>
+          </Commands>
+          <Visible>
+            <And>
+              <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+              <Condition Name="AllowEditNestedCondition" />
+            </And>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="MessageTemplatesButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="MessageTemplateComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateEditButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="MessageTemplateEditButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="MessageTemplateEditButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <BackgroundImage>Images\18x18\list.png</BackgroundImage>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <BackgroundImageLayout>Zoom</BackgroundImageLayout>
+          <Commands>
+            <Command Name="MessageTemplatesFormShowCommand" />
+          </Commands>
+          <Visible>
+            <And>
+              <Condition Name="CurrentUserIsInAdministratorGroupTrueEqualCondition" />
+              <Condition Name="AllowEditNestedCondition" />
+            </And>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateTextLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateComboBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="DateSendingLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DateSendingLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Текст сообщения</Text>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateCheckingPanel" Type="Panel" Assembly="BaseControls">
+          <Bottom>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateTextBox">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>17</Item>
+              </Minus>
+            </Formula>
+          </Bottom>
+          <Right>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateTextBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>15</Item>
+              </Minus>
+            </Formula>
+          </Right>
+          <Height>0</Height>
+          <Width>0</Width>
+        </MyObject>
+
+        <MyObject Name="MessageTemplateTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="MessageTemplateTextLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DateSendingDateTimePicker">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="MessageTemplateTextBox">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>7</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MessageTemplateGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="MessageTemplateTextBox">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <ReadOnly>
+            <Not>
+              <Condition Name="AllowEditNestedCondition" />
+            </Not>
+          </ReadOnly>
+          <Multiline>True</Multiline>
+          <Text>
+            <DataConnection SourceDataConnection="MessageMailingPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="MessageTemplateText" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="SMSCostGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="MessageTemplateGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="SMSCostGroupBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="MessageTemplateGroupBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>300</Width>
+        <TabIndex>3</TabIndex>
+        <Text>Расчет</Text>
+        <BackColor>BackThemeColor</BackColor>
+
+        <MyObject Name="SMSBalanseLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="DateSendingLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>5</Left>
+          <Width>80</Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Баланс</Text>
+        </MyObject>
+
+        <MyObject Name="SMSBalanseValueLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>18</Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SMSCostGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SMSBalanseValueLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TextAlign>MiddleLeft</TextAlign>
+          <FontStyle>TitleBoldFont</FontStyle>
+          <Text>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="SMSBalanceIsNotNullCondition" />
+                </When>
+                <Then>
+                  <String>
+                    <Format>{0} {1}</Format>
+                    <Items>
+                      <Item>
+                        <DataTypeFormat Type="DecimalDataType" Format="N2">
+                          <Command Name="SMSGetBalanceCallCommand" />
+                        </DataTypeFormat>
+                      </Item>
+                      <Item>
+                        <Object Name="SMSModuleCurrencyVariable" />
+                      </Item>
+                    </Items>
+                  </String>
+                </Then>
+              </Case>
+              <Case>проверьте</Case>
+            </Switch>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="SMSCostLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SMSBalanseValueLabel">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Width>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>Стоимость</Text>
+        </MyObject>
+
+        <MyObject Name="SMSCostValueLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="SMSCostLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TextAlign>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <FontStyle>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <Text>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="AllowEditNestedCondition" />
+                </When>
+                <Then>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Condition Name="SMSMailingCostIsNotNullCondition" />
+                      </When>
+                      <Then>
+                        <String>
+                          <Format>{0} {1}</Format>
+                          <Items>
+                            <Item>
+                              <DataTypeFormat Type="DecimalDataType" Format="N2">
+                                <Command Name="SMSMailingGetCostCallCommand" />
+                              </DataTypeFormat>
+                            </Item>
+                            <Item>
+                              <Object Name="SMSModuleCurrencyVariable" />
+                            </Item>
+                          </Items>
+                        </String>
+                      </Then>
+                    </Case>
+                    <Case>рассчитайте</Case>
+                  </Switch>
+                </Then>
+              </Case>
+              <Case>
+                <String>
+                  <Format>{0} {1}</Format>
+                  <Items>
+                    <Item>
+                      <DataTypeFormat Type="DecimalDataType" Format="N2">
+                        <Object Name="AddresseeDatabaseTable">
+                          <Property Name="ColumnSum">
+                            <Parameters>
+                              <Parameter Name="ColumnName">Cost</Parameter>
+                            </Parameters>
+                          </Property>
+                        </Object>
+                      </DataTypeFormat>
+                    </Item>
+                    <Item>
+                      <Object Name="SMSModuleCurrencyVariable" />
+                    </Item>
+                  </Items>
+                </String>
+              </Case>
+            </Switch>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="SMSBalanceRestLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SMSCostValueLabel">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TextAlign>
+            <Object Name="SMSBalanseLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <Text>Остаток</Text>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="SMSBalanceRestValueLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="SMSBalanceRestLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TextAlign>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <FontStyle>
+            <Object Name="SMSBalanseValueLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <Text>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="SMSMailingCostIsNotNullCondition" />
+                </When>
+                <Then>
+                  <String>
+                    <Format>{0} {1}</Format>
+                    <Items>
+                      <Item>
+                        <DataTypeFormat Type="DecimalDataType" Format="N2">
+                          <Formula>
+                            <Minus DataType="DecimalDataType">
+                              <Item>
+                                <Command Name="SMSGetBalanceCallCommand" />
+                              </Item>
+                              <Item>
+                                <Command Name="SMSMailingGetCostCallCommand" />
+                              </Item>
+                            </Minus>
+                          </Formula>
+                        </DataTypeFormat>
+                      </Item>
+                      <Item>
+                        <Object Name="SMSModuleCurrencyVariable" />
+                      </Item>
+                    </Items>
+                  </String>
+                </Then>
+              </Case>
+              <Case>рассчитайте</Case>
+            </Switch>
+          </Text>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="SMSCostButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SMSBalanceRestValueLabel">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>5</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SMSCostGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SMSCostButton">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <TextAlign>MiddleCenter</TextAlign>
+          <Text>Рассчитать</Text>
+          <Commands>
+            <Command Name="SMSGetBalanceCallCommand" />
+            <Command Name="SMSMailingGetCostCallCommand" />
+          </Commands>
+          <Visible>
+            <Condition Name="AllowEditNestedCondition" />
+          </Visible>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveAsDraftButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleRight</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\save.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить как черновик</Text>
+        <Commands>
+          <Command Name="IsDraftVariableValueSetCommand">True</Command>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+            <Or>
+              <Condition Name="FormChangedTrueEqualCondition" />
+              <Parameter Name="Copy" />
+            </Or>
+          </And>
+        </Enabled>
+        <Visible>
+          <Condition Name="AllowEditNestedCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="SMSRefreshStatusButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveAsDraftButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="SaveAsDraftButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="SaveAsDraftButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SaveAsDraftButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <TextAlign>MiddleRight</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\24x24\status.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Обновить статусы SMS</Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+            <Or>
+              <Condition Name="FormChangedTrueEqualCondition" />
+              <Parameter Name="Copy" />
+            </Or>
+          </And>
+        </Enabled>
+        <Visible>
+          <Not>
+            <Condition Name="AllowEditNestedCondition" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="SendButtonButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveAsDraftButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="SaveAsDraftButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>200</Width>
+        <TabIndex>3</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\24x24\post.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Отправить</Text>
+        <Commands>
+          <Command Name="IsDraftVariableValueSetCommand">False</Command>
+          <Command Name="SendSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <Visible>
+          <Condition Name="AllowEditNestedCondition" />
+        </Visible>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

@@ -1,0 +1,1302 @@
+<?xml version="1.0"?>
+<Form Name="CollectClientPhoneEditForm" Width="350" Height="396" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ClientId" />
+    <Parameter Name="ID" />
+    <Parameter Name="PhoneNumber" />
+    <Parameter Name="PhoneTypeId" />
+    <Parameter Name="PhoneType" />
+    <Parameter Name="PhoneTypeTitle" />
+    <Parameter Name="ContactPersonTypeId" />
+    <Parameter Name="ContactPersonType" />
+    <Parameter Name="ContactPersonTypeTitle" />
+    <Parameter Name="ContactPerson" />
+    <Parameter Name="Comment" />
+    <Parameter Name="IsMain" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование телефона</Then>
+        </Case>
+        <Case>Добавление телефона</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PhoneTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PhoneTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="PhoneTypeId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="OtherPhoneTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="PhoneTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Title" />
+        <Value>Другой</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ContactPersonTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ContactPersonTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ContactPersonTypeId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientContactPersonTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ContactPersonTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Title" />
+        <Value>Должник</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="OtherContactPersonTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ContactPersonTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Title" />
+        <Value>Другой</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ClientPhoneNumberTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneNumberTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ClientPhoneTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ClientPhoneTypeComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneTypeComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="PhoneTypeIdEqualOtherCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="PhoneTypeId" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="OtherPhoneTypeSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="PhoneTypeId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ContactPersonTypeIdEqualOtherCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="ContactPersonTypeId" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="OtherContactPersonTypeSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ContactPersonTypeId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ContactPersonTypeIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="ContactPersonType" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PhoneTypeIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="PhoneType" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ClientContactPersonTypeEqualClientCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneContactPersonTypeComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="ClientContactPersonTypeSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ContactPersonTypeId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ClientPhoneContactPersonTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneContactPersonTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ClientPhoneContactPersonTypeComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneContactPersonTypeComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ClientPhoneContactPersonTextBoxVisibleChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneContactPersonTextBox">
+            <Property Name="Visible" />
+          </Object>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ClientPhoneNumberTextBoxStartsWithPlusCondition" Type="StartsWithCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientPhoneNumberTextBox" />
+        </Item>
+        <Item>+</Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="ClientPhoneContactPersonTextBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>399</Then>
+            </Case>
+            <Case>351</Case>
+          </Switch>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="ClientPhoneTypeComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ClientPhoneTypeComboBox" />
+    </Command>
+
+    <Command Name="ClientPhoneTypeComboBoxTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ClientPhoneTypeComboBox">
+        <Property Name="Text">
+          <Parameter Name="PhoneType" />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="ClientPhoneContactPersonTypeComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ClientPhoneContactPersonTypeComboBox" />
+    </Command>
+
+    <Command Name="ClientPhoneContactPersonTypeComboBoxTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ClientPhoneContactPersonTypeComboBox">
+        <Property Name="Text">
+          <Parameter Name="ContactPersonType" />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="PhoneNumberValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PhoneNumber">
+        <Object Name="ClientPhoneNumberTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="PhoneTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PhoneTypeId">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="ClientPhoneTypeComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="ClientPhoneTypeComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <DataConnection SourceDataConnection="OtherPhoneTypeSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="PhoneTypeId" />
+                </Fields>
+              </DataConnection>
+            </Then>
+          </Case>
+          <Case>
+            <Object Name="ClientPhoneTypeComboBox" />
+          </Case>
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PhoneTypeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PhoneType">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="ClientPhoneTypeComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="ClientPhoneTypeComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <Object Name="ClientPhoneTypeComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="PhoneTypeTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PhoneTypeTitle">
+        <Switch>
+          <Case>
+            <When>
+              <Not>
+                <Condition Name="ClientPhoneTypeComboBoxIsEmptyCondition" />
+              </Not>
+            </When>
+            <Then>
+              <Object Name="ClientPhoneTypeComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="ContactPersonTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ContactPersonTypeId">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="ClientPhoneContactPersonTypeComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="ClientPhoneContactPersonTypeComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <DataConnection SourceDataConnection="OtherContactPersonTypeSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="ContactPersonTypeId" />
+                </Fields>
+              </DataConnection>
+            </Then>
+          </Case>
+          <Case>
+            <Object Name="ClientPhoneContactPersonTypeComboBox" />
+          </Case>
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="ContactPersonTypeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ContactPersonType">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="ClientPhoneContactPersonTypeComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="ClientPhoneContactPersonTypeComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <Object Name="ClientPhoneContactPersonTypeComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="ContactPersonTypeTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ContactPersonTypeTitle">
+        <Switch>
+          <Case>
+            <When>
+              <Not>
+                <Condition Name="ClientPhoneContactPersonTypeComboBoxIsEmptyCondition" />
+              </Not>
+            </When>
+            <Then>
+              <Object Name="ClientPhoneContactPersonTypeComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="ContactPersonValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ContactPerson">
+        <Switch>
+          <Case>
+            <When>
+              <Not>
+                <Condition Name="ClientContactPersonTypeEqualClientCondition" />
+              </Not>
+            </When>
+            <Then>
+              <Object Name="ClientPhoneContactPersonTextBox" />
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="CommentValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Comment">
+        <Object Name="ClientPhoneCommentTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="IsMainValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="IsMain">
+        <Object Name="ClientPhoneIsMainCheckBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="PhoneNumberValueSetCommand" />
+        <Command Name="PhoneTypeTitleValueSetCommand" />
+        <Command Name="PhoneTypeValueSetCommand" />
+        <Command Name="PhoneTypeIdValueSetCommand" />
+        <Command Name="ContactPersonTypeTitleValueSetCommand" />
+        <Command Name="ContactPersonTypeValueSetCommand" />
+        <Command Name="ContactPersonTypeIdValueSetCommand" />
+        <Command Name="ContactPersonValueSetCommand" />
+        <Command Name="CommentValueSetCommand" />
+        <Command Name="IsMainValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+        <If>
+          <When>
+            <And>
+              <Condition Name="PhoneTypeIdEqualOtherCondition" />
+              <Not>
+                <Condition Name="PhoneTypeIsNullCondition" />
+              </Not>
+            </And>
+          </When>
+          <Then>
+            <Command Name="ClientPhoneTypeComboBoxValueSetCommand" />
+            <Command Name="ClientPhoneTypeComboBoxTextValueSetCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <And>
+              <Condition Name="ContactPersonTypeIdEqualOtherCondition" />
+              <Not>
+                <Condition Name="ContactPersonTypeIsNullCondition" />
+              </Not>
+            </And>
+          </When>
+          <Then>
+            <Command Name="ClientPhoneContactPersonTypeComboBoxValueSetCommand" />
+            <Command Name="ClientPhoneContactPersonTypeComboBoxTextValueSetCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ClientPhoneContactPersonTextBoxVisibleChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="ClientPhoneNumberTextBox" />
+      <ConditionExpression>
+        <Condition Name="ClientPhoneNumberTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Номер телефона" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ClientPhoneTypeComboBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="ClientPhoneTypeComboBoxIsNullCondition" />
+          <Condition Name="ClientPhoneTypeComboBoxIsEmptyCondition" />
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип телефона" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ClientPhoneNumberLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ClientPhoneNumberLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Номер телефона</Text>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneNumberTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowedSymbols>+0123456789</AllowedSymbols>
+        <MaxLength>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ClientPhoneNumberTextBoxStartsWithPlusCondition" />
+              </When>
+              <Then>12</Then>
+            </Case>
+            <Case>11</Case>
+          </Switch>
+        </MaxLength>
+        <Text>
+          <Parameter Name="PhoneNumber" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientPhoneNumberTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Тип телефона</Text>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ClientPhoneTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="PhoneTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="PhoneTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="PhoneTypeId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneContactPersonTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientPhoneTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Тип контактного лица</Text>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneContactPersonTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ClientPhoneContactPersonTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneContactPersonTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneContactPersonTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="ContactPersonTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ContactPersonTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Parameter Name="Edit" />
+                </Not>
+              </When>
+              <Then>
+                <DataConnection SourceDataConnection="ClientContactPersonTypeSecondaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ContactPersonTypeId" />
+                  </Fields>
+                </DataConnection>
+              </Then>
+            </Case>
+            <Case>
+              <Parameter Name="ContactPersonTypeId" />
+            </Case>
+          </Switch>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneContactPersonLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientPhoneContactPersonTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Контактное лицо</Text>
+        <Visible>
+          <Not>
+            <Condition Name="ClientContactPersonTypeEqualClientCondition" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneContactPersonTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ClientPhoneContactPersonLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneContactPersonLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneContactPersonLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Text>
+          <Parameter Name="ContactPerson" />
+        </Text>
+        <Visible>
+          <Not>
+            <Condition Name="ClientContactPersonTypeEqualClientCondition" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneCommentLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ClientPhoneContactPersonTextBox">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="ClientPhoneContactPersonTextBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="ClientPhoneContactPersonTypeComboBox">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Комментарий</Text>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneCommentTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ClientPhoneCommentLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneCommentLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>51</Height>
+        <Width>
+          <Object Name="ClientPhoneCommentLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Parameter Name="Comment" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ClientPhoneIsMainCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientPhoneCommentTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientPhoneNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Text>Основной телефон</Text>
+        <Value>
+          <Parameter Name="IsMain" />
+        </Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ClientPhoneNumberTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Номер телефона" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="ClientPhoneTypeComboBoxIsNullCondition" />
+                  <Condition Name="ClientPhoneTypeComboBoxIsEmptyCondition" />
+                </And>
+              </When>
+              <Then>Поле "Тип телефона" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

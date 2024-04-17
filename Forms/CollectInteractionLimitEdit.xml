@@ -1,0 +1,1542 @@
+<?xml version="1.0"?>
+<Form Name="CollectInteractionLimitEditForm" Width="750" Height="533" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="LoanClientFormID" />
+    <Parameter Name="ClientTitle" />
+    <Parameter Name="ConcentDate" />
+    <Parameter Name="AgentConcentDate" />
+    <Parameter Name="AgentTitle" />
+    <Parameter Name="AgentBirthDate" />
+    <Parameter Name="AgentPhone" />
+    <Parameter Name="AgentAddress" />
+    <Parameter Name="AgentEmail" />
+    <Parameter Name="AgentLawyer" />
+    <Parameter Name="RejectDate" />
+    <Parameter Name="AgentRejectDate" />
+    <Parameter Name="RejectCancelDate" />
+    <Parameter Name="OtherAgentDate" />
+    <Parameter Name="Request" />
+    <Parameter Name="RequestResponse" />
+    <Parameter Name="Title">Ограничение взаимодействия</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="AgentPhoneTextBoxStartsWithPlusCondition" Type="StartsWithCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AgentPhoneTextBox" />
+        </Item>
+        <Item>+</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AgentEmailTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AgentEmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AgentEmailTextBoxIsEmailCondition" Type="IsEmailCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AgentEmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="AgentEmailTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="AgentEmailTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="AgentEmailTextBoxIsEmailCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный адрес эл. почты.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="ConcentDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ConcentDate">
+        <Object Name="ConcentDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentConcentDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentConcentDate">
+        <Object Name="AgentConcentDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentTitle">
+        <Object Name="AgentTitleTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentBirthDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentBirthDate">
+        <Object Name="AgentBirthDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentPhoneValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentPhone">
+        <Object Name="AgentPhoneTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentAddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentAddress">
+        <Object Name="AgentAddressTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentEmailValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentEmail">
+        <Object Name="AgentEmailTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentLawyerValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentLawyer">
+        <Object Name="AgentLawyerTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="RejectDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="RejectDate">
+        <Object Name="RejectDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AgentRejectDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AgentRejectDate">
+        <Object Name="AgentRejectDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="RejectCancelDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="RejectCancelDate">
+        <Object Name="RejectCancelDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="OtherAgentDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="OtherAgentDate">
+        <Object Name="OtherAgentDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="RequestValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Request">
+        <Object Name="RequestTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="RequestResponseValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="RequestResponse">
+        <Object Name="RequestResponseTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="ConcentDateValueSetCommand" />
+        <Command Name="AgentConcentDateValueSetCommand" />
+        <Command Name="AgentTitleValueSetCommand" />
+        <Command Name="AgentBirthDateValueSetCommand" />
+        <Command Name="AgentPhoneValueSetCommand" />
+        <Command Name="AgentAddressValueSetCommand" />
+        <Command Name="AgentEmailValueSetCommand" />
+        <Command Name="AgentLawyerValueSetCommand" />
+        <Command Name="RejectDateValueSetCommand" />
+        <Command Name="AgentRejectDateValueSetCommand" />
+        <Command Name="RejectCancelDateValueSetCommand" />
+        <Command Name="OtherAgentDateValueSetCommand" />
+        <Command Name="RequestValueSetCommand" />
+        <Command Name="RequestResponseValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <String>
+            <Format>{0} ({1})</Format>
+            <Items>
+              <Item>
+                <Parameter Name="Title" />
+              </Item>
+              <Item>
+                <Parameter Name="ClientTitle" />
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ConcentDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ConcentDateLabel">
+                        <Property Name="Left" />
+                      </Object>
+                    </Item>
+                    <Item>30</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Согласие на взаимодействие</Text>
+      </MyObject>
+
+      <MyObject Name="ConcentDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="ConcentDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AgentConcentDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ConcentDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Взаимодействие через представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentConcentDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentConcentDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="AgentConcentDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AgentTitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentConcentDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>ФИО представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentTitleTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentTitleLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentTitleLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentTitleLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Text>
+          <Parameter Name="AgentTitle" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AgentBirthDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentTitleTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата рождения представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentBirthDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentBirthDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentBirthDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentBirthDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="AgentBirthDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AgentPhoneLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentBirthDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Телефон представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentPhoneTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentPhoneLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentPhoneLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentPhoneLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <AllowedSymbols>+0123456789</AllowedSymbols>
+        <MaxLength>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="AgentPhoneTextBoxStartsWithPlusCondition" />
+              </When>
+              <Then>12</Then>
+            </Case>
+            <Case>11</Case>
+          </Switch>
+        </MaxLength>
+        <Text>
+          <Parameter Name="AgentPhone" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AgentAddressLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentPhoneTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Адрес представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentAddressTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentAddressLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentAddressLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>71</Height>
+        <Width>
+          <Object Name="AgentAddressLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Parameter Name="AgentAddress" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AgentEmailLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentAddressTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Адрес электронной почты представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentEmailTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentEmailLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentEmailLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentEmailLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <Text>
+          <Parameter Name="AgentEmail" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AgentLawyerLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentEmailTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Статус адвоката представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentLawyerTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentLawyerLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentLawyerLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentLawyerLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>8</TabIndex>
+        <Text>
+          <Parameter Name="AgentLawyer" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="RejectDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ConcentDateLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="RejectDateLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="ConcentDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ConcentDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ConcentDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ConcentDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Отказ от взаимодействия</Text>
+      </MyObject>
+
+      <MyObject Name="RejectDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="RejectDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="RejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>9</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="RejectDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AgentRejectDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="RejectDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="RejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="RejectDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="RejectDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="RejectDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="RejectDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Отказ от взаимодействия через представителя</Text>
+      </MyObject>
+
+      <MyObject Name="AgentRejectDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AgentRejectDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AgentRejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AgentRejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>10</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="AgentRejectDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="RejectCancelDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentRejectDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="RejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="RejectDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="RejectDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="RejectDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="RejectDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Отмена отказа от взаимодействия</Text>
+      </MyObject>
+
+      <MyObject Name="RejectCancelDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="RejectCancelDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="RejectCancelDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectCancelDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>11</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="RejectCancelDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="OtherAgentDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="RejectCancelDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="RejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="RejectDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="RejectDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="RejectDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="RejectDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Уведомление о привлечении иного лица для взаимодействия</Text>
+      </MyObject>
+
+      <MyObject Name="OtherAgentDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="OtherAgentDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="OtherAgentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="OtherAgentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>12</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="OtherAgentDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="RequestLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="OtherAgentDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="RejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="RejectDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="RejectDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="RejectDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="RejectDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Обращения должника</Text>
+      </MyObject>
+
+      <MyObject Name="RequestTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="RequestLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="RequestLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AgentAddressTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="RequestTextBox">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="RequestLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>13</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Parameter Name="Request" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="RequestResponseLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="RequestTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="RejectDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="RejectDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="RejectDateLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="RejectDateLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="RejectDateLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="RejectDateLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Ответы на обращения должника</Text>
+      </MyObject>
+
+      <MyObject Name="RequestResponseTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="RequestResponseLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="RequestResponseLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="AgentAddressTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="RequestResponseLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>14</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Parameter Name="RequestResponse" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Condition Name="AgentEmailTextBoxIsNullOrEmptyCondition" />
+                  </Not>
+                  <Not>
+                    <Condition Name="AgentEmailTextBoxIsEmailCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Некорректный адрес эл. почты.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

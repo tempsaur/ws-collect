@@ -1,0 +1,1136 @@
+<?xml version="1.0"?>
+<Form Name="CollectApplicationTypeEditForm" Width="500" Height="380" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ApplicationTypeId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование типа заявления</Then>
+        </Case>
+        <Case>Добавление типа заявления</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ApplicationTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ApplicationTypeByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ApplicationTypeId">
+            <Value>
+              <Parameter Name="ApplicationTypeId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypeTaxPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ApplicationTypeTaxByApplicationTypeIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ApplicationTypeTaxId" />
+          <Field Name="ApplicationTypeId" />
+          <Field Name="SumMin" />
+          <Field Name="SumMax" />
+          <Field Name="MinTax" />
+          <Field Name="Percent" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ApplicationTypeId">
+            <Value>
+              <Parameter Name="ApplicationTypeId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypeTaxConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="ApplicationTypeTaxPrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="ApplicationTypeTaxId" />
+        <Field Name="ApplicationTypeId" />
+        <Field Name="SumMin" />
+        <Field Name="SumMax" />
+        <Field Name="MinTax" />
+        <Field Name="Percent" />
+        <Field Name="ID" Type="Value">
+          <Object Name="CounterVariable" />
+        </Field>
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypeSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Model">
+          <Value>
+            <Command Name="ApplicationTypeDictionarySerializeToJsonCommand" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ApplicationTypeSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ApplicationTypeTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApplicationTypeTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ApplicationTypeTaxSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApplicationTypeTaxDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ApplicationTypeTaxCountGreaterZeroCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApplicationTypeTaxDatabaseTable">
+            <Property Name="RowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="IntervalsWithoutSpacesCondition" Type="NotLessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Array>
+                <Source>
+                  <Object Name="IntersactionCountVariable" />
+                </Source>
+                <Select>
+                  <Items>
+                    <Item Type="Index">1</Item>
+                  </Items>
+                </Select>
+                <DataTypeFormat Type="DecimalDataType" Format="N2" />
+              </Array>
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <Value>0,01</Value>
+              <DataType Type="DecimalDataType" />
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeTaxDatabaseTable">
+                  <Property Name="RowsCount" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Minus>
+          </Formula>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="IntervalsStartWithZeroCountGreaterZeroCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="ApplicationTypeTaxDatabaseTable">
+                <Property Name="ArrayData" />
+              </Object>
+            </Source>
+            <Filter>
+              <Index Value="3" />
+              <Value>0</Value>
+              <DataType Type="DecimalDataType" />
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="IntersactionCountGreaterZeroCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="IntersactionCountVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <Value>True</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="IncorrectRangeCountGreaterZeroCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="IncorrectRangeCountVariable" />
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ApplicationTypeTaxAddRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApplicationTypeTaxDatabaseTable">
+        <Property Name="AddRow">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ID</Item>
+                <Item>SumMin</Item>
+                <Item>SumMax</Item>
+                <Item>MinTax</Item>
+                <Item>Percent</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Input />
+                </Item>
+                <Item>0</Item>
+                <Item>0</Item>
+                <Item>0</Item>
+                <Item>0</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="ApplicationTypeTaxDeleteRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApplicationTypeTaxDatabaseTable">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <Object Name="ApplicationTypeTaxDatabaseTable">
+                <Property Name="SelectedRowIndex" />
+              </Object>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="ApplicationTypeDictionaryVariableRefreshCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApplicationTypeDictionaryVariable">
+        <Property Name="Refresh" />
+      </Object>
+    </Command>
+
+    <Command Name="ApplicationTypeDictionarySerializeToJsonCommand" Type="SerializeToJsonCommand" Assembly="Commands">
+      <Variable>
+        <Object Name="ApplicationTypeDictionaryVariable" />
+      </Variable>
+    </Command>
+
+    <Command Name="ApplicationTypeSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ApplicationTypeSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ApplicationTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ApplicationTypeId">
+        <Command Name="ApplicationTypeSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="ApplicationTypeDictionaryVariableRefreshCommand" />
+        <Command Name="ApplicationTypeDictionarySerializeToJsonCommand" />
+        <Command Name="ApplicationTypeSaveCommand" />
+        <Command Name="ApplicationTypeIdValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="ApplicationTypeTextBox" />
+      <ConditionExpression>
+        <Condition Name="ApplicationTypeTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип заявления" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ApplicationTypeTaxDatabaseTable" />
+      <ConditionExpression>
+        <Not>
+          <Condition Name="ApplicationTypeTaxCountGreaterZeroCondition" />
+        </Not>
+      </ConditionExpression>
+      <AsteriskHint>Количество параметров расчета госпошлины должно быть больше нуля.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ApplicationTypeTaxDatabaseTable" />
+      <ConditionExpression>
+        <Condition Name="IntersactionCountGreaterZeroCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Диапазоны сумм заявления не могут пересекаться.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ApplicationTypeTaxDatabaseTable" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="IntervalsWithoutSpacesCondition" />
+          </Not>
+          <Condition Name="IntervalsStartWithZeroCountGreaterZeroCondition" />
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Между диапазонами сумм заявления есть пробелы.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ApplicationTypeTaxDatabaseTable" />
+      <ConditionExpression>
+        <Condition Name="IncorrectRangeCountGreaterZeroCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Некорректный диапазон сумм.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="CounterVariable" Type="CounterVariable" Assembly="WorkflowServer" ChangeForm="False" />
+
+    <MyObject Name="ApplicationTypeDictionaryVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Structure Type="Dictionary" Refresh="False">
+          <Key Name="common">
+            <Structure Type="Dictionary" Refresh="False">
+              <Key Name="application_type_id">
+                <DataTypeConvert Type="IntegerDataType">
+                  <Parameter Name="ApplicationTypeId" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="application_type_title">
+                <Object Name="ApplicationTypeTextBox" Refresh="False" />
+              </Key>
+            </Structure>
+          </Key>
+          <Key Name="application_type_tax_list">
+            <Array>
+              <Source>
+                <Object Name="ApplicationTypeTaxDatabaseTable">
+                  <Property Name="DictionaryArrayData" />
+                </Object>
+              </Source>
+              <Select>
+                <Items>
+                  <Item Type="Field">ApplicationTypeTaxId</Item>
+                  <Item Type="Field">SumMin</Item>
+                  <Item Type="Field">SumMax</Item>
+                  <Item Type="Field">MinTax</Item>
+                  <Item Type="Field">Percent</Item>
+                </Items>
+              </Select>
+              <ToDictionary>
+                <Key Name="application_type_tax_id" Index="0" />
+                <Key Name="sum_min" Index="1" />
+                <Key Name="sum_max" Index="2" />
+                <Key Name="min_tax" Index="3" />
+                <Key Name="percent" Index="4" />
+              </ToDictionary>
+            </Array>
+          </Key>
+        </Structure>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="IntersactionCountVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Array>
+          <Source>
+            <Object Name="ApplicationTypeTaxDatabaseTable">
+              <Property Name="ArrayData" />
+            </Object>
+          </Source>
+          <Select>
+            <Items>
+              <Item Type="Index">1</Item>
+              <Item Type="Index">3</Item>
+              <Item Type="Index">4</Item>
+              <Item Type="Value">join</Item>
+            </Items>
+          </Select>
+          <FullJoin>
+            <OuterArray>
+              <Array>
+                <Source>
+                  <Object Name="ApplicationTypeTaxDatabaseTable">
+                    <Property Name="ArrayData" />
+                  </Object>
+                </Source>
+                <Select>
+                  <Items>
+                    <Item Type="Index">1</Item>
+                    <Item Type="Index">3</Item>
+                    <Item Type="Index">4</Item>
+                    <Item Type="Value">join</Item>
+                  </Items>
+                </Select>
+              </Array>
+            </OuterArray>
+            <Keys>
+              <Inner Index="3" />
+              <Outer Index="3" />
+            </Keys>
+            <Result>
+              <Inner Index="0" />
+              <Inner Index="1" />
+              <Inner Index="2" />
+              <Outer Index="0" />
+              <Outer Index="1" />
+              <Outer Index="2" />
+            </Result>
+          </FullJoin>
+          <Select>
+            <Items>
+              <Item Type="Expression">
+                <Expression>[0] != [3]  <![CDATA[&&]]> [4] <![CDATA[<=]]> [2] <![CDATA[&&]]> [5] >= [1]</Expression>
+              </Item>
+              <Item Type="Expression">
+                <Expression>[4] - [2]</Expression>
+              </Item>
+            </Items>
+          </Select>
+        </Array>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="IncorrectRangeCountVariable" Type="Variable" Assembly="SimpleControls">
+      <Value>
+        <Array>
+          <Source>
+            <Object Name="ApplicationTypeTaxDatabaseTable">
+              <Property Name="ArrayData" />
+            </Object>
+          </Source>
+          <Select>
+            <Items>
+              <Item Type="Index">3</Item>
+              <Item Type="Index">4</Item>
+              <Item Type="Expression">
+                <Expression>[3] >= [4]</Expression>
+              </Item>
+            </Items>
+          </Select>
+          <Filter>
+            <Index Value="2" />
+            <Value>True</Value>
+            <DataType Type="BooleanDataType" />
+          </Filter>
+          <Count />
+        </Array>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ApplicationTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ApplicationTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Тип заявления</Text>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <DataConnection SourceDataConnection="ApplicationTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeTaxLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Параметры расчета госпошлины</Text>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeTaxDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ApplicationTypeTaxLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>200</Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ApplicationTypeTaxAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>30</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <AllowResizeColumns Value="False" />
+        <AllowResizeRows Value="False" />
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>True</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <AllowFilterColumns Value="False" />
+        <AllowOrderColumns Value="True" />
+        <ColumnHeadersHeight Value="52" />
+        <SourceDataConnection Name="ApplicationTypeTaxConvertDataConnection" />
+        <Columns>
+          <Column Name="ApplicationTypeTaxId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ID" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoSizeMode Value="Fill" />
+            <AutoFill Type="RowNumber" />
+          </Column>
+          <Column Name="SumMin" Type="DatabaseTableColumnNumericBox" Assembly="DatabaseTableColumnControls">
+            <Title>Минимальная сумма заявления</Title>
+            <Width>90</Width>
+            <AutoSizeMode Value="Fill" />
+            <ThousandsSeparator Value="True" />
+            <Increment Value="1000" />
+            <Minimum Value="0" />
+            <DecimalPlaces Value="2" />
+            <DataType Type="DecimalDataType" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+          <Column Name="SumMax" Type="DatabaseTableColumnNumericBox" Assembly="DatabaseTableColumnControls">
+            <Title>Максимальная сумма заявления</Title>
+            <Width>90</Width>
+            <AutoSizeMode Value="Fill" />
+            <ThousandsSeparator Value="True" />
+            <Increment Value="1000" />
+            <Minimum Value="0" />
+            <DecimalPlaces Value="2" />
+            <DataType Type="DecimalDataType" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+          <Column Name="MinTax" Type="DatabaseTableColumnNumericBox" Assembly="DatabaseTableColumnControls">
+            <Title>Минимальная пошлина</Title>
+            <Width>90</Width>
+            <AutoSizeMode Value="Fill" />
+            <ThousandsSeparator Value="True" />
+            <Increment Value="1000" />
+            <Minimum Value="0" />
+            <DecimalPlaces Value="2" />
+            <DataType Type="DecimalDataType" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+          <Column Name="Percent" Type="DatabaseTableColumnNumericBox" Assembly="DatabaseTableColumnControls">
+            <Title>Процент на сумму выше минимальной</Title>
+            <Width>90</Width>
+            <AutoSizeMode Value="Fill" />
+            <ThousandsSeparator Value="True" />
+            <Increment Value="1" />
+            <Minimum Value="0" />
+            <Maximum Value="100" />
+            <DecimalPlaces Value="2" />
+            <DataType Type="DecimalDataType" />
+            <Alignment Value="MiddleRight" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor>
+            <Expression>SumMin >= SumMax</Expression>
+            <Color>Red</Color>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeTaxAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ApplicationTypeTaxDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeTaxDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Добавить строку параметров</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ApplicationTypeTaxAddRowCommand">
+            <Object Name="CounterVariable" />
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeTaxDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeTaxAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeTaxAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ApplicationTypeTaxAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ApplicationTypeTaxAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Удалить строку параметров</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ApplicationTypeTaxDeleteRowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ApplicationTypeTaxSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите запись для удаления.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ApplicationTypeTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Поле "Тип заявления" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="IncorrectRangeCountGreaterZeroCondition" />
+              </When>
+              <Then>Некорректный диапазон сумм.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="IntersactionCountGreaterZeroCondition" />
+              </When>
+              <Then>Диапазоны сумм заявления не могут пересекаться.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Condition Name="IntervalsWithoutSpacesCondition" />
+                  </Not>
+                  <Condition Name="IntervalsStartWithZeroCountGreaterZeroCondition" />
+                </And>
+              </When>
+              <Then>Между диапазонами сумм заявления не должно быть пробелов.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

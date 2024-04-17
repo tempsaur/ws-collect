@@ -1,0 +1,794 @@
+<?xml version="1.0"?>
+<Form Name="CollectTempAudioFileReferenceEditForm" Width="430" Height="197" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ClientId" />
+    <Parameter Name="ClientIds" />
+    <Parameter Name="LoanIds" />
+    <Parameter Name="Mode">audio</Parameter>
+    <Parameter Name="Title">
+      <String>
+        <Format>{0} привязки {1}</Format>
+        <Items>
+          <Item>
+            <Switch>
+              <Case>
+                <When>
+                  <Parameter Name="Edit" />
+                </When>
+                <Then>Редактирование</Then>
+              </Case>
+              <Case>Добавление</Case>
+            </Switch>
+          </Item>
+          <Item>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="ModeEqualAudioCondition" />
+                </When>
+                <Then>аудиозаписи</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Condition Name="ModeEqualTaskCondition" />
+                </When>
+                <Then>к задаче</Then>
+              </Case>
+              <Case />
+            </Switch>
+          </Item>
+        </Items>
+      </String>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ClientPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClientSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClientId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <And>
+              <Filter>
+                <Field NativeName="Archive" />
+                <Value>False</Value>
+                <DataType Type="BooleanDataType" />
+              </Filter>
+              <Filter Type="NotIn">
+                <Field NativeName="ClientId" />
+                <Value>
+                  <Parameter Name="ClientIds" />
+                </Value>
+                <DataType Type="IntegerDataType" />
+              </Filter>
+            </And>
+            <Filter>
+              <Field NativeName="ClientId" />
+              <Value>
+                <Parameter Name="ClientId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="LoanPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="LoanClientSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanId" />
+          <Field Name="ClientId" />
+          <Field Name="CreditNumber" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Field NativeName="LoanId" />
+              <Value>
+                <Parameter Name="LoanIds" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="LoanSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="LoanPrimaryGetDataConnection" />
+      <Filter>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="ClientComboBoxIsNullCondition" />
+            </Not>
+            <Condition Name="ModeEqualTaskCondition" />
+          </And>
+        </Enabled>
+        <Field NativeName="ClientId" />
+        <Value>
+          <Object Name="ClientComboBox" />
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ClientComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="LoanCheckedComboBoxNotSelectedCondition" Type="LessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="LoanCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ModeEqualAudioCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Mode" />
+        </Item>
+        <Item>audio</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ModeEqualTaskCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Mode" />
+        </Item>
+        <Item>task</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="LoanIdsValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="LoanIds">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="ClientIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ClientId">
+        <Object Name="ClientComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="LoanCheckedComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="LoanCheckedComboBox">
+        <Parameter Name="LoanIds" />
+      </Object>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="LoanIdsValueSetCommand" />
+        <If>
+          <When>
+            <And>
+              <Condition Name="LoanCheckedComboBoxNotSelectedCondition" />
+              <Condition Name="ModeEqualTaskCondition" />
+            </And>
+          </When>
+          <Then>
+            <Command Name="LoanIdsValueSetCommand">
+              <Structure Type="List">
+                <Item />
+              </Structure>
+            </Command>
+          </Then>
+          <Else>
+            <Command Name="LoanIdsValueSetCommand">
+              <Object Name="LoanCheckedComboBox" />
+            </Command>
+          </Else>
+        </If>
+        <Command Name="ClientIdValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="LoanCheckedComboBoxValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="ClientComboBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="ClientComboBoxIsNullCondition" />
+          <Or>
+            <Condition Name="ModeEqualAudioCondition" />
+            <And>
+              <Condition Name="LoanCheckedComboBoxNotSelectedCondition" />
+              <Condition Name="ModeEqualTaskCondition" />
+            </And>
+          </Or>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="ModeEqualAudioCondition" />
+            </When>
+            <Then>Поле "Должник" должно быть заполнено.</Then>
+          </Case>
+          <Case>
+            <When>
+              <Condition Name="ModeEqualTaskCondition" />
+            </When>
+            <Then>Хотя бы одно из полей "Должник" или "Список дел" должно быть заполнено.</Then>
+          </Case>
+        </Switch>
+      </AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="LoanCheckedComboBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="LoanCheckedComboBoxNotSelectedCondition" />
+          <Or>
+            <Condition Name="ModeEqualAudioCondition" />
+            <And>
+              <Condition Name="ClientComboBoxIsNullCondition" />
+              <Condition Name="ModeEqualTaskCondition" />
+            </And>
+          </Or>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="ModeEqualAudioCondition" />
+            </When>
+            <Then>Поле "Список дел" должно быть заполнено.</Then>
+          </Case>
+          <Case>
+            <When>
+              <Condition Name="ModeEqualTaskCondition" />
+            </When>
+            <Then>Хотя бы одно из полей "Должник" или "Список дел" должно быть заполнено.</Then>
+          </Case>
+        </Switch>
+      </AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ClientLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ClientLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Должник</Text>
+      </MyObject>
+
+      <MyObject Name="ClientComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="ClientLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ClientId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="ClientId" />
+        </Value>
+        <Enabled>
+          <Not>
+            <Parameter Name="Edit" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="LoanLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Список дел</Text>
+      </MyObject>
+
+      <MyObject Name="LoanCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <Change User="True" Source="True" ValueSet="False" />
+        <Top>
+          <Object Name="LoanLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="LoanLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <ValueList>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="LoanSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="LoanId" />
+                  <Field Name="CreditNumber" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Distinct />
+          </Array>
+        </ValueList>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ModeEqualTaskCondition" />
+              </When>
+              <Then>Хотя бы одно из полей "Должник" или "Список дел" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="ClientComboBoxIsNullCondition" />
+              </When>
+              <Then>Поле "Должник" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="LoanCheckedComboBoxNotSelectedCondition" />
+              </When>
+              <Then>Поле "Список дел" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

@@ -1,0 +1,927 @@
+<?xml version="1.0"?>
+<Form Name="CollectExcelImportColumnListListForm" Width="1170" Height="600" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Список колонок для загрузки</Parameter>
+    <Parameter Name="ImportType">loan</Parameter>
+    <Parameter Name="Updated" />
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="Yellow" Red="242" Green="234" Blue="158" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ExcelImportColumnListPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ExcelImportColumnListSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ExcelImportColumnId" />
+          <Field Name="CanEdit" />
+          <Field Name="Closed" />
+          <Field Name="Main" />
+          <Field Name="HasChildren" />
+          <Field Name="TreeStateId" />
+          <Field Name="ItemPath" />
+          <Field Name="ExcelImportColumnTitle" />
+          <Field Name="Description" />
+          <Field Name="CategoryMandatory" />
+          <Field Name="ColumnMandatory" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ImportType">
+            <Value>
+              <Parameter Name="ImportType" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TreeStateInsertSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ItemPath">
+          <Value>
+            <Object Name="CurrentTreeItemPathVariable" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="FormName">
+          <Value>ExcelImportColumnList</Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TreeStateInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TreeStateDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TreeStateId">
+          <Value>
+            <Object Name="CurrentTreeStateIdVariable" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TreeStateDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <!-- проверка что выбранная строка в левом дереве является узлом дерева -->
+    <Condition Name="TreeSelectedRowHasChildrenCondition" Type="EqualCondition" Assembly="Conditions">
+      <AlwaysChange Value="True" />
+      <Items>
+        <Item>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="ExcelImportColumnListDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">HasChildren</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <!-- проверка что в левой таблице нажали на ячейку State -->
+    <Condition Name="LastCellClickedLeftTreeColumnNameEqualStateCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="LastCellClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>State</Item>
+      </Items>
+    </Condition>
+
+    <!-- проверка что нажали на ячейку левую таблицу -->
+    <Condition Name="TreeCellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="ExcelImportColumnListDatabaseTable" />
+    </Condition>
+
+    <!-- проверка, что узел дерева свернут -->
+    <Condition Name="TreeLastClickedRowClosedEqualTrueCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="ExcelImportColumnListDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">Closed</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ExcelImportColumnListSelectedCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ExcelImportColumnListDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="ExcelImportColumnListDatabaseTable" />
+    </Condition>
+
+    <Condition Name="ExcelImportColumnDatabaseTableSelectedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Condition Name="ExcelImportColumnListSelectedCondition" />
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">CanEdit</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ExcelImportColumnTitleIsNotEmptyCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ExcelImportColumnTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ImportTypeEqualLoanCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="ImportType" />
+        </Item>
+        <Item>loan</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ImportTypeEqualPaymentCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="ImportType" />
+        </Item>
+        <Item>payment</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="TreeLoadingVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TreeLoadingVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- установка пути текущего узла -->
+    <Command Name="CurrentTreeItemPathVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentTreeItemPathVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- установка текущего состояния узла -->
+    <Command Name="CurrentTreeStateIdVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentTreeStateIdVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- установка всех переменных значеними из дерева -->
+    <Command Name="TreeVariableSetSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="CurrentTreeItemPathVariableValueSetCommand">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="ExcelImportColumnListDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">ItemPath</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Command>
+        <Command Name="CurrentTreeStateIdVariableValueSetCommand">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="CellValue">
+              <Parameters>
+                <Parameter Name="RowIndex">
+                  <Object Name="ExcelImportColumnListDatabaseTable">
+                    <Property Name="LastCellClickedRowIndex" />
+                  </Object>
+                </Parameter>
+                <Parameter Name="ColumnName">TreeStateId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Command>
+      </Commands>
+    </Command>
+
+    <Command Name="TreeStateAddSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TreeStateInsertSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TreeStateRemoveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TreeStateDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ExcelImportColumnListPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ExcelImportColumnListPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ExcelImportColumnClipboardSetCommand" Type="ClipboardSetCommand" Assembly="Commands">
+      <ClipboardText>
+        <Object Name="ExcelImportColumnListDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">ExcelImportColumnTitle</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </ClipboardText>
+    </Command>
+
+    <Command Name="ExcelImportColumnClipboardMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Копирование наименования колонки</Caption>
+      <Text>Наименование колонки скопировано в буфер обмена.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="TemplateVariableClipboardSetSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="ExcelImportColumnTitleIsNotEmptyCondition" />
+          </When>
+          <Then>
+            <Command Name="ExcelImportColumnClipboardSetCommand" />
+            <Command Name="ExcelImportColumnClipboardMessageBoxCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="ExcelImportColumnListExportToDocxCommand" Type="ExportToDocxCommand" Assembly="Commands">
+      <TemplateFileName>Templates\ExportVariable.docx</TemplateFileName>
+      <Parameters>
+        <Parameter Name="Title">Список колонок для использования при импорте данных из Excel</Parameter>
+        <Parameter Name="VariableTitleTitle">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">ExcelImportColumnTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="DescriptionTitle">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="ColumnTitle">
+              <Parameters>
+                <Parameter Name="ColumnName">Description</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="VariableTitle">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">ExcelImportColumnTitle</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="Description">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="Column">
+              <Parameters>
+                <Parameter Name="ColumnName">Description</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ExcelImportColumnEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectExcelImportColumnEdit.xml</Xml>
+      <Multiple Allow="False" Reload="False" />
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="ExcelImportColumnId">
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ExcelImportColumnId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ImportType">
+          <Parameter Name="ImportType" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="HelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Список колонок</Caption>
+      <Text>
+        <String>
+          <Format>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="ImportTypeEqualLoanCondition" />
+                </When>
+                <Then>{0}\r\r{1}\r\r{2}\r\r{3}\r\r{4}</Then>
+              </Case>
+              <Case>{0}\r\r{1}\r\r{2}</Case>
+            </Switch>
+          </Format>
+          <Items>
+            <Item>I.   Для копирования наименования колонки можно использовать соответствующую кнопку выше или двойной клик по строке.</Item>
+            <Item>II.  При использовании в файле загрузки колонок, которые могут быть разобраны, после выбора файла появится окно с выбором настроек разбора колонки.</Item>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="ImportTypeEqualLoanCondition" />
+                  </When>
+                  <Then>III. Колонки и группы колонок, выделенные жирным шрифтом, являются обязательными для заполнения.</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="ImportTypeEqualPaymentCondition" />
+                  </When>
+                  <Then>III. Колонки, которые предназначены для заполнения полей "Дата оплаты" и "Сумма оплаты", являются обязательными для файла в целом, без этих полей загрузка данных невозможна.</Then>
+                </Case>
+                <Case />
+              </Switch>
+            </Item>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="ImportTypeEqualLoanCondition" />
+                  </When>
+                  <Then>Например, для обновления или добавления информации по телефону должника необходимо наличие в файле заполненной колонки "Номер телефона".</Then>
+                </Case>
+                <Case />
+              </Switch>
+            </Item>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="ImportTypeEqualLoanCondition" />
+                  </When>
+                  <Then>IV.  Колонки, которые предназначены для заполнения полей "Фамилия", "Имя", "Отчество", "Дата рождения", "Номер КД" и "Дата КД", являются обязательными для файла в целом, без этих полей загрузка данных невозможна.</Then>
+                </Case>
+                <Case />
+              </Switch>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="None" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <And>
+          <Condition Name="TreeSelectedRowHasChildrenCondition" />
+          <Condition Name="LastCellClickedLeftTreeColumnNameEqualStateCondition" />
+          <Condition Name="TreeCellClickCondition" />
+        </And>
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Not>
+              <Object Name="TreeLoadingVariable" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="TreeLoadingVariableValueSetCommand">True</Command>
+            <Command Name="TreeVariableSetSequentialCommand" />
+            <If>
+              <When>
+                <Condition Name="TreeLastClickedRowClosedEqualTrueCondition" />
+              </When>
+              <Then>
+                <Command Name="TreeStateRemoveSaveCommand" />
+              </Then>
+              <Else>
+                <Command Name="TreeStateAddSaveCommand" />
+              </Else>
+            </If>
+            <Command Name="ExcelImportColumnListPrimaryGetDataConnectionRefreshCommand" />
+            <Command Name="TreeLoadingVariableValueSetCommand">False</Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ExcelImportColumnListDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TemplateVariableClipboardSetSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ExcelImportColumnEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ExcelImportColumnListPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <!-- флаг, что дерево загружаются -->
+    <MyObject Name="TreeLoadingVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <!-- путь выбранного узла -->
+    <MyObject Name="CurrentTreeItemPathVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <!-- состояние выбранного узла -->
+    <MyObject Name="CurrentTreeStateIdVariable" Type="Variable" Assembly="SimpleControls">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ExcelImportColumnListDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ExcelImportColumnListDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ExcelImportColumnListDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ExcelImportColumnEditButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <AutoSizeRowsMode Value="AllCells" />
+        <SourceDataConnection Name="ExcelImportColumnListPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="State" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Width>30</Width>
+            <Title />
+            <Calculate>
+              <Expression>IIF(HasChildren, IIF(Closed, '+', '‒'), '')</Expression>
+            </Calculate>
+            <Alignment Value="MiddleCenter" />
+            <AllowSort Value="False" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="Closed" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="HasChildren" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Main" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="TreeStateId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ItemPath" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ExcelImportColumnId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="CanEdit" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="CategoryMandatory" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ColumnMandatory" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ExcelImportColumnTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование колонки</Title>
+            <Width>370</Width>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+          </Column>
+          <Column Name="Description" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Описание</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <Alignment Value="TopLeft" />
+            <WrapMode Value="True" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <FontStyle Name="TitleBoldFont">
+            <Columns>
+              <Column Name="Description" />
+            </Columns>
+            <Expression>CategoryMandatory</Expression>
+          </FontStyle>
+          <FontStyle Name="TitleBoldFont">
+            <Columns>
+              <Column Name="ExcelImportColumnTitle" />
+            </Columns>
+            <Expression>ColumnMandatory</Expression>
+          </FontStyle>
+          <BackColor Name="Gray200">
+            <Expression>HasChildren AND NOT Main</Expression>
+          </BackColor>
+          <BackColor Name="Yellow">
+            <Expression>Main</Expression>
+          </BackColor>
+          <FontStyle Name="TitleBoldFont">
+            <Expression>Main</Expression>
+          </FontStyle>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="ExcelImportColumnEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ExcelImportColumnListDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>2</TabIndex>
+        <Hint>Редактировать колонку...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ExcelImportColumnEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ExcelImportColumnDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите колонку для редактирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="ExcelImportColumnListCopyButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ExcelImportColumnEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ExcelImportColumnEditButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ExcelImportColumnEditButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ExcelImportColumnEditButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Скопировать наименование колонки в буфер обмена</Hint>
+        <Image>Images\24x24\copy.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Enabled>
+          <Condition Name="ExcelImportColumnListSelectedCondition" />
+        </Enabled>
+        <Commands>
+          <Command Name="TemplateVariableClipboardSetSequentialCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите колонку для копирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="ExcelImportColumnListExportButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ExcelImportColumnListCopyButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ExcelImportColumnEditButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ExcelImportColumnEditButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ExcelImportColumnEditButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Экспорт списка колонок в Word</Hint>
+        <Image>Images\24x24\file_word.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ExcelImportColumnListExportToDocxCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="HelpButton" Type="Button" Assembly="BaseControls">
+        <Bottom>
+          <Object Name="ExcelImportColumnListDatabaseTable">
+            <Property Name="Bottom" />
+          </Object>
+        </Bottom>
+        <Left>
+          <Object Name="ExcelImportColumnListCopyButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ExcelImportColumnListCopyButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ExcelImportColumnListCopyButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <Image>Images\24x24\help.png</Image>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Commands>
+          <Command Name="HelpMessageBoxCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

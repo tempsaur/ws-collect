@@ -1,0 +1,4045 @@
+<?xml version="1.0"?>
+<Form Name="CollectAddressEditForm" Width="490" Height="610" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="Type">common</Parameter>
+    <Parameter Name="CurrentAddressTypeIds" />
+    <Parameter Name="CurrentAddress" />
+    <Parameter Name="ClientId" />
+    <Parameter Name="OspId" />
+    <Parameter Name="ID" />
+    <Parameter Name="AddressId" />
+    <Parameter Name="AddressTypeId" />
+    <Parameter Name="AddressType" />
+    <Parameter Name="AddressTypeTitle" />
+    <Parameter Name="AddressString" />
+    <Parameter Name="AddressOkato" />
+    <Parameter Name="AddressIndex" />
+    <Parameter Name="AddressRegionId" />
+    <Parameter Name="AddressDistrictId" />
+    <Parameter Name="AddressDistrict" />
+    <Parameter Name="AddressCityTypeId" />
+    <Parameter Name="AddressCityId" />
+    <Parameter Name="AddressCity" />
+    <Parameter Name="AddressCityDistrict" />
+    <Parameter Name="AddressStreetTypeId" />
+    <Parameter Name="AddressStreetId" />
+    <Parameter Name="AddressStreet" />
+    <Parameter Name="AddressBuilding" />
+    <Parameter Name="AddressBlock" />
+    <Parameter Name="AddressStructure" />
+    <Parameter Name="AddressFlat" />
+    <Parameter Name="Address" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование адреса</Then>
+        </Case>
+        <Case>Добавление адреса</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Height">
+      <Switch>
+        <Case>
+          <When>
+            <Or>
+              <Condition Name="TypeEqualCourtCondition" />
+              <Condition Name="TypeEqualOspCondition" />
+            </Or>
+          </When>
+          <Then>515</Then>
+        </Case>
+        <Case>610</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ListAddressPermission" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientAddressPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>
+        <Not>
+          <Condition Name="TypeEqualCommonCondition" />
+        </Not>
+      </ManualLoad>
+      <SqlQuery Name="ClientAddressByClientIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressId" />
+          <Field Name="AddressTypeId" />
+          <Field Name="AddressType" />
+          <Field Name="AddressString" />
+          <Field Name="AddressOkato" />
+          <Field Name="AddressIndex" />
+          <Field Name="AddressRegionId" />
+          <Field Name="AddressDistrictId" />
+          <Field Name="AddressCityDistrict" />
+          <Field Name="AddressCityTypeId" />
+          <Field Name="AddressCityId" />
+          <Field Name="AddressStreetTypeId" />
+          <Field Name="AddressStreetId" />
+          <Field Name="AddressBuilding" />
+          <Field Name="AddressBlock" />
+          <Field Name="AddressStructure" />
+          <Field Name="AddressFlat" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ClientId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="ClientId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientAddressSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ClientAddressPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="AddressId" />
+        <Value>
+          <Parameter Name="AddressId" />
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="AddressTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressTypeId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="OtherAddressTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="AddressTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Title" />
+        <Value>Другой</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="RegistrationAddressTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="AddressTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Title" />
+        <Value>Регистрация</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ActualAddressTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="AddressTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Title" />
+        <Value>Проживание</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="AddressRegionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressRegionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressRegionId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressDistrictPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressDistrictSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressDistrictId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Field NativeName="AddressDistrictId" />
+              <Value>
+                <Parameter Name="AddressDistrictId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressCityTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressCityTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressCityTypeId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressCityPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressCitySelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressCityId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Field NativeName="AddressCityId" />
+              <Value>
+                <Parameter Name="AddressCityId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressStreetTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressStreetTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressStreetTypeId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AddressStreetPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AddressStreetSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="AddressStreetId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter Type="In">
+              <Field NativeName="AddressStreetId" />
+              <Value>
+                <Parameter Name="AddressStreetId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientAddressUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="AddressId">
+          <Value>
+            <Parameter Name="AddressId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressTypeId">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <And>
+                    <Condition Name="AddressTypeComboBoxIsNullCondition" />
+                    <Not>
+                      <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+                    </Not>
+                  </And>
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="OtherAddressTypeSecondaryGetDataConnection">
+                    <Fields>
+                      <Field Name="AddressTypeId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="AddressTypeComboBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressType">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <And>
+                    <Condition Name="AddressTypeComboBoxIsNullCondition" />
+                    <Not>
+                      <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+                    </Not>
+                  </And>
+                </When>
+                <Then>
+                  <Object Name="AddressTypeComboBox">
+                    <Property Name="VisibleText" />
+                  </Object>
+                </Then>
+              </Case>
+              <Case />
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressString">
+          <Value>
+            <Object Name="AddressStringTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressOkato">
+          <Value>
+            <Object Name="AddressOkatoTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressIndex">
+          <Value>
+            <Object Name="AddressIndexTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressRegionId">
+          <Value>
+            <Object Name="AddressRegionComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressDistrictId">
+          <Value>
+            <Object Name="AddressDistrictComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressDistrict">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <And>
+                    <Condition Name="AddressDistrictComboBoxIsNullCondition" />
+                    <Not>
+                      <Condition Name="AddressDistrictComboBoxIsEmptyCondition" />
+                    </Not>
+                  </And>
+                </When>
+                <Then>
+                  <Object Name="AddressDistrictComboBox">
+                    <Property Name="VisibleText" />
+                  </Object>
+                </Then>
+              </Case>
+              <Case />
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressCityDistrict">
+          <Value>
+            <Object Name="AddressCityDistrictTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressCityTypeId">
+          <Value>
+            <Object Name="AddressCityTypeComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressCityId">
+          <Value>
+            <Object Name="AddressCityComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressCity">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <And>
+                    <Condition Name="AddressCityComboBoxIsNullCondition" />
+                    <Not>
+                      <Condition Name="AddressCityComboBoxIsEmptyCondition" />
+                    </Not>
+                  </And>
+                </When>
+                <Then>
+                  <Object Name="AddressCityComboBox">
+                    <Property Name="VisibleText" />
+                  </Object>
+                </Then>
+              </Case>
+              <Case />
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressStreetTypeId">
+          <Value>
+            <Object Name="AddressStreetTypeComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressStreetId">
+          <Value>
+            <Object Name="AddressStreetComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressStreet">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <And>
+                    <Condition Name="AddressStreetComboBoxIsNullCondition" />
+                    <Not>
+                      <Condition Name="AddressStreetComboBoxIsEmptyCondition" />
+                    </Not>
+                  </And>
+                </When>
+                <Then>
+                  <Object Name="AddressStreetComboBox">
+                    <Property Name="VisibleText" />
+                  </Object>
+                </Then>
+              </Case>
+              <Case />
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressBuilding">
+          <Value>
+            <Object Name="AddressBuildingTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressBlock">
+          <Value>
+            <Object Name="AddressBlockTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressStructure">
+          <Value>
+            <Object Name="AddressStructureTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="AddressFlat">
+          <Value>
+            <Object Name="AddressFlatTextBox" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ClientAddressUpdateSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="OspByAddressPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="OspByAddressSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="OspId" />
+          <Field Name="OspTitle" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="Address" RefreshQuery="False">
+            <Value>
+              <Parameter Name="Address" />
+            </Value>
+          </Parameter>
+        </Parameters>
+        <Filter Type="NotEqual">
+          <Field NativeName="OspId" />
+          <Value>
+            <Parameter Name="OspId" />
+          </Value>
+          <DataType Type="IntegerDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="TypeEqualCommonCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Type" />
+        </Item>
+        <Item>common</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="TypeEqualCourtCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Type" />
+        </Item>
+        <Item>court</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="TypeEqualOspCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Type" />
+        </Item>
+        <Item>osp</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AddressTypeIdEqualOtherCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AddressTypeId" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="OtherAddressTypeSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressTypeId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddressTypeEqualRegistrationCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressTypeComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="RegistrationAddressTypeSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressTypeId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddressTypeEqualActualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressTypeComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="ActualAddressTypeSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressTypeId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddressTypeIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AddressType" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressDistrictIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AddressDistrictId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressCityIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AddressCityId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStreetIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AddressStreetId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressTypeComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressTypeComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AddressRegionComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressRegionComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AddressStringTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStringTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressOkatoTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressOkatoTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressIndexTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressIndexTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressCityDistrictTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressCityDistrictTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressBuildingTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressBuildingTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressBlockTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressBlockTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStructureTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStructureTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressFlatTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressFlatTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressCityComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressCityComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressCityComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressCityComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AddressStreetComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStreetComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AddressTypeExistsCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressTypeComboBox" />
+        </Item>
+        <Item>
+          <Parameter Name="CurrentAddressTypeIds" />
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddressDistrictComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressDistrictComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressDistrictComboBoxIsEmptyCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressDistrictComboBox">
+            <Property Name="VisibleText" />
+          </Object>
+        </Item>
+        <Item />
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AddressCityTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressCityTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AddressStreetTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="AddressStreetTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ListAddressPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListAddressPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="OspAddressExistsCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OspByAddressPrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddressEqualCurrentAddressCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Address" />
+        </Item>
+        <Item>
+          <Parameter Name="CurrentAddress" />
+        </Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="AddressRegionListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressRegionList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="AddressRegionId">
+          <Object Name="AddressRegionComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddressDistrictListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressDistrictList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="AddressDistrictId">
+          <Object Name="AddressDistrictComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddressCityListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressCityList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="AddressCityId">
+          <Object Name="AddressCityComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddressStreetListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectAddressStreetList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="AddressStreetId">
+          <Object Name="AddressStreetComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="AddressTypeComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressTypeComboBox" />
+    </Command>
+
+    <Command Name="AddressTypeComboBoxTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressTypeComboBox">
+        <Property Name="Text">
+          <Parameter Name="AddressType" />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="AddressRegionComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressRegionComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="AddressDistrictComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressDistrictComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="AddressCityComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressCityComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="AddressStreetComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressStreetComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="AddressDistrictComboBoxTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressDistrictComboBox">
+        <Property Name="Text">
+          <Parameter Name="AddressDistrict" />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="AddressCityComboBoxTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressCityComboBox">
+        <Property Name="Text">
+          <Parameter Name="AddressCity" />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="AddressStreetComboBoxTextValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="AddressStreetComboBox">
+        <Property Name="Text">
+          <Parameter Name="AddressStreet" />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="AddressTypeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressType">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressTypeId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressTypeTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressTypeTitle">
+        <Switch>
+          <Case>
+            <When>
+              <Not>
+                <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+              </Not>
+            </When>
+            <Then>
+              <Object Name="AddressTypeComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressStringValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressString">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressOkatoValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressOkato">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressIndexValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressIndex">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressRegionIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressRegionId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressDistrictIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressDistrictId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressDistrictValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressDistrict">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="AddressDistrictComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="AddressDistrictComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <Object Name="AddressDistrictComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressCityDistrictValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressCityDistrict">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressCityTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressCityTypeId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressCityIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressCityId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressCityValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressCity">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="AddressCityComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="AddressCityComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <Object Name="AddressCityComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressStreetTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressStreetTypeId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressStreetIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressStreetId">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressStreetValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressStreet">
+        <Switch>
+          <Case>
+            <When>
+              <And>
+                <Condition Name="AddressStreetComboBoxIsNullCondition" />
+                <Not>
+                  <Condition Name="AddressStreetComboBoxIsEmptyCondition" />
+                </Not>
+              </And>
+            </When>
+            <Then>
+              <Object Name="AddressStreetComboBox">
+                <Property Name="VisibleText" />
+              </Object>
+            </Then>
+          </Case>
+          <Case />
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressBuildingValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressBuilding">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressBlockValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressBlock">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressStructureValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressStructure">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressFlatValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AddressFlat">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="AddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Address">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="AddressStringTextBoxIsNullOrEmptyCondition" />
+            </When>
+            <Then>
+              <Array>
+                <Source>
+                  <Structure Type="List">
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressOkatoTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>окато {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressOkatoTextBox" />
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressIndexTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>индекс {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressIndexTextBox" />
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressRegionComboBoxIsEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <Object Name="AddressRegionComboBox">
+                            <Property Name="VisibleText" />
+                          </Object>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressDistrictComboBoxIsEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>район {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressDistrictComboBox">
+                                  <Property Name="VisibleText" />
+                                </Object>
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressCityComboBoxIsEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>{0} {1}</Format>
+                            <Items>
+                              <Item>
+                                <Switch>
+                                  <Case>
+                                    <When>
+                                      <Condition Name="AddressCityTypeComboBoxIsNullCondition" />
+                                    </When>
+                                    <Then>город</Then>
+                                  </Case>
+                                  <Case>
+                                    <Object Name="AddressCityTypeComboBox">
+                                      <Property Name="VisibleText" />
+                                    </Object>
+                                  </Case>
+                                </Switch>
+                              </Item>
+                              <Item>
+                                <Object Name="AddressCityComboBox">
+                                  <Property Name="VisibleText" />
+                                </Object>
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressCityDistrictTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <Object Name="AddressCityDistrictTextBox" />
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressStreetComboBoxIsEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>{0} {1}</Format>
+                            <Items>
+                              <Item>
+                                <Switch>
+                                  <Case>
+                                    <When>
+                                      <Condition Name="AddressStreetTypeComboBoxIsNullCondition" />
+                                    </When>
+                                    <Then>улица</Then>
+                                  </Case>
+                                  <Case>
+                                    <Object Name="AddressStreetTypeComboBox">
+                                      <Property Name="VisibleText" />
+                                    </Object>
+                                  </Case>
+                                </Switch>
+                              </Item>
+                              <Item>
+                                <Object Name="AddressStreetComboBox">
+                                  <Property Name="VisibleText" />
+                                </Object>
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressBuildingTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>дом {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressBuildingTextBox" />
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressBlockTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>корпус {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressBlockTextBox" />
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressStructureTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>стр. {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressStructureTextBox" />
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressFlatTextBoxIsNullOrEmptyCondition" />
+                          </When>
+                          <Then>%NULL%</Then>
+                        </Case>
+                        <Case>
+                          <String>
+                            <Format>кв. {0}</Format>
+                            <Items>
+                              <Item>
+                                <Object Name="AddressFlatTextBox" />
+                              </Item>
+                            </Items>
+                          </String>
+                        </Case>
+                      </Switch>
+                    </Item>
+                  </Structure>
+                </Source>
+                <Filter Type="IsNotNull">
+                  <Index Value="0" />
+                  <DataType Type="StringDataType" />
+                  <Value />
+                </Filter>
+                <StringJoin Separator=", " />
+              </Array>
+            </Then>
+          </Case>
+          <Case>
+            <Object Name="AddressStringTextBox" />
+          </Case>
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="CurrentAddressTypeIdsValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CurrentAddressTypeIds">
+        <Array>
+          <Source>
+            <DataConnection SourceDataConnection="ClientAddressPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="AddressId" />
+                <Field Name="AddressTypeId" />
+              </Fields>
+            </DataConnection>
+          </Source>
+          <Filter Type="NotEqual">
+            <Index Value="0" />
+            <DataType Type="IntegerDataType" />
+            <Value>
+              <Parameter Name="AddressId" />
+            </Value>
+          </Filter>
+          <Select>
+            <Items>
+              <Item Type="Index">1</Item>
+            </Items>
+          </Select>
+        </Array>
+      </Parameter>
+    </Command>
+
+    <Command Name="ClientAddressUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ClientAddressUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressSaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <If>
+          <When>
+            <Condition Name="TypeEqualCommonCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>
+                <Command Name="ClientAddressUpdateSaveCommand" />
+              </Then>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="AddressTypeTitleValueSetCommand" />
+            <Command Name="AddressTypeValueSetCommand">
+              <Switch>
+                <Case>
+                  <When>
+                    <And>
+                      <Condition Name="AddressTypeComboBoxIsNullCondition" />
+                      <Not>
+                        <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+                      </Not>
+                    </And>
+                  </When>
+                  <Then>
+                    <Object Name="AddressTypeComboBox">
+                      <Property Name="VisibleText" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case />
+              </Switch>
+            </Command>
+            <Command Name="AddressTypeIdValueSetCommand">
+              <Switch>
+                <Case>
+                  <When>
+                    <And>
+                      <Condition Name="AddressTypeComboBoxIsNullCondition" />
+                      <Not>
+                        <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+                      </Not>
+                    </And>
+                  </When>
+                  <Then>
+                    <DataConnection SourceDataConnection="OtherAddressTypeSecondaryGetDataConnection">
+                      <Fields>
+                        <Field Name="AddressTypeId" />
+                      </Fields>
+                    </DataConnection>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="AddressTypeComboBox" />
+                </Case>
+              </Switch>
+            </Command>
+            <Command Name="AddressStringValueSetCommand">
+              <Object Name="AddressStringTextBox" />
+            </Command>
+            <Command Name="AddressOkatoValueSetCommand">
+              <Object Name="AddressOkatoTextBox" />
+            </Command>
+            <Command Name="AddressIndexValueSetCommand">
+              <Object Name="AddressIndexTextBox" />
+            </Command>
+            <Command Name="AddressRegionIdValueSetCommand">
+              <Object Name="AddressRegionComboBox" />
+            </Command>
+            <Command Name="AddressDistrictValueSetCommand" />
+            <Command Name="AddressDistrictIdValueSetCommand">
+              <Object Name="AddressDistrictComboBox" />
+            </Command>
+            <Command Name="AddressCityDistrictValueSetCommand">
+              <Object Name="AddressCityDistrictTextBox" />
+            </Command>
+            <Command Name="AddressCityTypeIdValueSetCommand">
+              <Object Name="AddressCityTypeComboBox" />
+            </Command>
+            <Command Name="AddressCityValueSetCommand" />
+            <Command Name="AddressCityIdValueSetCommand">
+              <Object Name="AddressCityComboBox" />
+            </Command>
+            <Command Name="AddressStreetTypeIdValueSetCommand">
+              <Object Name="AddressStreetTypeComboBox" />
+            </Command>
+            <Command Name="AddressStreetValueSetCommand" />
+            <Command Name="AddressStreetIdValueSetCommand">
+              <Object Name="AddressStreetComboBox" />
+            </Command>
+            <Command Name="AddressBuildingValueSetCommand">
+              <Object Name="AddressBuildingTextBox" />
+            </Command>
+            <Command Name="AddressBlockValueSetCommand">
+              <Object Name="AddressBlockTextBox" />
+            </Command>
+            <Command Name="AddressStructureValueSetCommand">
+              <Object Name="AddressStructureTextBox" />
+            </Command>
+            <Command Name="AddressFlatValueSetCommand">
+              <Object Name="AddressFlatTextBox" />
+            </Command>
+          </Else>
+        </If>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <If>
+          <When>
+            <Condition Name="TypeEqualCommonCondition" />
+          </When>
+          <Then>
+            <Command Name="AddressSaveSequentialCommand" />
+            <Command Name="FormCloseCommand" />
+          </Then>
+          <Else>
+            <Command Name="AddressValueSetCommand" />
+            <If>
+              <When>
+                <Condition Name="TypeEqualOspCondition" />
+              </When>
+              <Then>
+                <Command Name="OspByAddressPrimaryGetDataConnectionRefreshCommand" />
+              </Then>
+            </If>
+            <If>
+              <When>
+                <Or>
+                  <Condition Name="AddressEqualCurrentAddressCondition" />
+                  <And>
+                    <Condition Name="TypeEqualOspCondition" />
+                    <Condition Name="OspAddressExistsCondition" />
+                  </And>
+                </Or>
+              </When>
+              <Then>
+                <Command Name="AddressExistsMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="AddressSaveSequentialCommand" />
+                <Command Name="FormCloseCommand" />
+              </Else>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="AddressDistrictPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressDistrictPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressCityPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressCityPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AddressStreetPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="FormChangedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">
+          <Input />
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="OspByAddressPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="OspByAddressPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressExistsMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение адреса</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="AddressEqualCurrentAddressCondition" />
+            </When>
+            <Then>Данный адрес уже добавлен в таблицу.</Then>
+          </Case>
+          <Case>
+            <String>
+              <Format>Данный адрес относится к другому ОСП ({0}).</Format>
+              <Items>
+                <Item>
+                  <DataConnection SourceDataConnection="OspByAddressPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="OspTitle" />
+                    </Fields>
+                  </DataConnection>
+                </Item>
+              </Items>
+            </String>
+          </Case>
+        </Switch>
+      </Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <And>
+              <Condition Name="TypeEqualCommonCondition" />
+              <Parameter Name="Edit" />
+            </And>
+          </When>
+          <Then>
+            <Command Name="CurrentAddressTypeIdsValueSetCommand" />
+            <Command Name="AddressTypeIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressTypeId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressTypeValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressType" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressStringValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressString" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressOkatoValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressOkato" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressIndexValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressIndex" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressRegionIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressRegionId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressDistrictIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressDistrictId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressCityDistrictValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressCityDistrict" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressCityTypeIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressCityTypeId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressCityIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressCityId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressStreetTypeIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressStreetTypeId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressStreetIdValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressStreetId" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressBuildingValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressBuilding" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressBlockValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressBlock" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressStructureValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressStructure" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="AddressFlatValueSetCommand">
+              <DataConnection SourceDataConnection="ClientAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="AddressFlat" />
+                </Fields>
+              </DataConnection>
+            </Command>
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Condition Name="AddressDistrictIdIsNullCondition" />
+          </When>
+          <Then>
+            <Command Name="AddressDistrictComboBoxTextValueSetCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Condition Name="AddressCityIdIsNullCondition" />
+          </When>
+          <Then>
+            <Command Name="AddressCityComboBoxTextValueSetCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Condition Name="AddressStreetIdIsNullCondition" />
+          </When>
+          <Then>
+            <Command Name="AddressStreetComboBoxTextValueSetCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <And>
+              <Condition Name="AddressTypeIdEqualOtherCondition" />
+              <Not>
+                <Condition Name="AddressTypeIsNullCondition" />
+              </Not>
+            </And>
+          </When>
+          <Then>
+            <Command Name="AddressTypeComboBoxValueSetCommand" />
+            <Command Name="AddressTypeComboBoxTextValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="FormChangedValueSetCommand">False</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressRegionListFormShowCommand" Parameter="Selected" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="AddressRegionComboBoxValueSetCommand">
+          <Command Name="AddressRegionListFormShowCommand" Parameter="SelectedAddressRegionId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressDistrictListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="AddressDistrictListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="AddressDistrictPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="AddressDistrictListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="AddressDistrictComboBoxValueSetCommand">
+              <Command Name="AddressDistrictListFormShowCommand" Parameter="SelectedAddressDistrictId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressCityListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="AddressCityListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="AddressCityPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="AddressCityListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="AddressCityComboBoxValueSetCommand">
+              <Command Name="AddressCityListFormShowCommand" Parameter="SelectedAddressCityId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="AddressStreetListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="AddressStreetListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="AddressStreetPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="AddressStreetListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="AddressStreetComboBoxValueSetCommand">
+              <Command Name="AddressStreetListFormShowCommand" Parameter="SelectedAddressStreetId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="AddressTypeComboBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="AddressTypeComboBoxIsNullCondition" />
+          <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+          <Object Name="AddressTypeComboBox">
+            <Property Name="Visible" />
+          </Object>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип адреса" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="AddressTypeComboBox" />
+      <ConditionExpression>
+        <And>
+          <Or>
+            <Condition Name="AddressTypeEqualActualCondition" />
+            <Condition Name="AddressTypeEqualRegistrationCondition" />
+          </Or>
+          <Condition Name="AddressTypeExistsCondition" />
+          <Object Name="AddressTypeComboBox">
+            <Property Name="Visible" />
+          </Object>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>
+        <String>
+          <Format>Для этого должника уже существует адрес {0}. Выберите другой тип адреса.</Format>
+          <Items>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="AddressTypeEqualRegistrationCondition" />
+                  </When>
+                  <Then>регистрации</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="AddressTypeEqualActualCondition" />
+                  </When>
+                  <Then>проживания</Then>
+                </Case>
+                <Case>выбранного типа</Case>
+              </Switch>
+            </Item>
+          </Items>
+        </String>
+      </AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="AddressCityComboBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="AddressCityComboBoxIsNullCondition" />
+          <Condition Name="AddressCityComboBoxIsEmptyCondition" />
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Поле "Населенный пункт" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="AddressTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AddressTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Тип адреса</Text>
+        <Visible>
+          <Not>
+            <Or>
+              <Condition Name="TypeEqualCourtCondition" />
+              <Condition Name="TypeEqualOspCondition" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressTypeId" />
+        </Value>
+        <Visible>
+          <Not>
+            <Or>
+              <Condition Name="TypeEqualCourtCondition" />
+              <Condition Name="TypeEqualOspCondition" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressStringLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="AddressTypeComboBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="AddressTypeComboBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Plus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="AddressTypeLabel">
+                <Property Name="Top" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Адрес (извлечено из файла)</Text>
+      </MyObject>
+
+      <MyObject Name="AddressStringTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressStringLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressStringLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>51</Height>
+        <Width>
+          <Object Name="AddressStringLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressTypeComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <Parameter Name="AddressString" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AddressOkatoLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStringTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>ОКАТО</Text>
+        <Visible>
+          <Not>
+            <Or>
+              <Condition Name="TypeEqualCourtCondition" />
+              <Condition Name="TypeEqualOspCondition" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressOkatoTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressOkatoLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressIndexLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressIndexLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStringTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressOkato" />
+        </Text>
+        <Visible>
+          <Not>
+            <Or>
+              <Condition Name="TypeEqualCourtCondition" />
+              <Condition Name="TypeEqualOspCondition" />
+            </Or>
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressIndexLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="TypeEqualCourtCondition" />
+                  <Condition Name="TypeEqualOspCondition" />
+                </Or>
+              </When>
+              <Then>
+                <Object Name="AddressOkatoLabel">
+                  <Property Name="Top" />
+                </Object>
+              </Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="AddressOkatoTextBox">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Индекс</Text>
+      </MyObject>
+
+      <MyObject Name="AddressIndexTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressIndexLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressIndexLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressIndexLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressOkatoTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressIndex" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AddressRegionLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressIndexTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Область (регион)</Text>
+      </MyObject>
+
+      <MyObject Name="AddressRegionComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="AddressRegionLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressRegionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressRegionLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="AddressRegionSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="AddressRegionSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressIndexTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressRegionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressRegionId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressRegionId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AddressRegionSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressRegionComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressRegionComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="AddressRegionComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressRegionComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressRegionComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressRegionListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListAddressPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressDistrictLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressRegionComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Район области (региона)</Text>
+      </MyObject>
+
+      <MyObject Name="AddressDistrictComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="AddressDistrictLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressDistrictLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressDistrictLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="AddressDistrictSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="AddressDistrictSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressRegionSelectButton">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressDistrictPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressDistrictId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressDistrictId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AddressDistrictSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressDistrictComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressDistrictComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="AddressDistrictComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressDistrictComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressDistrictComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressDistrictListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListAddressPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressCityTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressDistrictComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="AddressTypeLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>20</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Тип населенного пункта</Text>
+      </MyObject>
+
+      <MyObject Name="AddressCityTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressCityTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressCityTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressCityTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressDistrictSelectButton">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressCityTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressCityTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressCityTypeId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AddressCityLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressCityTypeLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityTypeLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AddressCityLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Населенный пункт</Text>
+      </MyObject>
+
+      <MyObject Name="AddressCityComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="AddressCityLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressCityLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="AddressCitySelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="AddressCitySelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityTypeComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressCityPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressCityId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressCityId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AddressCitySelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressCityComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="AddressCityComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressCityComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressCityListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListAddressPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressCityDistrictLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Район населенного пункта</Text>
+      </MyObject>
+
+      <MyObject Name="AddressCityDistrictTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressCityDistrictLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressCityDistrictLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressCityDistrictLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCitySelectButton">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressCityDistrict" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AddressStreetTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityDistrictTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressCityTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressCityTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Тип улицы</Text>
+      </MyObject>
+
+      <MyObject Name="AddressStreetTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressStreetTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressStreetTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressStreetTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressCityDistrictTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressStreetTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressStreetTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressStreetTypeId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AddressStreetLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressStreetTypeLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressCityLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressCityLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Улица</Text>
+      </MyObject>
+
+      <MyObject Name="AddressStreetComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="AddressStreetLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressStreetLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="AddressStreetSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="AddressStreetSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetTypeComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AddressStreetPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="AddressStreetId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="AddressStreetId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="AddressStreetSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressStreetComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="AddressStreetComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="AddressStreetComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetComboBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="AddressStreetListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="ListAddressPermissionCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="AddressBuildingLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="AddressTypeLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>60</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>4</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Номер дома</Text>
+      </MyObject>
+
+      <MyObject Name="AddressBuildingTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStreetSelectButton">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressBuilding" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AddressBlockLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressBuildingLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Корпус</Text>
+      </MyObject>
+
+      <MyObject Name="AddressBlockTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressBlockLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressBlockLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressBlockLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressBuildingTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressBlock" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AddressStructureLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressBlockLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Строение</Text>
+      </MyObject>
+
+      <MyObject Name="AddressStructureTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressStructureLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressStructureLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressStructureLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressBlockTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressStructure" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="AddressFlatLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="AddressBuildingLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStructureLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="AddressFlatLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="AddressTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="AddressTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="AddressTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="AddressTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Номер квартиры</Text>
+      </MyObject>
+
+      <MyObject Name="AddressFlatTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AddressFlatLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AddressFlatLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AddressFlatLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AddressStructureTextBox">
+                  <Property Name="TabIndex" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </TabIndex>
+        <Text>
+          <Parameter Name="AddressFlat" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="AddressTypeComboBoxIsNullCondition" />
+                  <Condition Name="AddressTypeComboBoxIsEmptyCondition" />
+                  <Object Name="AddressTypeComboBox">
+                    <Property Name="Visible" />
+                  </Object>
+                </And>
+              </When>
+              <Then>Поле "Тип адреса" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Or>
+                    <Condition Name="AddressTypeEqualRegistrationCondition" />
+                    <Condition Name="AddressTypeEqualActualCondition" />
+                  </Or>
+                  <Condition Name="AddressTypeExistsCondition" />
+                </And>
+              </When>
+              <Then>
+                <String>
+                  <Format>Для этого должника уже существует адрес {0}. Выберите другой тип адреса.</Format>
+                  <Items>
+                    <Item>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressTypeEqualRegistrationCondition" />
+                          </When>
+                          <Then>регистрации</Then>
+                        </Case>
+                        <Case>
+                          <When>
+                            <Condition Name="AddressTypeEqualActualCondition" />
+                          </When>
+                          <Then>проживания</Then>
+                        </Case>
+                        <Case>выбранного типа</Case>
+                      </Switch>
+                    </Item>
+                  </Items>
+                </String>
+              </Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="AddressCityComboBoxIsNullCondition" />
+                  <Condition Name="AddressCityComboBoxIsEmptyCondition" />
+                </And>
+              </When>
+              <Then>Поле "Населенный пункт" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

@@ -1,0 +1,2510 @@
+<?xml version="1.0"?>
+<Form Name="CollectExcelImportSettingsForm" Width="470" Height="500" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Настройка разбора полей</Parameter>
+    <Parameter Name="ImportType">loan</Parameter>
+    <Parameter Name="ParseColumnList" />
+    <Parameter Name="ResultColumnListToRemove" />
+    <Parameter Name="NeedToParseRegistrationAddress">False</Parameter>
+    <Parameter Name="NeedToParseActualAddress">False</Parameter>
+    <Parameter Name="NeedToParseJurisdictionAddress">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ExcelImportDelimeterPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ExcelImportDelimeterSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ExcelImportDelimeterId" />
+          <Field Name="FormattedTitle" />
+          <Field Name="Title" />
+          <Field Name="Type" />
+        </Fields>
+        <Filter Type="In">
+          <Enabled>
+            <Not>
+              <Or>
+                <Condition Name="CurrentParseColumnVariableEqualClientTitleCondition" />
+                <Condition Name="CurrentParseColumnVariableEqualPaymentClientTitleCondition" />
+              </Or>
+            </Not>
+          </Enabled>
+          <Field NativeName="Type" />
+          <Value>
+            <Structure Type="List">
+              <Item>all</Item>
+            </Structure>
+          </Value>
+          <DataType Type="StringDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="SelectedDelimeterSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportDelimeterPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="ExcelImportDelimeterId" />
+        <Value>
+          <Object Name="ColumnDelimeterComboBox" />
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ExcelImportColumnSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ExcelImportColumnId" />
+          <Field Name="ColumnName" />
+          <Field Name="Title" />
+          <Field Name="NeedToParse" />
+          <Field Name="Name" />
+          <Field Name="AutoParse" />
+          <Field Name="ExcelImportDelimeterId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ImportType">
+            <Value>
+              <Parameter Name="ImportType" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CurrentExcelImportColumnSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>
+          <Object Name="CurrentParseColumnVariable" />
+        </Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportParseTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ExcelImportParseTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ExcelImportParseTypeId" />
+          <Field Name="ToParseExcelImportColumnId" />
+          <Field Name="ResultExcelImportColumnId" />
+          <Field Name="OrderNumber" />
+          <Field Name="IsMandatory" />
+          <Field Name="Enabled" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ImportType">
+            <Value>
+              <Parameter Name="ImportType" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportParseTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportParseTypePrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="ToParseExcelImportColumnId" />
+        <Value>
+          <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ExcelImportColumnId" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Model">
+          <Value>
+            <Command Name="ExcelImportColumnDictionarySerializeToJsonCommand" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ExcelImportColumnParseUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnNumberGreaterMinCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnNumberVariable" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnNumberNotGreaterMaxCondition" Type="NotGreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnNumberVariable" />
+        </Item>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="ParseColumnListVariable" />
+            </Source>
+            <Count />
+          </Array>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnNumberEqualMaxCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnNumberVariable" />
+        </Item>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="ParseColumnListVariable" />
+            </Source>
+            <Count />
+          </Array>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnVariableEqualClientTitleCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnVariable" />
+        </Item>
+        <Item>client_title</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnVariableEqualPaymentClientTitleCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnVariable" />
+        </Item>
+        <Item>payment_client_title</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnVariable" />
+        </Item>
+        <Item>payment_comment</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnVariableEqualClientRegistrationAddressCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnVariable" />
+        </Item>
+        <Item>client_registration_address</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentParseColumnVariableEqualClientActualAddressCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentParseColumnVariable" />
+        </Item>
+        <Item>client_actual_address</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ExcelImportParseTypeSelectedCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportParseTypeDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="OrderNumberEqualMinCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportParseTypeDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="ExcelImportParseTypeSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="OrderNumber" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Min Type="IntegerDataType" />
+          </Array>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="OrderNumberEqualMaxCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ExcelImportParseTypeDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderNumber</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="ExcelImportParseTypeSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="OrderNumber" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Max Type="IntegerDataType" />
+          </Array>
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="CurrentParseColumnNumberVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentParseColumnNumberVariable">
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="CurrentParseColumnNumberVariable" />
+            </Item>
+            <Item>
+              <Input />
+            </Item>
+          </Plus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="ExcelImportParseTypeUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ExcelImportParseTypePrimaryGetDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ExcelImportParseTypeId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="ExcelImportParseTypeDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">ExcelImportParseTypeId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>Enabled</Item>
+                <Item>OrderNumber</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Input Name="Enabled" />
+                </Item>
+                <Item>
+                  <Input Name="OrderNumber" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ExcelImportParseTypeDatabaseTableSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ExcelImportParseTypeDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">ExcelImportParseTypeId</Parameter>
+            <Parameter Name="Value">
+              <Object Name="ExcelImportParseTypeIdVariable" />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="ExcelImportParseTypeUpdateOrderNumberCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ExcelImportParseTypePrimaryGetDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ExcelImportParseTypeId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Array>
+                        <Source>
+                          <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection">
+                            <Fields>
+                              <Field Name="ExcelImportParseTypeId" />
+                              <Field Name="OrderNumber" />
+                              <Field Name="ToParseExcelImportColumnId" />
+                            </Fields>
+                          </DataConnection>
+                        </Source>
+                        <Filter>
+                          <Index Value="2" />
+                          <DataType Type="IntegerDataType" />
+                          <Value>
+                            <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+                              <Fields>
+                                <Field Name="ExcelImportColumnId" />
+                              </Fields>
+                            </DataConnection>
+                          </Value>
+                        </Filter>
+                        <Filter>
+                          <Index Value="1" />
+                          <DataType Type="IntegerDataType" />
+                          <Value>
+                            <Object Name="OrderNumberVariable" />
+                          </Value>
+                        </Filter>
+                        <Filter Type="NotEqual">
+                          <Index Value="0" />
+                          <DataType Type="IntegerDataType" />
+                          <Value>
+                            <Object Name="ExcelImportParseTypeIdVariable" />
+                          </Value>
+                        </Filter>
+                        <Select>
+                          <Items>
+                            <Item Type="Index">0</Item>
+                          </Items>
+                        </Select>
+                      </Array>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>OrderNumber</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Input />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ExcelImportParseTypeUpdateOrderNumbersCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ExcelImportParseTypePrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="ReplicateValues">False</Parameter>
+            <Parameter Name="RawValues">True</Parameter>
+            <Parameter Name="RowIndices">
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="ExcelImportParseTypeId" />
+                      <Field Name="OrderNumber" />
+                      <Field Name="ToParseExcelImportColumnId" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <Select>
+                  <Items>
+                    <Item Type="Index">0</Item>
+                    <Item Type="Index">1</Item>
+                    <Item Type="Index">2</Item>
+                    <Item Type="Number" /><!-- RowIndex -->
+                  </Items>
+                </Select>
+                <Filter Type="IsNotNull">
+                  <Index Value="1" />
+                </Filter>
+                <Filter>
+                  <Index Value="2" />
+                  <DataType Type="IntegerDataType" />
+                  <Value>
+                    <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+                      <Fields>
+                        <Field Name="ExcelImportColumnId" />
+                      </Fields>
+                    </DataConnection>
+                  </Value>
+                </Filter>
+                <Filter Type="GreaterOrEqual">
+                  <Index Value="1" />
+                  <DataType Type="IntegerDataType" />
+                  <Value>
+                    <Object Name="OrderNumberVariable" />
+                  </Value>
+                </Filter>
+                <Order>
+                  <By Index="0" />
+                </Order>
+                <Select>
+                  <Items>
+                    <Item Type="Index">3</Item>
+                  </Items>
+                </Select>
+              </Array>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>OrderNumber</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="ExcelImportParseTypeId" />
+                      <Field Name="OrderNumber" />
+                      <Field Name="ToParseExcelImportColumnId" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <Filter Type="IsNotNull">
+                  <Index Value="1" />
+                </Filter>
+                <Filter>
+                  <Index Value="2" />
+                  <DataType Type="IntegerDataType" />
+                  <Value>
+                    <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+                      <Fields>
+                        <Field Name="ExcelImportColumnId" />
+                      </Fields>
+                    </DataConnection>
+                  </Value>
+                </Filter>
+                <Filter Type="GreaterOrEqual">
+                  <Index Value="1" />
+                  <DataType Type="IntegerDataType" />
+                  <Value>
+                    <Object Name="OrderNumberVariable" />
+                  </Value>
+                </Filter>
+                <Order>
+                  <By Index="0" />
+                </Order>
+                <Select>
+                  <Items>
+                    <Item Type="Expression">
+                      <Expression>[1] - 1</Expression>
+                    </Item>
+                  </Items>
+                </Select>
+                <ToTable />
+              </Array>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ExcelImportParseTypeIdVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ExcelImportParseTypeIdVariable">
+        <Object Name="ExcelImportParseTypeDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">ExcelImportParseTypeId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Object>
+    </Command>
+
+    <Command Name="OrderNumberVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderNumberVariable">
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="ExcelImportParseTypeDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">OrderNumber</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Item>
+            <Item>
+              <Input />
+            </Item>
+          </Plus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="TemplateViewPanelVisibleVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TemplateViewPanelVisibleVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="TemplateViewPanelPanelBringToFrontCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TemplateViewPanel">
+        <Property Name="BringToFront" />
+      </Object>
+    </Command>
+
+    <Command Name="ExcelImportParseTypeDatabaseTableClearSelectionCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ExcelImportParseTypeDatabaseTable">
+        <Property Name="ClearSelection" />
+      </Object>
+    </Command>
+
+    <Command Name="ExcelImportColumnUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ExcelImportColumnPrimaryGetDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>Name</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="CurrentParseColumnVariable" />
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>AutoParse</Item>
+                <Item>ExcelImportDelimeterId</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Object Name="ColumnAutoParseCheckBox" />
+                </Item>
+                <Item>
+                  <Object Name="ColumnDelimeterComboBox" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ExcelImportColumnDictionaryVariableRefreshCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ExcelImportColumnDictionaryVariable">
+        <Property Name="Refresh" />
+      </Object>
+    </Command>
+
+    <Command Name="ExcelImportColumnDictionarySerializeToJsonCommand" Type="SerializeToJsonCommand" Assembly="Commands">
+      <Variable>
+        <Object Name="ExcelImportColumnDictionaryVariable" />
+      </Variable>
+    </Command>
+
+    <Command Name="ExcelImportColumnUpdateCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ExcelImportColumnUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="FormChangedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">True</Property>
+      </Form>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="ExcelImportColumnDictionaryVariableRefreshCommand" />
+        <Command Name="ExcelImportColumnDictionarySerializeToJsonCommand" />
+        <Command Name="ExcelImportColumnUpdateCommand" />
+        <Command Name="NeedToParseRegistrationAddressValueSetCommand" />
+        <Command Name="NeedToParseActualAddressValueSetCommand" />
+        <Command Name="NeedToParseJurisdictionAddressValueSetCommand" />
+        <Command Name="ResultColumnListToRemoveValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="NeedToParseRegistrationAddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="NeedToParseRegistrationAddress">
+        <Array>
+          <Source>
+            <Command Name="ExcelImportColumnUpdateCommand" />
+          </Source>
+          <First />
+          <StringSplit Separator=";" />
+          <ElementAt>0</ElementAt>
+          <DataTypeConvert Type="BooleanDataType" />
+        </Array>
+      </Parameter>
+    </Command>
+
+    <Command Name="NeedToParseActualAddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="NeedToParseActualAddress">
+        <Array>
+          <Source>
+            <Command Name="ExcelImportColumnUpdateCommand" />
+          </Source>
+          <First />
+          <StringSplit Separator=";" />
+          <ElementAt>1</ElementAt>
+          <DataTypeConvert Type="BooleanDataType" />
+        </Array>
+      </Parameter>
+    </Command>
+
+    <Command Name="NeedToParseJurisdictionAddressValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="NeedToParseJurisdictionAddress">
+        <Array>
+          <Source>
+            <Command Name="ExcelImportColumnUpdateCommand" />
+          </Source>
+          <First />
+          <StringSplit Separator=";" />
+          <ElementAt>2</ElementAt>
+          <DataTypeConvert Type="BooleanDataType" />
+        </Array>
+      </Parameter>
+    </Command>
+
+    <Command Name="ResultColumnListToRemoveValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ResultColumnListToRemove">
+        <Array>
+          <Source>
+            <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ToParseExcelImportColumnId" />
+                <Field Name="ResultExcelImportColumnId" />
+                <Field Name="Enabled" />
+              </Fields>
+            </DataConnection>
+          </Source>
+          <LeftJoin>
+            <OuterArray>
+              <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ExcelImportColumnId" />
+                  <Field Name="AutoParse" />
+                </Fields>
+              </DataConnection>
+            </OuterArray>
+            <Keys>
+              <Inner Index="0" Type="IntegerDataType" />
+              <Outer Index="0" Type="IntegerDataType" />
+            </Keys>
+            <Result>
+              <Inner Index="1" />
+              <Inner Index="2" />
+              <Outer Index="1" />
+            </Result>
+          </LeftJoin>
+          <Filter>
+            <Index Value="1" />
+            <DataType Type="BooleanDataType" />
+            <Value>False</Value>
+          </Filter>
+          <Filter>
+            <Index Value="2" />
+            <DataType Type="BooleanDataType" />
+            <Value>False</Value>
+          </Filter>
+          <Select>
+            <Items>
+              <Item Type="Substitution">
+                <Index>0</Index>
+                <Value>
+                  <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="ExcelImportColumnId" />
+                      <Field Name="Name" />
+                    </Fields>
+                  </DataConnection>
+                </Value>
+              </Item>
+            </Items>
+          </Select>
+        </Array>
+      </Parameter>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="ExcelImportColumnDictionaryVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="Dictionary">
+          <Key Name="excel_import_column_list">
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection" Refresh="False">
+                  <Fields>
+                    <Field Name="ExcelImportColumnId" />
+                    <Field Name="AutoParse" />
+                    <Field Name="ExcelImportDelimeterId" />
+                    <Field Name="Name" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <Filter Type="In">
+                <Index Value="3" />
+                <DataType Type="StringDataType" />
+                <Value>
+                  <Parameter Name="ParseColumnList" />
+                </Value>
+              </Filter>
+              <Select>
+                <Items>
+                  <Item Type="Index">0</Item>
+                  <Item Type="Index">1</Item>
+                  <Item Type="Index">2</Item>
+                </Items>
+              </Select>
+              <ToDictionary>
+                <Key Name="excel_import_column_id" Index="0" />
+                <Key Name="auto_parse" Index="1" />
+                <Key Name="excel_import_delimeter_id" Index="2" />
+              </ToDictionary>
+            </Array>
+          </Key>
+          <Key Name="excel_import_parse_type_list">
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="ExcelImportParseTypePrimaryGetDataConnection" Refresh="False">
+                  <Fields>
+                    <Field Name="ExcelImportParseTypeId" />
+                    <Field Name="OrderNumber" />
+                    <Field Name="Enabled" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <ToDictionary>
+                <Key Name="excel_import_parse_type_id" Index="0" />
+                <Key Name="order_number" Index="1" />
+                <Key Name="enabled" Index="2" />
+              </ToDictionary>
+            </Array>
+          </Key>
+        </Structure>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="TemplateViewPanelVisibleVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>False</Value>
+    </MyObject>
+
+    <MyObject Name="ParseColumnListVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Array>
+          <Source>
+            <Parameter Name="ParseColumnList" />
+          </Source>
+          <Select>
+            <Items>
+              <Item Type="Number" Start="1" />
+              <Item Type="Index">0</Item>
+            </Items>
+          </Select>
+        </Array>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="CurrentParseColumnNumberVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>1</Value>
+    </MyObject>
+
+    <MyObject Name="CurrentParseColumnVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Array>
+          <Source>
+            <Object Name="ParseColumnListVariable" />
+          </Source>
+          <Filter>
+            <Index Value="0" />
+            <DataType Type="IntegerDataType" />
+            <Value>
+              <Object Name="CurrentParseColumnNumberVariable" />
+            </Value>
+          </Filter>
+          <Select>
+            <Items>
+              <Item Type="Index">1</Item>
+            </Items>
+          </Select>
+          <First />
+        </Array>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="ExcelImportParseTypeIdVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="OrderNumberVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>70</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <String>
+            <Format>{0}\rСтолбец: {1}</Format>
+            <Items>
+              <Item>
+                <Parameter Name="Title" />
+              </Item>
+              <Item>
+                <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+                  <Fields>
+                    <Field Name="Title" />
+                  </Fields>
+                </DataConnection>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ColumnAutoParseCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>10</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ColumnAutoParseCheckBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ColumnAutoParseHintLabel">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="ColumnAutoParseHintLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <String>
+            <Format>Автоматический разбор столбца "{0}"</Format>
+            <Items>
+              <Item>
+                <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+                  <Fields>
+                    <Field Name="Title" />
+                  </Fields>
+                </DataConnection>
+              </Item>
+            </Items>
+          </String>
+        </Text>
+        <Value>
+          <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="AutoParse" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <Visible>
+          <Not>
+            <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ColumnAutoParseHintLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="ColumnAutoParseCheckBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ColumnAutoParseCheckBox">
+            <Property Name="Right" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ColumnAutoParseCheckBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ColumnAutoParseCheckBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <Text>?</Text>
+        <TextAlign>MiddleCenter</TextAlign>
+        <Hint>Для корректного распознавания адреса убедитесь в том, что его части указаны через запятую и проблел (", "), регион указан в адресе первым либо сразу после индекса.
+Для остальных частей адреса необходимы префиксы "г." или "город", "с." или "село", "пр." или "проспект", "д." или "дом" и т.д.
+Корпус и строение дома распознаются только с наличием префикса.
+Если префиксы не указаны, то адрес будет сохранён в следующем порядке: индекс, регион, район региона, населенный пункт, улица, дом, квартира.</Hint>
+        <Visible>
+          <And>
+            <Object Name="ColumnAutoParseCheckBox" />
+            <Or>
+              <Condition Name="CurrentParseColumnVariableEqualClientRegistrationAddressCondition" />
+              <Condition Name="CurrentParseColumnVariableEqualClientActualAddressCondition" />
+            </Or>
+          </And>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ParsePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+              </When>
+              <Then>0</Then>
+            </Case>
+            <Case>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ColumnAutoParseCheckBox">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>10</Item>
+                </Plus>
+              </Formula>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>0</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ParsePanel">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Visible>
+          <Not>
+            <Object Name="ColumnAutoParseCheckBox" />
+          </Not>
+        </Visible>
+
+        <MyObject Name="ColumnDelimeterLabel" Type="Label" Assembly="BaseControls">
+          <Top>0</Top>
+          <Left>
+            <Object Name="ColumnAutoParseCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>80</Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Разделитель</Text>
+          <Visible>
+            <Not>
+              <Or>
+                <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                <Object Name="TemplateViewPanelVisibleVariable" />
+              </Or>
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ColumnDelimeterComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <TabStop>
+            <Not>
+              <Object Name="TemplateViewPanelVisibleVariable" />
+            </Not>
+          </TabStop>
+          <ValueList>
+            <DataConnection SourceDataConnection="ExcelImportDelimeterPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ExcelImportDelimeterId" />
+                <Field Name="FormattedTitle" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+              <Fields>
+                <Field Name="ExcelImportDelimeterId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+          <Visible>
+            <Not>
+              <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ColumnTemplateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="TemplateViewPanelVisibleVariable" />
+                </When>
+                <Then>
+                  <Object Name="ColumnDelimeterLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Then>
+              </Case>
+              <Case>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ColumnDelimeterLabel">
+                        <Property Name="Right" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Plus>
+                </Formula>
+              </Case>
+            </Switch>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ColumnAutoParseCheckBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ColumnTemplateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Шаблон</Text>
+          <Visible>
+            <Not>
+              <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ColumnTemplateTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="ColumnTemplateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ColumnTemplateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ExcelImportParseTypeDatabaseTable">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ColumnTemplateTextBox">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <TabStop>
+            <Not>
+              <Object Name="TemplateViewPanelVisibleVariable" />
+            </Not>
+          </TabStop>
+          <Text>
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="ExcelImportParseTypeSecondaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ResultExcelImportColumnId" />
+                    <Field Name="OrderNumber" />
+                    <Field Name="Enabled" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <Filter>
+                <Index Value="2" />
+                <DataType Type="BooleanDataType" />
+                <Value>True</Value>
+              </Filter>
+              <Filter>
+                <Index Value="1" />
+                <DataType Type="IntegerDataType" />
+                <Value>1</Value>
+              </Filter>
+              <Select>
+                <Items>
+                  <Item Type="Index">0</Item>
+                  <Item Type="Value" />
+                </Items>
+              </Select>
+              <Union>
+                <Array>
+                  <Source>
+                    <DataConnection SourceDataConnection="ExcelImportParseTypeSecondaryGetDataConnection">
+                      <Fields>
+                        <Field Name="ResultExcelImportColumnId" />
+                        <Field Name="OrderNumber" />
+                        <Field Name="Enabled" />
+                      </Fields>
+                    </DataConnection>
+                  </Source>
+                  <Filter>
+                    <Index Value="2" />
+                    <DataType Type="BooleanDataType" />
+                    <Value>True</Value>
+                  </Filter>
+                  <Filter Type="NotEqual">
+                    <Index Value="1" />
+                    <DataType Type="IntegerDataType" />
+                    <Value>1</Value>
+                  </Filter>
+                  <Order>
+                    <By Index="1" />
+                  </Order>
+                  <Select>
+                    <Items>
+                      <Item Type="Index">0</Item>
+                      <Item Type="Value">
+                        <DataConnection SourceDataConnection="SelectedDelimeterSecondaryGetDataConnection">
+                          <Fields>
+                            <Field Name="Title" />
+                          </Fields>
+                        </DataConnection>
+                      </Item>
+                    </Items>
+                  </Select>
+                </Array>
+              </Union>
+              <LeftJoin>
+                <OuterArray>
+                  <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="ExcelImportColumnId" />
+                      <Field Name="Title" />
+                    </Fields>
+                  </DataConnection>
+                </OuterArray>
+                <Keys>
+                  <Inner Index="0" Type="IntegerDataType" />
+                  <Outer Index="0" Type="IntegerDataType" />
+                </Keys>
+                <Result>
+                  <Inner Index="1" />
+                  <Outer Index="1" />
+                </Result>
+              </LeftJoin>
+              <Select>
+                <Items>
+                  <Item Type="Index">0</Item>
+                  <Item Type="Format">[{1}]</Item>
+                </Items>
+              </Select>
+              <StringJoin Separator="" />
+            </Array>
+          </Text>
+          <ReadOnly>True</ReadOnly>
+          <Visible>
+            <Not>
+              <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ColumnTemplateViewButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="ColumnTemplateTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ColumnTemplateTextBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="ColumnTemplateTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="ColumnTemplateTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Image>Images\11x11\search.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Hint>Просмотр шаблона</Hint>
+          <Commands>
+            <Command Name="TemplateViewPanelPanelBringToFrontCommand" />
+            <Command Name="TemplateViewPanelVisibleVariableValueSetCommand">
+              <Not>
+                <Object Name="TemplateViewPanelVisibleVariable" />
+              </Not>
+            </Command>
+          </Commands>
+          <Visible>
+            <Not>
+              <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="TemplateViewPanel" Type="Panel" Assembly="BaseControls">
+          <Top>
+            <Object Name="ColumnTemplateViewButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>10</Left>
+          <Height>
+            <Object Name="TemplateTextBox">
+              <Property Name="Bottom" />
+            </Object>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ColumnTemplateTextBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="TemplateViewPanel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <BorderStyle>FixedSingle</BorderStyle>
+          <Visible>
+            <Object Name="TemplateViewPanelVisibleVariable" />
+          </Visible>
+
+          <MyObject Name="TemplateTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ExcelImportParseTypeDatabaseTable">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="ColumnTemplateTextBox">
+                      <Property Name="Top" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Height>
+            <Width>
+              <Object Name="TemplateViewPanel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <TabIndex>1</TabIndex>
+            <Multiline>True</Multiline>
+            <Text>
+              <Object Name="ColumnTemplateTextBox" />
+            </Text>
+            <ReadOnly>True</ReadOnly>
+          </MyObject>
+        </MyObject>
+
+        <MyObject Name="ExcelImportParseTypeLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                </When>
+                <Then>5</Then>
+              </Case>
+              <Case>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ColumnTemplateTextBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Plus>
+                </Formula>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ContentPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ExcelImportParseTypeLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="ColumnDelimeterLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                </When>
+                <Then>
+                  <String>
+                    <Format>Выберите поля для поиска в столбце "{0}"</Format>
+                    <Items>
+                      <Item>
+                        <DataConnection SourceDataConnection="CurrentExcelImportColumnSecondaryGetDataConnection">
+                          <Fields>
+                            <Field Name="Title" />
+                          </Fields>
+                        </DataConnection>
+                      </Item>
+                    </Items>
+                  </String>
+                </Then>
+              </Case>
+              <Case>Список доступных колонок</Case>
+            </Switch>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="ExcelImportParseTypeDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+          <Top>
+            <Object Name="ExcelImportParseTypeLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ExcelImportParseTypeLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ParsePanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ExcelImportParseTypeDatabaseTable">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ExcelImportParseTypeLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="OrderNumberDecreaseButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <TabStop>
+            <Not>
+              <Object Name="TemplateViewPanelVisibleVariable" />
+            </Not>
+          </TabStop>
+          <AllowInsert>False</AllowInsert>
+          <AllowUpdate>False</AllowUpdate>
+          <AllowDelete>False</AllowDelete>
+          <AllowResizeRows Value="False" />
+          <AutoSizeColumnsMode Value="Fill" />
+          <BorderStyle Value="Fixed3D" />
+          <BackgroundColor Value="Gray200" />
+          <SelectionColor Name="SelectionColor" />
+          <ShowCellHints Value="True" />
+          <SourceDataConnection Name="ExcelImportParseTypeSecondaryGetDataConnection" />
+          <AllowFilterColumns Value="False" />
+          <AllowResizeColumns Value="False" />
+          <AllowOrderColumns Value="False" />
+          <Columns>
+            <Column Name="OrderNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>№</Title>
+              <Width>30</Width>
+              <AutoSizeMode Value="None" />
+              <HeaderAlignment Value="MiddleLeft" />
+              <AllowSort Value="False" />
+              <Sorting>
+                <SortOrder Type="Asc" />
+                <ColumnOrder Order="2" />
+              </Sorting>
+              <DisplayIndex>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                    </When>
+                    <Then>3</Then>
+                  </Case>
+                  <Case>1</Case>
+                </Switch>
+              </DisplayIndex>
+              <Visible>
+                <Not>
+                  <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                </Not>
+              </Visible>
+            </Column>
+            <Column Name="ExcelImportParseTypeId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="ResultExcelImportColumnId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="IsMandatory" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="ResultExcelImportColumnTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Наименование столбца</Title>
+              <MinimumWidth>100</MinimumWidth>
+              <AutoSizeMode Value="Fill" />
+              <Substitution SourceColumn="ResultExcelImportColumnId">
+                <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ExcelImportColumnId" />
+                    <Field Name="Title" />
+                  </Fields>
+                </DataConnection>
+              </Substitution>
+              <AllowSort Value="False" />
+              <Sorting>
+                <SortOrder Type="Asc" />
+                <ColumnOrder Order="3" />
+              </Sorting>
+              <DisplayIndex>2</DisplayIndex>
+            </Column>
+            <Column Name="Enabled" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+              <Title>Исп.</Title>
+              <Hint>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                    </When>
+                    <Then>Искать поле в столбце</Then>
+                  </Case>
+                  <Case>Использовать столбец для разбора</Case>
+                </Switch>
+              </Hint>
+              <Width>40</Width>
+              <AutoSizeMode Value="None" />
+              <AllowSort Value="False" />
+              <Sorting>
+                <SortOrder Type="Desc" />
+                <ColumnOrder Order="1" />
+              </Sorting>
+              <DisplayIndex>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                    </When>
+                    <Then>1</Then>
+                  </Case>
+                  <Case>3</Case>
+                </Switch>
+              </DisplayIndex>
+            </Column>
+          </Columns>
+        </MyObject>
+
+        <MyObject Name="OrderNumberDecreaseButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="ExcelImportParseTypeDatabaseTable">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ExcelImportParseTypeDatabaseTable">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>30</Height>
+          <Width>30</Width>
+          <TabIndex>5</TabIndex>
+          <Image>Images\18x18\up.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="ExcelImportParseTypeIdVariableValueSetCommand" />
+            <Command Name="OrderNumberVariableValueSetCommand">-1</Command>
+            <Command Name="ExcelImportParseTypeUpdateRowCommand">
+              <Input Name="Enabled">True</Input>
+              <Input Name="OrderNumber">
+                <Object Name="OrderNumberVariable" />
+              </Input>
+            </Command>
+            <Command Name="ExcelImportParseTypeUpdateOrderNumberCommand">
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderNumberVariable" />
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </Command>
+            <Command Name="ExcelImportParseTypeDatabaseTableSelectRowCommand" />
+            <Command Name="FormChangedTrueValueSetCommand" />
+          </Commands>
+          <Enabled>
+            <And>
+              <Condition Name="ExcelImportParseTypeSelectedCondition" />
+              <Object Name="ExcelImportParseTypeDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Enabled</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+              <Not>
+                <Condition Name="OrderNumberEqualMinCondition" />
+              </Not>
+            </And>
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>
+            <Switch>
+              <Case>
+                <When>
+                  <Not>
+                    <Condition Name="ExcelImportParseTypeSelectedCondition" />
+                  </Not>
+                </When>
+                <Then>Выберите столбец в таблице.</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Not>
+                    <Object Name="ExcelImportParseTypeDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">Enabled</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Not>
+                </When>
+                <Then>Выбранный столбец не участвует в разборе поля.</Then>
+              </Case>
+              <Case>Выбранный столбец уже является первым в списке.</Case>
+            </Switch>
+          </DisabledText>
+          <Visible>
+            <Not>
+              <Or>
+                <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                <Object Name="TemplateViewPanelVisibleVariable" />
+              </Or>
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="OrderNumberIncreaseButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="OrderNumberDecreaseButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="OrderNumberDecreaseButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="OrderNumberDecreaseButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="OrderNumberDecreaseButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Image>Images\18x18\down.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="ExcelImportParseTypeIdVariableValueSetCommand" />
+            <Command Name="OrderNumberVariableValueSetCommand">1</Command>
+            <Command Name="ExcelImportParseTypeUpdateRowCommand">
+              <Input Name="Enabled">True</Input>
+              <Input Name="OrderNumber">
+                <Object Name="OrderNumberVariable" />
+              </Input>
+            </Command>
+            <Command Name="ExcelImportParseTypeUpdateOrderNumberCommand">
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderNumberVariable" />
+                  </Item>
+                  <Item>1</Item>
+                </Minus>
+              </Formula>
+            </Command>
+            <Command Name="ExcelImportParseTypeDatabaseTableSelectRowCommand" />
+            <Command Name="FormChangedTrueValueSetCommand" />
+          </Commands>
+          <Enabled>
+            <And>
+              <Condition Name="ExcelImportParseTypeSelectedCondition" />
+              <Object Name="ExcelImportParseTypeDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Enabled</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+              <Not>
+                <Condition Name="OrderNumberEqualMaxCondition" />
+              </Not>
+            </And>
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>
+            <Switch>
+              <Case>
+                <When>
+                  <Not>
+                    <Condition Name="ExcelImportParseTypeSelectedCondition" />
+                  </Not>
+                </When>
+                <Then>Выберите столбец в таблице.</Then>
+              </Case>
+              <Case>
+                <When>
+                  <Not>
+                    <Object Name="ExcelImportParseTypeDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">Enabled</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Not>
+                </When>
+                <Then>Выбранный столбец не участвует в разборе поля.</Then>
+              </Case>
+              <Case>Выбранный столбец уже является последним в списке.</Case>
+            </Switch>
+          </DisabledText>
+          <Visible>
+            <Not>
+              <Or>
+                <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                <Object Name="TemplateViewPanelVisibleVariable" />
+              </Or>
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="RemoveButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="CurrentParseColumnVariableEqualPaymentCommentCondition" />
+                </When>
+                <Then>
+                  <Object Name="OrderNumberDecreaseButton">
+                    <Property Name="Top" />
+                  </Object>
+                </Then>
+              </Case>
+              <Case>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="OrderNumberIncreaseButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Plus>
+                </Formula>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>
+            <Object Name="OrderNumberDecreaseButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="OrderNumberDecreaseButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="OrderNumberDecreaseButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Image>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="ExcelImportParseTypeDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">Enabled</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </When>
+                <Then>Images\18x18\cancel.png</Then>
+              </Case>
+              <Case>Images\18x18\check_circle.png</Case>
+            </Switch>
+          </Image>
+          <Hint>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="ExcelImportParseTypeDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">Enabled</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </When>
+                <Then>Не использовать столбец</Then>
+              </Case>
+              <Case>Использовать столбец</Case>
+            </Switch>
+          </Hint>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <If>
+              <When>
+                <Object Name="ExcelImportParseTypeDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">Enabled</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </When>
+              <Then>
+                <Command Name="ExcelImportParseTypeIdVariableValueSetCommand" />
+                <Command Name="OrderNumberVariableValueSetCommand">0</Command>
+                <Command Name="ExcelImportParseTypeUpdateRowCommand">
+                  <Input Name="Enabled">False</Input>
+                  <Input Name="OrderNumber" />
+                </Command>
+                <Command Name="ExcelImportParseTypeUpdateOrderNumbersCommand" />
+                <Command Name="ExcelImportParseTypeDatabaseTableSelectRowCommand" />
+              </Then>
+              <Else>
+                <Command Name="ExcelImportParseTypeIdVariableValueSetCommand" />
+                <Command Name="ExcelImportParseTypeUpdateRowCommand">
+                  <Input Name="Enabled">True</Input>
+                  <Input Name="OrderNumber">
+                    <Formula>
+                      <Plus DataType="IntegerDataType">
+                        <Item>
+                          <Array>
+                            <Source>
+                              <DataConnection SourceDataConnection="ExcelImportParseTypeSecondaryGetDataConnection">
+                                <Fields>
+                                  <Field Name="OrderNumber" />
+                                </Fields>
+                              </DataConnection>
+                            </Source>
+                            <Max Type="IntegerDataType" />
+                          </Array>
+                        </Item>
+                        <Item>1</Item>
+                      </Plus>
+                    </Formula>
+                  </Input>
+                </Command>
+                <Command Name="ExcelImportParseTypeDatabaseTableSelectRowCommand" />
+              </Else>
+            </If>
+            <Command Name="FormChangedTrueValueSetCommand" />
+          </Commands>
+          <Enabled>
+            <And>
+              <Condition Name="ExcelImportParseTypeSelectedCondition" />
+              <Not>
+                <Object Name="ExcelImportParseTypeDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">IsMandatory</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Not>
+            </And>
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>
+            <Switch>
+              <Case>
+                <When>
+                  <Not>
+                    <Condition Name="ExcelImportParseTypeSelectedCondition" />
+                  </Not>
+                </When>
+                <Then>Выберите столбец в таблице.</Then>
+              </Case>
+              <Case>Выбранный столбец обязателен для использования.</Case>
+            </Switch>
+          </DisabledText>
+          <Visible>
+            <Not>
+              <Object Name="TemplateViewPanelVisibleVariable" />
+            </Not>
+          </Visible>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="PreviousButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="NextButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\previous.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Назад</Text>
+        <Commands>
+          <Command Name="ExcelImportColumnUpdateRowCommand" />
+          <Command Name="TemplateViewPanelVisibleVariableValueSetCommand">False</Command>
+          <Command Name="CurrentParseColumnNumberVariableValueSetCommand">-1</Command>
+          <Command Name="ExcelImportParseTypeDatabaseTableClearSelectionCommand" />
+        </Commands>
+        <Visible>
+          <Condition Name="CurrentParseColumnNumberGreaterMinCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="NextButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="PreviousButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="NextButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="PreviousButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="PreviousButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentParseColumnNumberEqualMaxCondition" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\next.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentParseColumnNumberEqualMaxCondition" />
+              </When>
+              <Then>MiddleLeft</Then>
+            </Case>
+            <Case>MiddleRight</Case>
+          </Switch>
+        </ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentParseColumnNumberEqualMaxCondition" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Далее</Case>
+          </Switch>
+        </Text>
+        <Commands>
+          <If>
+            <When>
+              <Condition Name="CurrentParseColumnNumberEqualMaxCondition" />
+            </When>
+            <Then>
+              <Command Name="ExcelImportColumnUpdateRowCommand" />
+              <Command Name="SaveSequentialCommand" />
+              <Command Name="FormCloseCommand" />
+            </Then>
+            <Else>
+              <Command Name="ExcelImportColumnUpdateRowCommand" />
+              <Command Name="TemplateViewPanelVisibleVariableValueSetCommand">False</Command>
+              <Command Name="CurrentParseColumnNumberVariableValueSetCommand">1</Command>
+              <Command Name="ExcelImportParseTypeDatabaseTableClearSelectionCommand" />
+            </Else>
+          </If>
+        </Commands>
+        <Visible>
+          <Condition Name="CurrentParseColumnNumberNotGreaterMaxCondition" />
+        </Visible>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

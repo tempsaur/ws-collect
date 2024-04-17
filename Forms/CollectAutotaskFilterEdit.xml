@@ -1,0 +1,2073 @@
+<?xml version="1.0"?>
+<Form Name="CollectAutotaskFilterEditForm" Width="1000" Height="450" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" FormBorderStyle="FixedSingle" AsteriskFontStyle="HeadTitleFont" AsteriskForeColor="Red" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="AutotaskFilterId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование автозадачи</Then>
+        </Case>
+        <Case>Добавление автозадачи</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="AutotaskFilterPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AutotaskFilterByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+          <Field Name="TaskTypeId" />
+          <Field Name="DeadlineType" />
+          <Field Name="CreateDate" />
+          <Field Name="EditDate" />
+          <Field Name="DeadlineDate" />
+          <Field Name="DeadlineLater" />
+          <Field Name="Description" />
+          <Field Name="Filter" />
+          <Field Name="ResponsibleForLoan" />
+          <Field Name="LeadSpecialistResponsibleForLoan" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="AutotaskFilterId">
+            <Value>
+              <Parameter Name="AutotaskFilterId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AutotaskFieldsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="AutotaskFieldsSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ColumnName" />
+          <Field Name="Title" />
+          <Field Name="Type" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TaskTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskTypeId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ResponsibleUserIdPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ResponsibleUserIdByAutotaskFilterIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ResponsibleUserId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="AutotaskFilterId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="AutotaskFilterId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="UserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+          <Field Name="Person" />
+          <Field Name="IsCurrentUser" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ResponsibleUserSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="UserPrimaryGetDataConnection" />
+      <Filter Type="Nested">
+        <Or>
+          <Filter Type="In">
+            <Field NativeName="UserId" />
+            <Value>
+              <DataConnection SourceDataConnection="ResponsibleUserIdPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ResponsibleUserId" />
+                </Fields>
+              </DataConnection>
+            </Value>
+            <DataType Type="StringDataType" />
+          </Filter>
+          <And>
+            <Filter>
+              <Field NativeName="Person" />
+              <Value>True</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+          </And>
+        </Or>
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="AutotaskFilterAddNewSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Title">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="FilterTitleTextBoxIsNullOrEmptyCondition" />
+                </When>
+                <Then>[Без названия]</Then>
+              </Case>
+              <Case>
+                <Object Name="FilterTitleTextBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TaskTypeId">
+          <Value>
+            <Object Name="TaskTypeComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="DeadlineType">
+          <Value>
+            <Object Name="DeadlineTypeComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Deadline">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="DeadlineTypeComboBox" />
+                </When>
+                <Then>
+                  <Object Name="DeadlineDateTimePicker" />
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="DeadlineDaysNumericBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ResponsibleUserId" SendAsArray="True">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="ResponsibleUserSecondaryGetDataConnection">
+                    <Fields>
+                      <Field Name="UserId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Array>
+                  <Source>
+                    <Object Name="ResponsibleUserCheckedComboBox" />
+                  </Source>
+                  <Filter>
+                    <And>
+                      <Filter Type="NotEqual">
+                        <Index Value="0" />
+                        <Value>responsible_for_loan</Value>
+                        <DataType Type="StringDataType" />
+                      </Filter>
+                      <Filter Type="NotEqual">
+                        <Index Value="0" />
+                        <Value>leading_specialist</Value>
+                        <DataType Type="StringDataType" />
+                      </Filter>
+                    </And>
+                  </Filter>
+                </Array>
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Description">
+          <Value>
+            <Object Name="DescriptionTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Filter">
+          <Value>
+            <DataTypeConvert Type="StringDataType">
+              <Object Name="CustomFilterPanel">
+                <Property Name="Filter" />
+              </Object>
+            </DataTypeConvert>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ResponsibleForLoan">
+          <Value>
+            <Or>
+              <Condition Name="ResponsibleForLoanSelectedCondition" />
+              <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+            </Or>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeadSpecialistResponsibleForLoan">
+          <Value>
+            <Or>
+              <Condition Name="LeadSpecialistResponsibleForLoanSelectedCondition" />
+              <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+            </Or>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="AutotaskFilterInsertSqlQuery" Type="Insert" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="AutotaskFilterSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="AutotaskFilterId">
+          <Value>
+            <Parameter Name="AutotaskFilterId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Title">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="FilterTitleTextBoxIsNullOrEmptyCondition" />
+                </When>
+                <Then>[Без названия]</Then>
+              </Case>
+              <Case>
+                <Object Name="FilterTitleTextBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="TaskTypeId">
+          <Value>
+            <Object Name="TaskTypeComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="DeadlineType">
+          <Value>
+            <Object Name="DeadlineTypeComboBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Deadline">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="DeadlineTypeComboBox" />
+                </When>
+                <Then>
+                  <Object Name="DeadlineDateTimePicker" />
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="DeadlineDaysNumericBox" />
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ResponsibleUserId" SendAsArray="True">
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="ResponsibleUserSecondaryGetDataConnection">
+                    <Fields>
+                      <Field Name="UserId" />
+                    </Fields>
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Array>
+                  <Source>
+                    <Object Name="ResponsibleUserCheckedComboBox" />
+                  </Source>
+                  <Filter>
+                    <And>
+                      <Filter Type="NotEqual">
+                        <Index Value="0" />
+                        <Value>responsible_for_loan</Value>
+                        <DataType Type="StringDataType" />
+                      </Filter>
+                      <Filter Type="NotEqual">
+                        <Index Value="0" />
+                        <Value>leading_specialist</Value>
+                        <DataType Type="StringDataType" />
+                      </Filter>
+                    </And>
+                  </Filter>
+                </Array>
+              </Case>
+            </Switch>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Description">
+          <Value>
+            <Object Name="DescriptionTextBox" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Filter">
+          <Value>
+            <DataTypeConvert Type="StringDataType">
+              <Object Name="CustomFilterPanel">
+                <Property Name="Filter" />
+              </Object>
+            </DataTypeConvert>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ResponsibleForLoan">
+          <Value>
+            <Or>
+              <Condition Name="ResponsibleForLoanSelectedCondition" />
+              <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+            </Or>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="LeadSpecialistResponsibleForLoan">
+          <Value>
+            <Or>
+              <Condition Name="LeadSpecialistResponsibleForLoanSelectedCondition" />
+              <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+            </Or>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="AutotaskFilterUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormClosingNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <AlwaysChange Value="True" />
+      <ConditionExpression>
+        <Or>
+          <Condition Name="FormClosingCondition" />
+          <Condition Name="FormEscapeKeyDownCondition" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormChangedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Or>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+          <Object Name="FilterChangedVariable" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Form>
+              <Property Name="CheckingFired" />
+            </Form>
+          </Not>
+          <Object Name="FilterValidatedVariable" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="IsNewAutotaskFilterNotGreater0Condition" Type="NotGreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AutotaskFilterId" />
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ResponsibleUserCheckedComboBoxSelectedNoneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="ItemsCount" />
+          </Object>
+        </Item>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ResponsibleForLoanSelectedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="ResponsibleUserCheckedComboBox" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <Value>responsible_for_loan</Value>
+              <DataType Type="StringDataType" />
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="LeadSpecialistResponsibleForLoanSelectedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="ResponsibleUserCheckedComboBox" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <Value>leading_specialist</Value>
+              <DataType Type="StringDataType" />
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="FilterTitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="FilterTitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="DeadlineDateLessNowDateCondition" Type="LessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DeadlineDateTimePicker" />
+        </Item>
+        <Item>
+          <DateTime Variable="ActualNowDate" />
+        </Item>
+      </Items>
+      <DataType Type="DateDataType" />
+    </Condition>
+
+    <Condition Name="AutotaskFilterIdIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="AutotaskFilterId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="DeadlineDaysIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DeadlineDaysNumericBox" />
+        </Item>
+      </Items>
+    </Condition>
+  </Conditions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="TaskTypeComboBox" />
+      <ConditionExpression>
+        <Condition Name="TaskTypeComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип действия" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ResponsibleUserCheckedComboBox" />
+      <ConditionExpression>
+        <Condition Name="ResponsibleUserCheckedComboBoxSelectedNoneCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Исполнители задачи" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="DeadlineDateTimePicker" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="DeadlineDateLessNowDateCondition" />
+          <Object Name="DeadlineTypeComboBox" />
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Срок исполнения не может быть меньше текущей даты</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="DeadlineDaysNumericBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="DeadlineDaysIsNullCondition" />
+          <Not>
+            <Object Name="DeadlineTypeComboBox" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Количество дней срока исполнения должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormLoadedVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FormLoadedVariable">True</Object>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="FilterNotValidatedMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption />
+      <Text>Заполните все обязательные поля конструктора</Text>
+      <Icon Type="Warning" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="FilterValidatedVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FilterValidatedVariable">
+        <Object Name="CustomFilterPanel">
+          <Property Name="Validated" />
+        </Object>
+      </Object>
+    </Command>
+
+    <Command Name="AutotaskFilterAddNewSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AutotaskFilterAddNewSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AutotaskFilterSaveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="AutotaskFilterSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedValueTrueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="FilterValidatedVariableValueSetCommand" />
+        <If>
+          <When>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="SaveOnCloseMessageBoxCommand" />
+          </Then>
+          <Else>
+            <Command Name="CloseOnCloseMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="IsNewAutotaskFilterNotGreater0Condition" />
+          </When>
+          <Then>
+            <Command Name="AutotaskFilterAddNewSaveCommand" />
+          </Then>
+          <Else>
+            <Command Name="AutotaskFilterSaveSaveCommand" />
+          </Else>
+        </If>
+        <Command Name="UpdatedValueTrueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="FilterValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CustomFilterPanel">
+        <Property Name="Filter">
+          <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Filter" />
+            </Fields>
+          </DataConnection>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="FilterRefreshValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CustomFilterPanel">
+        <Property Name="RefreshFilter" />
+      </Object>
+    </Command>
+
+    <Command Name="FilterChangedVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FilterChangedVariable">
+        <Object Name="CustomFilterPanel">
+          <Property Name="Changed" />
+        </Object>
+      </Object>
+    </Command>
+
+    <Command Name="FilterVisibleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CustomFilterPanel">
+        <Property Name="Visible">
+          <Input />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="HelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Справка</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r\r{1}\r\r{2}</Format>
+          <Items>
+            <Item>Установите условия постановки данной задачи. Для этого выберите поля и их возможные значения.</Item>
+            <Item>Если данные в карточке дела будут удовлетворять заданным условиям, то задача будет автоматически создана.</Item>
+            <Item>Условия можно группировать по логическим правилам И и ИЛИ.</Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="HelpButtonBringToFrontValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="HelpButton">
+        <Property Name="BringToFront" />
+      </Object>
+    </Command>
+
+    <Command Name="FormChangedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">
+          <Input />
+        </Property>
+      </Form>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="HelpButtonBringToFrontValueSetCommand" />
+        <If>
+          <When>
+            <Condition Name="AutotaskFilterIdIsNotNullCondition" />
+          </When>
+          <Then>
+            <Command Name="FilterValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="FormLoadedVariableValueSetCommand" />
+        <Command Name="FilterVisibleValueSetCommand">True</Command>
+        <Command Name="HelpButtonBringToFrontValueSetCommand" />
+        <Command Name="FormChangedValueSetCommand">False</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingNestedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FilterChangedVariableValueSetCommand" />
+        <If>
+          <When>
+            <And>
+              <Object Name="FormLoadedVariable" />
+              <Condition Name="FormChangedNestedCondition" />
+            </And>
+          </When>
+          <Then>
+            <Command Name="FormCloseSequentialCommand" />
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="SaveSequentialCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <And>
+          <Condition Name="FormClosingNestedCondition" />
+          <Or>
+            <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+            <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+          </Or>
+        </And>
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="FormLoadedVariable" Type="Variable" Assembly="SimpleControls">
+      <Change User="False" Source="False" ValueSet="False" />
+      <Value>False</Value>
+    </MyObject>
+
+    <MyObject Name="FilterValidatedVariable" Type="Variable" Assembly="SimpleControls">
+      <Change User="False" Source="False" ValueSet="False" />
+      <Value>True</Value>
+    </MyObject>
+
+    <MyObject Name="FilterChangedVariable" Type="Variable" Assembly="SimpleControls">
+      <Change User="False" Source="False" ValueSet="False" />
+      <Value>False</Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <AutoScroll>False</AutoScroll>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="FormLabel" Type="Label" Assembly="BaseControls" ChangeForm="False">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="HeadPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <ForeColor>HeadTextColor</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <AutoScroll>False</AutoScroll>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TaskDataGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FilterTitleTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Formula>
+                  <Multiply DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="TaskDataGroupBox">
+                        <Property Name="Left" />
+                      </Object>
+                    </Item>
+                    <Item>2</Item>
+                  </Multiply>
+                </Formula>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <Text>Информация об автозадаче</Text>
+
+        <MyObject Name="FilterTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="TaskDataGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="FilterTitleLabel">
+                          <Property Name="Left" />
+                        </Object>
+                      </Item>
+                      <Item>50</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>3</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Наименование</Text>
+        </MyObject>
+
+        <MyObject Name="FilterTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <TipText>[Без названия]</TipText>
+          <Text>
+            <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="CreatedDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FilterTitleLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="FilterTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="FilterTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="FilterTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата создания</Text>
+        </MyObject>
+
+        <MyObject Name="CreatedDateTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CreatedDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CreatedDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CreatedDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <ReadOnly>True</ReadOnly>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataTypeFormat Type="DateDataType" Format="dd MMMM yyyy">
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="IsNewAutotaskFilterNotGreater0Condition" />
+                  </When>
+                  <Then>
+                    <DateTime Variable="ActualNowDate" />
+                  </Then>
+                </Case>
+                <Case>
+                  <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="CreateDate" />
+                    </Fields>
+                  </DataConnection>
+                </Case>
+              </Switch>
+            </DataTypeFormat>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="EditDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CreatedDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TaskDataGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="EditDateLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="FilterTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="FilterTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="FilterTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата изменения</Text>
+        </MyObject>
+
+        <MyObject Name="EditDateTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="EditDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="EditDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="EditDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <ReadOnly>True</ReadOnly>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataTypeFormat Type="DateDataType" Format="dd MMMM yyyy">
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="IsNewAutotaskFilterNotGreater0Condition" />
+                  </When>
+                  <Then>
+                    <DateTime Variable="ActualNowDate" />
+                  </Then>
+                </Case>
+                <Case>
+                  <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="EditDate" />
+                    </Fields>
+                  </DataConnection>
+                </Case>
+              </Switch>
+            </DataTypeFormat>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="TaskInfoGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskDataGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskDataGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DescriptionTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="TaskDataGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Text>Информация о задаче</Text>
+
+        <MyObject Name="TaskTypeLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="FilterTitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="FilterTitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="FilterTitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="FilterTitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Тип действия</Text>
+        </MyObject>
+
+        <MyObject Name="TaskTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <DataConnection SourceDataConnection="TaskTypePrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TaskTypeId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TaskTypeId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="DeadlineLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CreatedDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CreatedDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TaskTypeLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TaskTypeLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TaskTypeLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Срок исполнения</Text>
+        </MyObject>
+
+        <MyObject Name="DeadlineTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="TaskTypeComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DeadlineLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>60</Width>
+          <TabIndex>2</TabIndex>
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <Structure Type="Table">
+              <Row>
+                <Item>True</Item>
+                <Item>Дата</Item>
+              </Row>
+              <Row>
+                <Item>False</Item>
+                <Item>Через</Item>
+              </Row>
+            </Structure>
+          </ValueList>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="IsNewAutotaskFilterNotGreater0Condition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DeadlineType" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="DeadlineDaysNumericBox" Type="NumericBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="DeadlineLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DeadlineTypeComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DeadlineLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="DaysLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="DeadlineTypeComboBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Minimum>0</Minimum>
+          <Increment>1</Increment>
+          <TabIndex>3</TabIndex>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="IsNewAutotaskFilterNotGreater0Condition" />
+                </When>
+                <Then>0</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DeadlineLater" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Visible>
+            <Not>
+              <Object Name="DeadlineTypeComboBox" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="DaysLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="DeadlineDaysNumericBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DeadlineDaysNumericBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>40</Width>
+          <Height>
+            <Object Name="DeadlineDaysNumericBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TextAlign>
+            <Object Name="TaskTypeLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>дней</Text>
+          <Visible>
+            <Object Name="DeadlineDaysNumericBox">
+              <Property Name="Visible" />
+            </Object>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="DeadlineDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="DeadlineLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DeadlineDaysNumericBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="DeadlineDaysNumericBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="DaysLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+              </Plus>
+            </Formula>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Format>dd MMMM yyyy</Format>
+          <ShowCalendar>True</ShowCalendar>
+          <NullValue Show="False" />
+          <Value>
+            <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="DeadlineDate" />
+              </Fields>
+            </DataConnection>
+          </Value>
+          <Visible>
+            <Object Name="DeadlineTypeComboBox" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ResponsibleUserLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="EditDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="EditDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TaskTypeLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TaskTypeLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TaskTypeLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Исполнители задачи</Text>
+        </MyObject>
+
+        <MyObject Name="ResponsibleUserCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="ResponsibleUserLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ResponsibleUserLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ResponsibleUserLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <ValueList>
+            <Array>
+              <Source>
+                <Structure Type="Table">
+                  <Row>
+                    <Item>responsible_for_loan</Item>
+                    <Item>Ответственный специалист по делу</Item>
+                  </Row>
+                  <Row>
+                    <Item>leading_specialist</Item>
+                    <Item>Ведущий специалист</Item>
+                  </Row>
+                </Structure>
+              </Source>
+              <Concat>
+                <DataConnection SourceDataConnection="ResponsibleUserSecondaryGetDataConnection">
+                  <Fields>
+                    <Field Name="UserId" />
+                    <Field Name="Title" />
+                  </Fields>
+                </DataConnection>
+              </Concat>
+            </Array>
+          </ValueList>
+          <NullValue Show="True" Title="[Все]" />
+          <Value>
+            <DataConnection SourceDataConnection="ResponsibleUserIdPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ResponsibleUserId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+          <Formatting>
+            <BackColor Name="HeadThemeColor">
+              <Expression>([0] = 'responsible_for_loan') || ([0] = 'leading_specialist')</Expression>
+            </BackColor>
+          </Formatting>
+        </MyObject>
+
+        <MyObject Name="DescriptionLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ResponsibleUserCheckedComboBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ResponsibleUserLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="DescriptionLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="TaskTypeLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TaskTypeLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TaskTypeLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TaskTypeLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Описание</Text>
+        </MyObject>
+
+        <MyObject Name="DescriptionTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="DescriptionLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="DescriptionLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>75</Height>
+          <Width>
+            <Object Name="DescriptionLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Description" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="FilterLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskInfoGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskInfoGroupBox">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>150</Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Условия задачи</Text>
+      </MyObject>
+
+      <MyObject Name="CustomFilterPanel" Type="FilterPanel" Assembly="Collect">
+        <Top>
+          <Object Name="FilterLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="FilterLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="CustomFilterPanel">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="TaskInfoGroupBox">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <FieldsList>
+          <DataConnection SourceDataConnection="AutotaskFieldsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ColumnName" />
+              <Field Name="Title" />
+              <Field Name="Type" />
+            </Fields>
+          </DataConnection>
+        </FieldsList>
+        <Filter>
+          <DataConnection SourceDataConnection="AutotaskFilterPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Filter" />
+            </Fields>
+          </DataConnection>
+        </Filter>
+        <MaxHeight>300</MaxHeight>
+        <Visible>False</Visible>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="RefreshButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>5</Left>
+        <Height>
+          <Object Name="SaveButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SaveButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <FontStyle>
+          <Object Name="SaveButton">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <FlatStyle>
+          <Object Name="SaveButton">
+            <Property Name="FlatStyle" />
+          </Object>
+        </FlatStyle>
+        <FlatBorderSize>
+          <Object Name="SaveButton">
+            <Property Name="FlatBorderSize" />
+          </Object>
+        </FlatBorderSize>
+        <FlatBorderColor>
+          <Object Name="SaveButton">
+            <Property Name="FlatBorderColor" />
+          </Object>
+        </FlatBorderColor>
+        <FlatMouseDownBackColor>
+          <Object Name="SaveButton">
+            <Property Name="FlatMouseDownBackColor" />
+          </Object>
+        </FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Object Name="SaveButton">
+            <Property Name="FlatMouseOverBackColor" />
+          </Object>
+        </FlatMouseOverBackColor>
+        <TextAlign>
+          <Object Name="SaveButton">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сбросить условия задачи</Text>
+        <Commands>
+          <Command Name="FilterRefreshValueSetCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="HelpButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SaveButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="HelpButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="SaveButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>36</Width>
+        <TabStop>False</TabStop>
+        <FlatStyle>Flat</FlatStyle>
+        <Image>Images\24x24\help.png</Image>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Commands>
+          <Command Name="HelpMessageBoxCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="FilterValidatedVariableValueSetCommand" />
+          <If>
+            <When>
+              <Object Name="FilterValidatedVariable" />
+            </When>
+            <Then>
+              <Command Name="SaveSequentialCommand" />
+              <Command Name="FormCloseCommand" />
+            </Then>
+            <Else>
+              <Command Name="FilterNotValidatedMessageBoxCommand" />
+            </Else>
+          </If>
+        </Commands>
+        <Enabled>
+          <Not>
+            <Form>
+              <Property Name="CheckingFired" />
+            </Form>
+          </Not>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Form>
+                  <Property Name="CheckingFired" />
+                </Form>
+              </When>
+              <Then>Заполните все обязательные поля</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

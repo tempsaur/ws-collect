@@ -1,0 +1,4053 @@
+<?xml version="1.0"?>
+<Form Name="CollectPochtaRuOrderListForm" Title="Реестр заказов 'Почта России'" Width="1000" Height="600" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="CloseAfterSelect">False</Parameter>
+    <Parameter Name="Title">Реестр заказов "Почта России"</Parameter>
+    <Parameter Name="PochtaRuOrderTitle" />
+    <Parameter Name="Selected" />
+    <Parameter Name="Updated" />
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorHeadPanelButtonBorder" Red="160" Green="160" Blue="160" Alpha="255" />
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="ButtonBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="LightGreen" Red="180" Green="255" Blue="180" Alpha="255" />
+
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="FootTitleBoldFont" Font="Segoe UI" Size="13" Bold="True" />
+      <FontStyle Name="TabButtonFont" Font="Segoe UI" Size="10" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+
+    <DataConnection Name="OrderPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PochtaRuOrderSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="RowNumber" />
+          <Field Name="TotalPages" />
+          <Field Name="TotalRows" />
+
+          <Field Name="OrderId" />
+          <Field Name="LoanPostId" />
+          <Field Name="LoanClientId" />
+          <Field Name="LoanId" />
+          <Field Name="Archived" />
+          <Field Name="InBatch" />
+
+          <Field Name="OrderNum" />
+          <Field Name="Barcode" />
+          <Field Name="HasBarcode" />
+          <Field Name="FullAddressTo" />
+          <Field Name="RecipientName" />
+
+          <Field Name="BatchName" />
+          <Field Name="ArrivalDate" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="CurrentPage" RefreshQuery="False">
+            <Value>
+              <Object Name="OrderCurrentPageTextBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="RowsPerPage">
+            <Value>
+              <Object Name="OrderRowsPerPageComboBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="Archived">
+            <Value>
+              <Object Name="ArchiveFilterComboBox" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="BatchPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PochtaRuBatchSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="RowNumber" />
+          <Field Name="TotalPages" />
+          <Field Name="TotalRows" />
+
+          <Field Name="BatchId" />
+          <Field Name="BatchStatus" />
+          <Field Name="Archived" />
+
+          <Field Name="BatchName" />
+          <Field Name="BatchStatusText" />
+          <Field Name="SendingDate" />
+          <Field Name="ElectronicF103" />
+          <Field Name="DeliveryCount" />
+          <Field Name="ShipmentCount" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="CurrentPage" RefreshQuery="False">
+            <Value>
+              <Object Name="OrderCurrentPageTextBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="RowsPerPage">
+            <Value>
+              <Object Name="OrderRowsPerPageComboBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="Archived">
+            <Value>
+              <Object Name="ArchiveFilterComboBox" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="OrdersSelectedSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="OrderPrimaryGetDataConnection" />
+      <Filter Type="In">
+        <Field NativeName="OrderId" />
+        <Value>
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="OrderErrorsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="PochtaRuOrderErrorsSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Message" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="OrderIds" RefreshQuery="False" SendAsArray="True">
+            <Value>
+              <DataConnection SourceDataConnection="OrdersSelectedSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="OrderId" />
+                </Fields>
+              </DataConnection>
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="OrdersSelectedInBatchSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="OrdersSelectedSecondaryGetDataConnection" />
+      <Filter Type="Equal">
+        <Field NativeName="InBatch" />
+        <Value>True</Value>
+        <DataType Type="BooleanDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="BatchesSelectedSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="BatchPrimaryGetDataConnection" />
+      <Filter Type="In">
+        <Field NativeName="BatchId" />
+        <Value>
+          <Object Name="BatchDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">BatchId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <!-- !DC -->
+
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="EscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+
+    <!--  -->
+
+    <Condition Name="BatchFilterIsArchivedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ArchiveFilterComboBox" />
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="SingleOrderSelectedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrdersSelectedSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AtLeastOneOrderSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrdersSelectedSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="OrdersSelectedSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Archived" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="BooleanDataType" />
+              <Value>True</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AtLeastOneSelectedOrderIsMissingBarcodeCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="OrdersSelectedSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="HasBarcode" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="BooleanDataType" />
+              <Value>False</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TabSelectedIsBatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SelectedTabVariable" />
+        </Item>
+        <Item>batch</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="TabSelectedIsOrderCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SelectedTabVariable" />
+        </Item>
+        <Item>order</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="AtLeastOneBatchSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="BatchesSelectedSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="SingleBatchSelectedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BatchDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AtLeastOneSelectedBatchArchivedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="BatchesSelectedSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="BatchesSelectedSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Archived" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="BooleanDataType" />
+              <Value>True</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AtLeastOneSelectedOrderBelongsToBatchCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrdersSelectedInBatchSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="AllSelectedOrdersBelongToBatchEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrdersSelectedInBatchSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="OrdersSelectedSecondaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ApiCallSuccessCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApiCallSuccessVariable" />
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ApiCallErrorCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApiCallSuccessVariable" />
+        </Item>
+        <Item>False</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="OrderDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="OrderDatabaseTable" />
+    </Condition>
+
+    <Condition Name="OrderErrorsMessageIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrderErrorsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Message" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="OrderErrorsMessageIsNotNullOrEmptyCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Condition Name="OrderErrorsMessageIsNullOrEmptyCondition" />
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <!-- Order Pagination -->
+
+    <Condition Name="OrderCurrentPageEqual1Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="OrderCurrentPageTextBox" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="OrderCurrentPageEqualMaxCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="OrderCurrentPageTextBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="OrderPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TotalPages" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="OrderCountIsZeroCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrderPrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <!-- Batch Pagination -->
+
+    <Condition Name="BatchCurrentPageEqual1Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BatchCurrentPageTextBox" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="BatchCurrentPageEqualMaxCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="BatchCurrentPageTextBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TotalPages" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="BatchCountIsZeroCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+    </Condition>
+
+    <!-- !CN -->
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="SelectedTabVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="SelectedTabVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="ControlPanelResizeVariableSwitchCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ControlPanelResizeVariable">
+        <Not>
+          <Object Name="ControlPanelResizeVariable" />
+        </Not>
+      </Object>
+    </Command>
+
+    <Command Name="OrderEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPochtaRuOrderEdit.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="LoanPostId">
+          <Input />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="FormDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="OrderPrimaryGetDataConnection" Packet="True" />
+        <DataConnection Name="BatchPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="OrderDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="OrderPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="OrderErrorsDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="OrderErrorsPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BatchDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="BatchPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BatchCreateFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPochtaRuBatchEdit.xml</Xml>
+      <Show Type="Modal" />
+      <Parameters>
+        <Parameter Name="OrderIds">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPochtaRuBatchEdit.xml</Xml>
+      <Show Type="Modal" />
+      <Parameters>
+        <Parameter Name="BatchId">
+          <Object Name="BatchDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">BatchId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="SendingDate">
+          <Object Name="BatchDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">SendingDate</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchSelectFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPochtaRuBatchSelect.xml</Xml>
+      <Show Type="Modal" />
+    </Command>
+
+    <Command Name="PostEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPostEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="LoanPostId">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanPostId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="Type">common</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OrderDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление заказов</Caption>
+      <Text>Вы уверены что хотите удалить выбранные заказы?</Text>
+      <Icon Type="Information" />
+      <Buttons Type="OkCancel" />
+    </Command>
+
+    <Command Name="BatchPrintFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectPochtaRuBatchPrint.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="BatchId">
+          <Input Name="BatchId" />
+        </Parameter>
+        <Parameter Name="BatchName">
+          <Input Name="BatchName" />
+        </Parameter>
+        <Parameter Name="SendingDate">
+          <Input Name="SendingDate" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="LoanEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="LoanClientId">
+          <Input Name="LoanClientId">
+            <Input Name="LoanClientId" />
+          </Input>
+        </Parameter>
+        <Parameter Name="LoanId">
+          <Input Name="LoanId">
+            <Input Name="LoanId" />
+          </Input>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <!-- api -->
+    <Command Name="ApiCallSuccessVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApiCallSuccessVariable">
+        <Input Name="Value" />
+      </Object>
+    </Command>
+
+    <Command Name="ApiCallMessageVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApiCallMessageVariable">
+        <Input Name="Value" />
+      </Object>
+    </Command>
+
+    <Command Name="ApiErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Ошибка при выполнении запроса к системе PochtaRu</Caption>
+      <Text>
+        <Object Name="ApiCallMessageVariable" />
+      </Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="ApiCallHandleResultCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="ApiCallSuccessVariableValueSetCommand">
+          <Input Name="Value">
+            <Input Name="Success" />
+          </Input>
+        </Command>
+        <Command Name="ApiCallMessageVariableValueSetCommand">
+          <Input Name="Value">
+            <Input Name="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallErrorCondition" />
+          </When>
+          <Then>
+            <Command Name="ApiErrorMessageBoxCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="OrderErrorsMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Condition Name="OrderErrorsMessageIsNotNullOrEmptyCondition" />
+      <Caption>Ошибка при выполнении запроса к системе Почта.Ру</Caption>
+      <Text>
+        <DataConnection SourceDataConnection="OrderErrorsPrimaryGetDataConnection">
+          <Fields>
+            <Field Name="Message" />
+          </Fields>
+        </DataConnection>
+      </Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="OnOrderApiCallSuccessSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Condition Name="ApiCallSuccessCondition" />
+      <Commands>
+        <Command Name="OrderErrorsDataConnectionRefreshCommand" />
+        <Command Name="OrderErrorsMessageBoxCommand" />
+        <Command Name="FormDataConnectionRefreshCommand" />
+      </Commands>
+    </Command>
+
+    <!-- SearchById -->
+    <Command Name="OrderSearchByIdCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuOrderSearchByIdCommand" />
+      <Parameters>
+        <Parameter Name="OrderIds" SendAsArray="True">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OrderSearchByIdCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="OrderSearchByIdCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="OrderSearchByIdCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="OrderSearchByIdCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <Command Name="OnOrderApiCallSuccessSequentialCommand" />
+      </Commands>
+    </Command>
+
+    <!-- SearchByBarcode -->
+    
+    <Command Name="OrderSearchByBarcodeCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuOrderSearchByBarcodeCommand" />
+       <Parameters>
+        <Parameter Name="OrderIds" SendAsArray="True">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+    
+    <Command Name="OrderSearchByBarcodeCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="OrderSearchByBarcodeCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="OrderSearchByBarcodeCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="OrderSearchByBarcodeCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <Command Name="OnOrderApiCallSuccessSequentialCommand" />
+      </Commands>
+    </Command>
+
+    <!-- BatchCheckOrders -->
+    <Command Name="BatchCheckOrdersCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchCheckOrdersCommand" />
+      <Parameters>
+        <Parameter Name="BatchIds" SendAsArray="True">
+          <DataConnection SourceDataConnection="BatchesSelectedSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="BatchId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchCheckOrdersCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="BatchCheckOrdersCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="BatchCheckOrdersCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="BatchCheckOrdersCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallSuccessCondition" />
+          </When>
+          <Then>
+            <Command Name="FormDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!--BatchCheckAll-->
+
+    <Command Name="BatchCheckAllCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchCheckAllCommand" />
+    </Command>
+
+    <Command Name="BatchCheckAllCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="BatchCheckAllCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="BatchCheckAllCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="BatchCheckAllCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallSuccessCondition" />
+          </When>
+          <Then>
+            <Command Name="FormDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- OrderDelete -->
+
+    <Command Name="OrderDeleteCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuOrderDeleteCommand" />
+      <Parameters>
+        <Parameter Name="OrderIds" SendAsArray="True">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OrderDeleteCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="OrderDeleteMessageBoxCommand" />
+        <If>
+          <When>
+            <Command Name="OrderDeleteMessageBoxCommand" Parameter="OK" />
+          </When>
+          <Then>
+            <Command Name="OrderDeleteCallCommand" />
+            <Command Name="ApiCallHandleResultCommand">
+              <Input Name="Success">
+                <Command Name="OrderDeleteCallCommand" Parameter="Success" />
+              </Input>
+              <Input Name="Message">
+                <Command Name="OrderDeleteCallCommand" Parameter="Message" />
+              </Input>
+            </Command>
+            <Command Name="OnOrderApiCallSuccessSequentialCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- MoveToBatch -->
+
+    <Command Name="PochtaRuOrderMoveToBatchCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuOrderMoveToBatchCommand" />
+      <Parameters>
+        <Parameter Name="BatchId">
+          <Command Name="BatchSelectFormShowCommand" Parameter="BatchId" />
+        </Parameter>
+        <Parameter Name="OrderIds" SendAsArray="True">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OrderMoveToBatchCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="BatchSelectFormShowCommand" />
+        <If>
+          <When>
+            <Command Name="BatchSelectFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="PochtaRuOrderMoveToBatchCallCommand" />
+            <Command Name="ApiCallHandleResultCommand">
+              <Input Name="Success">
+                <Command Name="PochtaRuOrderMoveToBatchCallCommand" Parameter="Success" />
+              </Input>
+              <Input Name="Message">
+                <Command Name="PochtaRuOrderMoveToBatchCallCommand" Parameter="Message" />
+              </Input>
+            </Command>
+            <Command Name="OnOrderApiCallSuccessSequentialCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- MoveBackToBackLog -->
+    <Command Name="OrderMoveBackToBacklogCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuOrderMoveBackToBacklogCommand" />
+      <Parameters>
+        <Parameter Name="OrderIds" SendAsArray="True">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowsCellValuesByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OrderMoveBackToBacklogCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="OrderMoveBackToBacklogCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="OrderMoveBackToBacklogCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="OrderMoveBackToBacklogCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <Command Name="OnOrderApiCallSuccessSequentialCommand" />
+      </Commands>
+    </Command>
+
+    <!-- DocumentsCreateFormsBacklog -->
+
+    <Command Name="OrderBacklogDownloadDocumentsCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuOrderBacklogDownloadDocumentsCommand" />
+      <Parameters>
+        <Parameter Name="OrderId">
+          <Object Name="OrderDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">OrderId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="OrderBacklogDownloadDocumentsFolderDialogShowCommand" Type="FolderDialogShowCommand" Assembly="Commands">
+      <Title>Выберите папку</Title>
+      <RootSpecialFolder>Desktop</RootSpecialFolder>
+    </Command>
+
+    <Command Name="OrderBacklogDownloadDocumentsDownloadFileCommand" Type="DownloadFileCommand" Assembly="Commands">
+      <FileGuid>
+        <Command Name="OrderBacklogDownloadDocumentsCallCommand" Parameter="GUID" />
+      </FileGuid>
+    </Command>
+
+    <Command Name="OrderBacklogDownloadDocumentsCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="OrderBacklogDownloadDocumentsFolderDialogShowCommand" />
+        <If>
+          <When>
+            <Command Name="OrderBacklogDownloadDocumentsFolderDialogShowCommand" Parameter="OK" />
+          </When>
+          <Then>
+            <Command Name="OrderBacklogDownloadDocumentsCallCommand" />
+            <Command Name="ApiCallHandleResultCommand">
+              <Input Name="Success">
+                <Command Name="OrderBacklogDownloadDocumentsCallCommand" Parameter="Success" />
+              </Input>
+              <Input Name="Message">
+                <Command Name="OrderBacklogDownloadDocumentsCallCommand" Parameter="Message" />
+              </Input>
+            </Command>
+            <If>
+              <When>
+                <Condition Name="ApiCallSuccessCondition" />
+              </When>
+              <Then>
+                <Command Name="OrderBacklogDownloadDocumentsDownloadFileCommand" />
+              </Then>
+            </If>
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- BatchDocumentsCheckIn -->
+    <Command Name="BatchDocumentsCheckInCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchDocumentsCheckInCommand" />
+      <Parameters>
+        <Parameter Name="BatchId">
+          <Object Name="BatchDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">BatchId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchDocumentsCheckInSuccessMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Подготовка и отправка электронной формы Ф103</Caption>
+      <Text>Успешно.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="BatchDocumentsCheckInCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="BatchDocumentsCheckInCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="BatchDocumentsCheckInCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="BatchDocumentsCheckInCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallSuccessCondition" />
+          </When>
+          <Then>
+            <Command Name="BatchDocumentsCheckInSuccessMessageBoxCommand" />
+            <Command Name="FormDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- BatchArchive -->
+
+    <Command Name="PochtaRuBatchArchiveCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchArchiveCommand" />
+      <Parameters>
+        <Parameter Name="BatchIds" SendAsArray="True">
+          <DataConnection SourceDataConnection="BatchesSelectedSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="BatchId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PochtaRuBatchArchiveCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="PochtaRuBatchArchiveCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="PochtaRuBatchArchiveCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="PochtaRuBatchArchiveCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallSuccessCondition" />
+          </When>
+          <Then>
+            <Command Name="FormDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- BatchArchiveRevert -->
+
+    <Command Name="PochtaRuBatchArchiveRevertCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchArchiveRevertCommand" />
+      <Parameters>
+        <Parameter Name="BatchIds" SendAsArray="True">
+          <DataConnection SourceDataConnection="BatchesSelectedSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="BatchId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PochtaRuBatchArchiveRevertCommand" Type="SequentialCommand" Assembly="Commands">
+      <Lock Value="True" />
+      <Commands>
+        <Command Name="PochtaRuBatchArchiveRevertCallCommand" />
+        <Command Name="ApiCallHandleResultCommand">
+          <Input Name="Success">
+            <Command Name="PochtaRuBatchArchiveRevertCallCommand" Parameter="Success" />
+          </Input>
+          <Input Name="Message">
+            <Command Name="PochtaRuBatchArchiveRevertCallCommand" Parameter="Message" />
+          </Input>
+        </Command>
+        <If>
+          <When>
+            <Condition Name="ApiCallSuccessCondition" />
+          </When>
+          <Then>
+            <Command Name="FormDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- Order Pagination -->
+
+    <Command Name="OrderCurrentPageIncreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderCurrentPageTextBox">
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="OrderCurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Plus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="OrderCurrentPageDecreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderCurrentPageTextBox">
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Object Name="OrderCurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Minus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="OrderCurrentPageTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderCurrentPageTextBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- Batch Pagination -->
+
+    <Command Name="BatchCurrentPageIncreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderCurrentPageTextBox">
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="OrderCurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Plus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="BatchCurrentPageDecreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderCurrentPageTextBox">
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Object Name="OrderCurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Minus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="BatchCurrentPageTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="OrderCurrentPageTextBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <!-- !CM -->
+
+  </Commands>
+
+  <Executions>
+
+    <Execution>
+      <ConditionExpression>
+        <Or>
+          <Condition Name="FormClosingCondition" />
+          <Condition Name="EscapeKeyDownCondition" />
+        </Or>
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="EscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="OrderEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="BatchCreateFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="OrderDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="SingleOrderSelectedCondition" />
+          </When>
+          <Then>
+            <Command Name="OrderEditFormShowCommand">
+              <Object Name="OrderDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">LoanPostId</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <!-- !EX -->
+  </Executions>
+
+  <MyObjects>
+
+    <MyObject Name="VariablePanel" Type="Panel" Assembly="BaseControls">
+      <Visible>False</Visible>
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>0</Height>
+      <Width>0</Width>
+
+      <MyObject Name="SelectedTabVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+        <Value>
+          <Array>
+            <Source>
+              <Structure Type="List">
+                <Item>order</Item>
+                <Item>batch</Item>
+              </Structure>
+            </Source>
+            <First />
+          </Array>
+        </Value>
+      </MyObject>
+
+      <MyObject Name="ApiCallSuccessVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+        <Value />
+      </MyObject>
+
+      <MyObject Name="ApiCallMessageVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+        <Value />
+      </MyObject>
+
+      <MyObject Name="ControlPanelResizeVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+        <Value>False</Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <TabIndex>1</TabIndex>
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <TabIndex>1</TabIndex>
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <NullValue Show="True" Title="Все" />
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>False</Value>
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <TabIndex>2</TabIndex>
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Parameter Name="SelectionMode" />
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TabPanel" Type="Panel" Assembly="BaseControls">
+        <TabIndex>1</TabIndex>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="ControlPanelResizeVariable" />
+              </When>
+              <Then>100</Then>
+            </Case>
+            <Case>33</Case>
+          </Switch>
+        </Width>
+        <BackColor>ThemeColorBackButtonBorder</BackColor>
+
+        <MyObject Name="TabOrderButton" Type="Button" Assembly="BaseControls">
+          <TabIndex>1</TabIndex>
+          <Top>1</Top>
+          <Left>0</Left>
+          <Height>33</Height>
+          <Width>
+            <Object Name="TabPanel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <BackColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="TabSelectedIsOrderCondition" />
+                </When>
+                <Then>FlatMouseDownBackColor</Then>
+              </Case>
+              <Case>ButtonBackColor</Case>
+            </Switch>
+          </BackColor>
+          <ForeColor>Black</ForeColor>
+          <FontStyle>TabButtonFont</FontStyle>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="TabSelectedIsOrderCondition" />
+                </When>
+                <Then>FlatMouseDownBackColor</Then>
+              </Case>
+              <Case>FlatMouseOverBackColor</Case>
+            </Switch>
+          </FlatMouseOverBackColor>
+          <Image>Images\24x24\post.png</Image>
+          <ImageAlign>MiddleLeft</ImageAlign>
+          <Text>        Заказы</Text>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Commands>
+            <Command Name="SelectedTabVariableValueSetCommand">order</Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="TabBatchButton" Type="Button" Assembly="BaseControls">
+          <TabIndex>2</TabIndex>
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TabOrderButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>1</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TabOrderButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="TabOrderButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="TabOrderButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <BackColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="TabSelectedIsBatchCondition" />
+                </When>
+                <Then>FlatMouseDownBackColor</Then>
+              </Case>
+              <Case>ButtonBackColor</Case>
+            </Switch>
+          </BackColor>
+          <ForeColor>Black</ForeColor>
+          <FontStyle>TabButtonFont</FontStyle>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="TabSelectedIsBatchCondition" />
+                </When>
+                <Then>FlatMouseDownBackColor</Then>
+              </Case>
+              <Case>FlatMouseOverBackColor</Case>
+            </Switch>
+          </FlatMouseOverBackColor>
+          <Image>Images\24x24\pochtaru_create_batch.png</Image>
+          <ImageAlign>MiddleLeft</ImageAlign>
+          <Text>        Партии</Text>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Commands>
+            <Command Name="SelectedTabVariableValueSetCommand">batch</Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="FillerPanel" Type="Panel" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TabBatchButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>1</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>0</Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TabPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="TabBatchButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Object Name="TabPanel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <BackColor>ButtonBackColor</BackColor>
+        </MyObject>
+
+      </MyObject>
+
+      <MyObject Name="ControlPanelResizeButton" Type="Button" Assembly="BaseControls">
+        <TabIndex>2</TabIndex>
+        <Top>
+          <Object Name="TabPanel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TabPanel">
+            <Property Name="Right" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TabPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>20</Width>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="ControlPanelResizeVariable" />
+              </When>
+              <Then>Images\11x11\arrow_left.png</Then>
+            </Case>
+            <Case>Images\11x11\arrow_right.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <BackColor>BackThemeColor</BackColor>
+        <FlatMouseOverBackColor>ButtonBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ControlPanelResizeVariableSwitchCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="OrderPanel" Type="Panel" Assembly="BaseControls">
+        <TabIndex>3</TabIndex>
+        <Visible>
+          <Condition Name="TabSelectedIsOrderCondition" />
+        </Visible>
+        <Top>0</Top>
+        <Left>
+          <Object Name="ControlPanelResizeButton">
+            <Property Name="Right" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TabPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ControlPanelResizeButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+
+        <MyObject Name="OrderDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+          <TabIndex>1</TabIndex>
+          <Change User="False" Source="False" ValueSet="False" />
+          <Top>10</Top>
+          <Left>10</Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ContentPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="OrderDatabaseTablePaginationPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="OrderPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="OrderDatabaseTableSidePanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <AllowInsert>False</AllowInsert>
+          <AllowUpdate>False</AllowUpdate>
+          <AllowDelete>False</AllowDelete>
+          <AllowResizeRows Value="False" />
+          <AutoSizeColumnsMode Value="Fill" />
+          <BorderStyle Value="Fixed3D" />
+          <BackgroundColor Value="Gray200" />
+          <SelectionColor Name="SelectionColor" />
+          <ShowCellHints Value="True" />
+          <SourceDataConnection Name="OrderPrimaryGetDataConnection" />
+          <Columns>
+            <Column Name="OrderId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="LoanPostId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="LoanClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="LoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="Archived" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+
+            <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>№ п/п</Title>
+              <Width>50</Width>
+              <DataType Type="IntegerDataType" />
+              <WrapMode Value="True" />
+            </Column>
+            <Column Name="OrderNum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Номер заказа</Title>
+              <Width>60</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+              <Hint>Номер заказа</Hint>
+            </Column>
+            <Column Name="Barcode" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>ШПИ</Title>
+              <Width>80</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+            </Column>
+            <Column Name="BatchName" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Партия</Title>
+              <Width>120</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+              <Hint>Наименование партии</Hint>
+            </Column>
+            <Column Name="SendingDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Дата отправки</Title>
+              <Width>120</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            </Column>
+            <Column Name="ArrivalDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Дата доставки</Title>
+              <Width>120</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            </Column>
+            <Column Name="RecipientName" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Адресат</Title>
+              <Width>150</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+            </Column>
+            <Column Name="FullAddressTo" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Адрес получателя</Title>
+              <AutoSizeMode Value="Fill" />
+              <ManagementMode>NotAllowed</ManagementMode>
+            </Column>
+          </Columns>
+          <Formatting>
+            <BackColor Name="ArchiveColor">
+              <Expression>Archived</Expression>
+              <Items />
+            </BackColor>
+          </Formatting>
+        </MyObject>
+
+        <MyObject Name="OrderDatabaseTableSidePanel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>2</TabIndex>
+          <Top>
+            <Object Name="OrderDatabaseTable">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Right>
+            <Object Name="OrderPanel">
+              <Property Name="Width" />
+            </Object>
+          </Right>
+          <Height>
+            <Object Name="OrderDatabaseTable">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>56</Width>
+
+          <MyObject Name="OrderSearchButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneOrderSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                  </When>
+                  <Then>Один или более выбранных заказов находятся в архиве.</Then>
+                </Case>
+                <Case>Выберите один или более заказов.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>0</Top>
+            <Left>10</Left>
+            <Height>36</Height>
+            <Width>36</Width>
+            <Image>Images\24x24\pochtaru_refresh.png</Image>
+            <Hint>Обновить выбранные заказы...</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderSearchByIdCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderSearchByBarcodeButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderSearchButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneOrderSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                </Not>
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderIsMissingBarcodeCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderIsMissingBarcodeCondition" />
+                  </When>
+                  <Then>У одного или более выбранных заказов отсутствует ШПИ.</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                  </When>
+                  <Then>Один или более выбранных заказов находятся в архиве.</Then>
+                </Case>
+                <Case>Выберите один или более заказов.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderSearchButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\pochtaru_refresh_batch.png</Image>
+            <Hint>Обновить выбранные заказы по ШПИ...</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderSearchByBarcodeCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderEditButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderSearchByBarcodeButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <Condition Name="SingleOrderSelectedCondition" />
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>Выберите один заказ.</DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderSearchByBarcodeButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchByBarcodeButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchByBarcodeButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchByBarcodeButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Редактировать заказ...</Hint>
+            <Image>Images\24x24\pochtaru_order_edit.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderEditFormShowCommand">
+                <Object Name="OrderDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanPostId</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Command>
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderDeleteButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderEditButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneOrderSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                  </When>
+                  <Then>Один или более выбранных заказов находятся в архиве.</Then>
+                </Case>
+                <Case>Выберите один или более заказов.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderEditButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Удалить заказ...</Hint>
+            <Image>Images\24x24\pochtaru_order_delete.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderDeleteCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="ApiCreateBatchesButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderDeleteButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneOrderSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderBelongsToBatchCondition" />
+                </Not>
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="AtLeastOneOrderSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите один или более заказов.</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                  </When>
+                  <Then>Один или более выбранных заказов находятся в архиве.</Then>
+                </Case>
+                <Case>Один или более выбранных заказов уже находятся в партии.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderDeleteButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>15</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Создать партию ...</Hint>
+            <Image>Images\24x24\pochtaru_create_batch.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="BatchCreateFormShowCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="MoveOrdersToBatchButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ApiCreateBatchesButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneOrderSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderBelongsToBatchCondition" />
+                </Not>
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="AtLeastOneOrderSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите один или более заказов.</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                  </When>
+                  <Then>Один или более выбранных заказов находятся в архиве.</Then>
+                </Case>
+                <Case>Один или более выбранных заказов уже находятся в партии.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="ApiCreateBatchesButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Перенести заказы в партию...</Hint>
+            <Image>Images\24x24\pochtaru_move_orders_to_batch.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderMoveToBatchCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="MoveOrdersBackToBacklogButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="MoveOrdersToBatchButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneOrderSelectedCondition" />
+                <Condition Name="AllSelectedOrdersBelongToBatchEqualCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="AtLeastOneOrderSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите один или более заказов.</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="AtLeastOneSelectedOrderArchivedCondition" />
+                  </When>
+                  <Then>Один или более выбранных заказов находятся в архиве.</Then>
+                </Case>
+                <Case>Не все выбранные заказы находятся в партии.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="MoveOrdersToBatchButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Вернуть заказы в раздел "Новые"...</Hint>
+            <Image>Images\24x24\pochtaru_move_orders_back_to_backlog.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderMoveBackToBacklogCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="LoanPostButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="MoveOrdersBackToBacklogButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <Condition Name="SingleOrderSelectedCondition" />
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>Выберите один заказ.</DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="MoveOrdersBackToBacklogButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>15</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Открыть карточку корреспонденции</Hint>
+            <Image>Images\24x24\pochtaru_open_loan_post.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="PostEditFormShowCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderDocumentsDownloadButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="LoanPostButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <Condition Name="SingleOrderSelectedCondition" />
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>Выберите один заказ.</DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="LoanPostButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Загрузить документы для заказа до создания партии...</Hint>
+            <Image>Images\24x24\download.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="OrderBacklogDownloadDocumentsCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="LoanButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderDocumentsDownloadButton">
+                      <Property Name="TabIndex" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Plus>
+              </Formula>
+            </TabIndex>
+            <Enabled>
+              <Condition Name="SingleOrderSelectedCondition" />
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>Выберите один заказ.</DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderDocumentsDownloadButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="OrderSearchButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderSearchButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderSearchButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Hint>Перейти в карточку дела...</Hint>
+            <Image>Images\24x24\loan_view.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Commands>
+              <Command Name="LoanEditFormShowCommand">
+                <Input Name="LoanClientId">
+                  <Object Name="OrderDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">LoanClientId</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </Input>
+                <Input Name="LoanId">
+                  <Object Name="OrderDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">LoanId</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </Input>
+              </Command>
+            </Commands>
+          </MyObject>
+
+        </MyObject>
+
+        <MyObject Name="OrderDatabaseTablePaginationPanel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>3</TabIndex>
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="OrderDatabaseTable">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="OrderPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="OrderDatabaseTablePaginationPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Left>
+          <Height>41</Height>
+          <Width>
+            <Object Name="OrderTotalRowsLabel">
+              <Property Name="Right" />
+            </Object>
+          </Width>
+          <BackColor>BackThemeColor</BackColor>
+
+          <MyObject Name="OrderFirstPageButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Top>5</Top>
+            <Left>5</Left>
+            <Height>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>26</Width>
+            <Image>Images\11x11\double_arrow_left.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="OrderCurrentPageEqual1Condition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="OrderCurrentPageTextBoxValueSetCommand">1</Command>
+              <Command Name="OrderDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderPreviousPageButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>2</TabIndex>
+            <Top>
+              <Object Name="OrderFirstPageButton">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderFirstPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>6</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Width>
+            <Image>Images\11x11\arrow_left.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="OrderCurrentPageEqual1Condition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="OrderCurrentPageDecreaseCommand" />
+              <Command Name="OrderDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderCurrentPageTextBox" Type="TextBox" Assembly="BaseControls">
+            <TabIndex>3</TabIndex>
+            <Top>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderPreviousPageButton">
+                      <Property Name="Top" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Minus>
+              </Formula>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderPreviousPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>10</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Width>42</Width>
+            <AllowedSymbols>0123456789</AllowedSymbols>
+            <MaxLength>6</MaxLength>
+            <TextAlign>Right</TextAlign>
+            <Text>1</Text>
+          </MyObject>
+
+          <MyObject Name="OrderTotalPagesLabel" Type="Label" Assembly="BaseControls">
+            <Top>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Right" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="OrderPreviousPageButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>58</Width>
+            <TextAlign>MiddleLeft</TextAlign>
+            <Text>
+              <String>
+                <Format>из {0}</Format>
+                <Items>
+                  <Item>
+                    <Switch>
+                      <Case>
+                        <When>
+                          <Condition Name="OrderCountIsZeroCondition" />
+                        </When>
+                        <Then>0</Then>
+                      </Case>
+                      <Case>
+                        <DataConnection SourceDataConnection="OrderPrimaryGetDataConnection">
+                          <Fields>
+                            <Field Name="TotalPages" />
+                          </Fields>
+                        </DataConnection>
+                      </Case>
+                    </Switch>
+                  </Item>
+                </Items>
+              </String>
+            </Text>
+          </MyObject>
+
+          <MyObject Name="OrderNextPageButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>4</TabIndex>
+            <Top>
+              <Object Name="OrderFirstPageButton">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderTotalPagesLabel">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>3</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Width>
+            <Image>Images\11x11\arrow_right.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="OrderCurrentPageEqualMaxCondition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="OrderCurrentPageIncreaseCommand" />
+              <Command Name="OrderDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderLastPageButton" Type="Button" Assembly="BaseControls">
+            <TabIndex>5</TabIndex>
+            <Top>
+              <Object Name="OrderPreviousPageButton">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderNextPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>6</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="OrderFirstPageButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\11x11\double_arrow_right.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="OrderCurrentPageEqualMaxCondition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="OrderCurrentPageTextBoxValueSetCommand">
+                <DataConnection SourceDataConnection="OrderPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="TotalPages" />
+                  </Fields>
+                </DataConnection>
+              </Command>
+              <Command Name="OrderDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="OrderRowsPerPageLabel" Type="Label" Assembly="BaseControls">
+            <Top>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderLastPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="OrderPreviousPageButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>110</Width>
+            <TextAlign>MiddleRight</TextAlign>
+            <Text>строк на странице</Text>
+          </MyObject>
+
+          <MyObject Name="OrderRowsPerPageComboBox" Type="ComboBox" Assembly="BaseControls">
+            <TabIndex>6</TabIndex>
+            <Change User="True" Source="False" ValueSet="False" />
+            <Top>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Object Name="OrderRowsPerPageLabel">
+                <Property Name="Right" />
+              </Object>
+            </Left>
+            <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+            <Width>50</Width>
+            <ValueList>
+              <Structure Type="Table">
+                <Row>
+                  <Item>1000000000</Item>
+                  <Item>[Все]</Item>
+                </Row>
+                <Row>
+                  <Item>20</Item>
+                  <Item>20</Item>
+                </Row>
+                <Row>
+                  <Item>50</Item>
+                  <Item>50</Item>
+                </Row>
+                <Row>
+                  <Item>100</Item>
+                  <Item>100</Item>
+                </Row>
+                <Row>
+                  <Item>200</Item>
+                  <Item>200</Item>
+                </Row>
+                <Row>
+                  <Item>500</Item>
+                  <Item>500</Item>
+                </Row>
+              </Structure>
+            </ValueList>
+            <Value>50</Value>
+          </MyObject>
+
+          <MyObject Name="OrderTotalRowsLabel" Type="Label" Assembly="BaseControls">
+            <Top>
+              <Object Name="OrderCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="OrderRowsPerPageComboBox">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Width>65</Width>
+            <TextAlign>MiddleLeft</TextAlign>
+            <Text>
+              <String>
+                <Format>из {0}</Format>
+                <Items>
+                  <Item>
+                    <Switch>
+                      <Case>
+                        <When>
+                          <Condition Name="OrderCountIsZeroCondition" />
+                        </When>
+                        <Then>0</Then>
+                      </Case>
+                      <Case>
+                        <DataConnection SourceDataConnection="OrderPrimaryGetDataConnection">
+                          <Fields>
+                            <Field Name="TotalRows" />
+                          </Fields>
+                        </DataConnection>
+                      </Case>
+                    </Switch>
+                  </Item>
+                </Items>
+              </String>
+            </Text>
+          </MyObject>
+
+        </MyObject>
+
+      </MyObject>
+
+      <MyObject Name="BatchPanel" Type="Panel" Assembly="BaseControls">
+        <TabIndex>4</TabIndex>
+        <Visible>
+          <Condition Name="TabSelectedIsBatchCondition" />
+        </Visible>
+        <Top>
+          <Object Name="OrderPanel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="OrderPanel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="OrderPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="OrderPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+
+        <MyObject Name="BatchDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+          <Change User="False" Source="False" ValueSet="False" />
+          <Top>10</Top>
+          <Left>10</Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ContentPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="BatchDatabaseTablePaginationPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="BatchDatabaseTableSidePanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <AllowInsert>False</AllowInsert>
+          <AllowUpdate>False</AllowUpdate>
+          <AllowDelete>False</AllowDelete>
+          <AllowResizeRows Value="False" />
+          <AutoSizeColumnsMode Value="Fill" />
+          <BorderStyle Value="Fixed3D" />
+          <BackgroundColor Value="Gray200" />
+          <SelectionColor Name="SelectionColor" />
+          <ShowCellHints Value="True" />
+          <SourceDataConnection Name="BatchPrimaryGetDataConnection" />
+          <Columns>
+            <Column Name="BatchId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="ElectronicF103" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="Archived" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+
+            <Column Name="BatchName" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Номер партии</Title>
+              <AutoSizeMode Value="Fill" />
+            </Column>
+            <Column Name="SendingDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Дата отправки</Title>
+              <Width>120</Width>
+              <ManagementMode>NotAllowed</ManagementMode>
+              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            </Column>
+            <Column Name="ShipmentCount" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Кол-во отправлений</Title>
+              <Width>90</Width>
+            </Column>
+            <Column Name="DeliveryCount" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Кол-во врученных отправлений</Title>
+              <Width>90</Width>
+            </Column>
+            <Column Name="ElectronicF103Text" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Электронная Ф103 отправлена</Title>
+              <Width>100</Width>
+              <Calculate>
+                <Expression>IIF(ElectronicF103, 'Отправлена', 'Не отправлена')</Expression>
+              </Calculate>
+            </Column>
+          </Columns>
+          <Formatting>
+            <BackColor Name="ArchiveColor">
+              <Expression>Archived</Expression>
+              <Items />
+            </BackColor>
+          </Formatting>
+        </MyObject>
+
+        <MyObject Name="BatchDatabaseTableSidePanel" Type="Panel" Assembly="BaseControls">
+          <Top>
+            <Object Name="BatchDatabaseTable">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Right>
+            <Object Name="BatchPanel">
+              <Property Name="Width" />
+            </Object>
+          </Right>
+          <Height>
+            <Object Name="BatchDatabaseTable">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>56</Width>
+
+          <MyObject Name="BatchCheckAllButton" Type="Button" Assembly="BaseControls">
+            <Top>0</Top>
+            <Left>10</Left>
+            <Height>36</Height>
+            <Width>36</Width>
+            <Image>Images\24x24\pochtaru_refresh_batch.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Hint>Обновить все текущие партии</Hint>
+            <TabIndex>1</TabIndex>
+            <Commands>
+              <Command Name="BatchCheckAllCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchCheckOrdersButton" Type="Button" Assembly="BaseControls">
+            <Enabled>
+              <And>
+                <Condition Name="AtLeastOneBatchSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedBatchArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="AtLeastOneBatchSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите одну или несколько партий.</Then>
+                </Case>
+                <Case>Выбранные партии не должны находиться в архиве.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchCheckAllButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\pochtaru_refresh.png</Image>
+            <Hint>Обновить данные о заказах в партии...</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <TabIndex>2</TabIndex>
+            <Commands>
+              <Command Name="BatchCheckOrdersCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchUpdateSendingDateButton" Type="Button" Assembly="BaseControls">
+            <Enabled>
+              <And>
+                <Condition Name="SingleBatchSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedBatchArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="SingleBatchSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите одну партию.</Then>
+                </Case>
+                <Case>Выбранная партия находится в архиве.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchCheckOrdersButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\pochtaru_order_edit.png</Image>
+            <Hint>Изменить дату отправки партии...</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <TabIndex>3</TabIndex>
+            <Commands>
+              <Command Name="BatchEditFormShowCommand">
+                <Input Name="BatchId">
+                  <Object Name="BatchDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">BatchId</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </Input>
+              </Command>
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchDocumentDownloadButton" Type="Button" Assembly="BaseControls">
+            <Enabled>
+              <And>
+                <Condition Name="SingleBatchSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedBatchArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="SingleBatchSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите одну партию.</Then>
+                </Case>
+                <Case>Выбранная партия находится в архиве.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchUpdateSendingDateButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\download.png</Image>
+            <Hint>Загрузка документов партии...</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <TabIndex>4</TabIndex>
+            <Commands>
+              <Command Name="BatchPrintFormShowCommand">
+                <Input Name="BatchId">
+                  <Object Name="BatchDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">BatchId</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </Input>
+                <Input Name="BatchName">
+                  <Object Name="BatchDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">BatchName</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </Input>
+                <Input Name="SendingDate">
+                  <Object Name="BatchDatabaseTable">
+                    <Property Name="SelectedRowCellValueByColumnName">
+                      <Parameters>
+                        <Parameter Name="ColumnName">SendingDate</Parameter>
+                      </Parameters>
+                    </Property>
+                  </Object>
+                </Input>
+              </Command>
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchDocumentsCheckInButton" Type="Button" Assembly="BaseControls">
+            <Enabled>
+              <And>
+                <Condition Name="SingleBatchSelectedCondition" />
+                <Not>
+                  <Condition Name="AtLeastOneSelectedBatchArchivedCondition" />
+                </Not>
+              </And>
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>
+              <Switch>
+                <Case>
+                  <When>
+                    <Not>
+                      <Condition Name="SingleBatchSelectedCondition" />
+                    </Not>
+                  </When>
+                  <Then>Выберите одну партию.</Then>
+                </Case>
+                <Case>Выбранная партия находится в архиве.</Case>
+              </Switch>
+            </DisabledText>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchDocumentDownloadButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\pochtaru_send_f103.png</Image>
+            <Hint>Подготовка и отправка электронной формы Ф103. Присваивает уникальную версию партии для дальнейшего приема этой партии сотрудниками ОПС. Отправляет по e-mail электронную форму Ф103 в ОПС для регистрации.</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <TabIndex>5</TabIndex>
+            <Commands>
+              <Command Name="BatchDocumentsCheckInCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchArchiveButton" Type="Button" Assembly="BaseControls">
+            <Enabled>
+              <Condition Name="AtLeastOneBatchSelectedCondition" />
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>Выберите одну или более партий.</DisabledText>
+            <Visible>
+              <Not>
+                <Condition Name="BatchFilterIsArchivedCondition" />
+              </Not>
+            </Visible>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchDocumentsCheckInButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\pochtaru_archive.png</Image>
+            <Hint>Отправить выбранные партии в архив</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <TabIndex>6</TabIndex>
+            <Commands>
+              <Command Name="PochtaRuBatchArchiveCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchArchiveRevertButton" Type="Button" Assembly="BaseControls">
+            <Enabled>
+              <Condition Name="AtLeastOneBatchSelectedCondition" />
+            </Enabled>
+            <DisabledMode>True</DisabledMode>
+            <DisabledText>Выберите одну или более партий.</DisabledText>
+            <Visible>
+              <Condition Name="BatchFilterIsArchivedCondition" />
+            </Visible>
+            <Top>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchDocumentsCheckInButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Top>
+            <Left>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCheckAllButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Image>Images\24x24\pochtaru_archive.png</Image>
+            <Hint>Вернуть выбранные партии из архива</Hint>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>1</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <TabIndex>7</TabIndex>
+            <Commands>
+              <Command Name="PochtaRuBatchArchiveRevertCommand" />
+            </Commands>
+          </MyObject>
+
+        </MyObject>
+
+        <MyObject Name="BatchDatabaseTablePaginationPanel" Type="Panel" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchDatabaseTable">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="BatchPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>
+                        <Object Name="BatchDatabaseTablePaginationPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Left>
+          <Height>41</Height>
+          <Width>
+            <Object Name="BatchTotalRowsLabel">
+              <Property Name="Right" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <BackColor>BackThemeColor</BackColor>
+
+          <MyObject Name="BatchFirstPageButton" Type="Button" Assembly="BaseControls">
+            <Top>5</Top>
+            <Left>5</Left>
+            <Height>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>26</Width>
+            <TabIndex>1</TabIndex>
+            <Image>Images\11x11\double_arrow_left.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="BatchCurrentPageEqual1Condition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="BatchCurrentPageTextBoxValueSetCommand">1</Command>
+              <Command Name="BatchDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchPreviousPageButton" Type="Button" Assembly="BaseControls">
+            <Top>
+              <Object Name="BatchFirstPageButton">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchFirstPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>6</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Width>
+            <TabIndex>2</TabIndex>
+            <Image>Images\11x11\arrow_left.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="BatchCurrentPageEqual1Condition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="BatchCurrentPageDecreaseCommand" />
+              <Command Name="BatchDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchCurrentPageTextBox" Type="TextBox" Assembly="BaseControls">
+            <Top>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchPreviousPageButton">
+                      <Property Name="Top" />
+                    </Object>
+                  </Item>
+                  <Item>1</Item>
+                </Minus>
+              </Formula>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchPreviousPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>10</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Width>42</Width>
+            <TabIndex>3</TabIndex>
+            <AllowedSymbols>0123456789</AllowedSymbols>
+            <MaxLength>6</MaxLength>
+            <TextAlign>Right</TextAlign>
+            <Text>1</Text>
+          </MyObject>
+
+          <MyObject Name="BatchTotalPagesLabel" Type="Label" Assembly="BaseControls">
+            <Top>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Right" />
+              </Object>
+            </Left>
+            <Height>
+              <Object Name="BatchPreviousPageButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>58</Width>
+            <TextAlign>MiddleLeft</TextAlign>
+            <Text>
+              <String>
+                <Format>из {0}</Format>
+                <Items>
+                  <Item>
+                    <Switch>
+                      <Case>
+                        <When>
+                          <Condition Name="BatchCountIsZeroCondition" />
+                        </When>
+                        <Then>0</Then>
+                      </Case>
+                      <Case>
+                        <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                          <Fields>
+                            <Field Name="TotalPages" />
+                          </Fields>
+                        </DataConnection>
+                      </Case>
+                    </Switch>
+                  </Item>
+                </Items>
+              </String>
+            </Text>
+          </MyObject>
+
+          <MyObject Name="BatchNextPageButton" Type="Button" Assembly="BaseControls">
+            <Top>
+              <Object Name="BatchFirstPageButton">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchTotalPagesLabel">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>3</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Width>
+            <TabIndex>4</TabIndex>
+            <Image>Images\11x11\arrow_right.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="BatchCurrentPageEqualMaxCondition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="BatchCurrentPageIncreaseCommand" />
+              <Command Name="BatchDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchLastPageButton" Type="Button" Assembly="BaseControls">
+            <Top>
+              <Object Name="BatchPreviousPageButton">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchNextPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>6</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>
+              <Object Name="BatchFirstPageButton">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <TabIndex>5</TabIndex>
+            <Image>Images\11x11\double_arrow_right.png</Image>
+            <FlatStyle>Flat</FlatStyle>
+            <FlatBorderSize>0</FlatBorderSize>
+            <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+            <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+            <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+            <Enabled>
+              <Not>
+                <Condition Name="BatchCurrentPageEqualMaxCondition" />
+              </Not>
+            </Enabled>
+            <Commands>
+              <Command Name="BatchCurrentPageTextBoxValueSetCommand">
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="TotalPages" />
+                  </Fields>
+                </DataConnection>
+              </Command>
+              <Command Name="BatchDataConnectionRefreshCommand" />
+            </Commands>
+          </MyObject>
+
+          <MyObject Name="BatchRowsPerPageLabel" Type="Label" Assembly="BaseControls">
+            <Top>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchLastPageButton">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Height>
+              <Object Name="BatchPreviousPageButton">
+                <Property Name="Height" />
+              </Object>
+            </Height>
+            <Width>110</Width>
+            <TextAlign>MiddleRight</TextAlign>
+            <Text>строк на странице</Text>
+          </MyObject>
+
+          <MyObject Name="BatchRowsPerPageComboBox" Type="ComboBox" Assembly="BaseControls">
+            <Change User="True" Source="False" ValueSet="False" />
+            <Top>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Object Name="BatchRowsPerPageLabel">
+                <Property Name="Right" />
+              </Object>
+            </Left>
+            <Width>50</Width>
+            <TabIndex>6</TabIndex>
+            <ValueList>
+              <Structure Type="Table">
+                <Row>
+                  <Item>1000000000</Item>
+                  <Item>[Все]</Item>
+                </Row>
+                <Row>
+                  <Item>20</Item>
+                  <Item>20</Item>
+                </Row>
+                <Row>
+                  <Item>50</Item>
+                  <Item>50</Item>
+                </Row>
+                <Row>
+                  <Item>100</Item>
+                  <Item>100</Item>
+                </Row>
+                <Row>
+                  <Item>200</Item>
+                  <Item>200</Item>
+                </Row>
+                <Row>
+                  <Item>500</Item>
+                  <Item>500</Item>
+                </Row>
+              </Structure>
+            </ValueList>
+            <Value>50</Value>
+          </MyObject>
+
+          <MyObject Name="BatchTotalRowsLabel" Type="Label" Assembly="BaseControls">
+            <Top>
+              <Object Name="BatchCurrentPageTextBox">
+                <Property Name="Top" />
+              </Object>
+            </Top>
+            <Left>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="BatchRowsPerPageComboBox">
+                      <Property Name="Right" />
+                    </Object>
+                  </Item>
+                </Plus>
+              </Formula>
+            </Left>
+            <Width>65</Width>
+            <TextAlign>MiddleLeft</TextAlign>
+            <Text>
+              <String>
+                <Format>из {0}</Format>
+                <Items>
+                  <Item>
+                    <Switch>
+                      <Case>
+                        <When>
+                          <Condition Name="BatchCountIsZeroCondition" />
+                        </When>
+                        <Then>0</Then>
+                      </Case>
+                      <Case>
+                        <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                          <Fields>
+                            <Field Name="TotalRows" />
+                          </Fields>
+                        </DataConnection>
+                      </Case>
+                    </Switch>
+                  </Item>
+                </Items>
+              </String>
+            </Text>
+          </MyObject>
+
+        </MyObject>
+
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <TabIndex>3</TabIndex>
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+
+    </MyObject>
+  </MyObjects>
+</Form>

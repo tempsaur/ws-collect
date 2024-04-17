@@ -1,0 +1,3579 @@
+<?xml version="1.0"?>
+<Form Name="CollectTaskEditForm" Width="910" Height="524" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="TaskId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование задачи</Then>
+        </Case>
+        <Case>Добавление задачи</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray175" Red="175" Green="175" Blue="175" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="TaskPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskTypeId" />
+          <Field Name="CreateDate" />
+          <Field Name="DeadlineDate" />
+          <Field Name="ExecutionDate" />
+          <Field Name="CloseDate" />
+          <Field Name="TaskStatusId" />
+          <Field Name="AuthorId" />
+          <Field Name="Description" />
+          <Field Name="UserIsAdmin" />
+          <Field Name="IsAutotask" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TaskId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="TaskId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ResponsibleUserIdPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ResponsibleUserIdByTaskIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ResponsibleUserId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TaskId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="TaskId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TaskCommentPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskCommentByTaskIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskCommentId" />
+          <Field Name="AuthorId" />
+          <Field Name="CreateDate" />
+          <Field Name="Comment" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TaskId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="TaskId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TaskCommentConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="TaskCommentPrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="ID" Type="Value">
+          <Object Name="CounterVariable" />
+        </Field>
+        <Field Name="TaskCommentId" />
+        <Field Name="AuthorId" />
+        <Field Name="CreateDate" Type="Substitution" Field="TaskCommentId">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TaskCommentPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="TaskCommentId" />
+                  <Field Name="CreateDate" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Select>
+              <Items>
+                <Item Type="Index">0</Item>
+                <Item Type="Action">
+                  <Index>1</Index>
+                  <Actions>
+                    <DataTypeFormat Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
+                  </Actions>
+                </Item>
+              </Items>
+            </Select>
+          </Array>
+        </Field>
+        <Field Name="Comment" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="TaskCommentByIDConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="TaskCommentConvertDataConnection" />
+      <Fields>
+        <Field Name="ID" />
+        <Field Name="TaskCommentId" />
+        <Field Name="AuthorId" />
+        <Field Name="CreateDate" />
+        <Field Name="Comment" />
+        <Field Name="AuthorTitle" Type="Substitution" Field="AuthorId">
+          <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UserId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </Field>
+      </Fields>
+      <Filter>
+        <Field NativeName="ID" />
+        <Value>
+          <Object Name="CommentDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ID</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TaskLoanPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskLoanByTaskIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskLoanId" />
+          <Field Name="LoanId" />
+          <Field Name="ClientId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="TaskId">
+            <Value>
+              <Parameter Name="TaskId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="LoanAllowedForUserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="LoanAllowedForUserSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanId" />
+          <Field Name="LoanAllowed" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientAllowedForUserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClientAllowedForUserSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClientId" />
+          <Field Name="ClientAllowed" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TaskLoanConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="TaskLoanPrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="ID" Type="Value">
+          <Object Name="CounterVariable" />
+        </Field>
+        <Field Name="TaskLoanId" />
+        <Field Name="LoanId" />
+        <Field Name="ClientId" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="TaskTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskTypeId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="TaskTypeId" />
+              <Value>
+                <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="TaskTypeId" />
+                  </Fields>
+                </DataConnection>
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TaskStatusPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="TaskStatusSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TaskStatusId" />
+          <Field Name="Name" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TaskStatusSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="TaskStatusPrimaryGetDataConnection" />
+      <Filter Type="NotEqual">
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="UserIsAdminNestedCondition" />
+            </Not>
+            <Not>
+              <Condition Name="TaskStatusEqualClosedCondition" />
+            </Not>
+          </And>
+        </Enabled>
+        <Field NativeName="Name" />
+        <Value>closed</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TaskStatusInWorkSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="TaskStatusPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>in_work</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TaskStatusExecutedSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="TaskStatusPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>executed</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TaskStatusClosedSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="TaskStatusPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>closed</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ClientPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClientSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClientId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter>
+          <Field NativeName="Archive" />
+          <Value>False</Value>
+          <DataType Type="BooleanDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="LoanClientPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="LoanClientSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="LoanClientId" />
+          <Field Name="LoanId" />
+          <Field Name="ClientId" />
+          <Field Name="CreditNumber" />
+          <Field Name="Archive" />
+          <Field Name="CanEditLoan" />
+        </Fields>
+        <Filter>
+          <Field NativeName="Archive" />
+          <Value>False</Value>
+          <DataType Type="BooleanDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="UserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserSimpleSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+          <Field Name="Person" />
+          <Field Name="IsCurrentUser" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AuthorSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="UserPrimaryGetDataConnection" />
+      <Filter Type="Nested">
+        <Or>
+          <Filter>
+            <Field NativeName="UserId" />
+            <Value>
+              <Switch>
+                <Case>
+                  <When>
+                    <Parameter Name="Edit" />
+                  </When>
+                  <Then>
+                    <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+                      <Fields>
+                        <Field Name="AuthorId" />
+                      </Fields>
+                    </DataConnection>
+                  </Then>
+                </Case>
+                <Case>
+                  <DataConnection SourceDataConnection="IsCurrentUserSecondaryGetDataConnection">
+                    <Fields>
+                      <Field Name="UserId" />
+                    </Fields>
+                  </DataConnection>
+                </Case>
+              </Switch>
+            </Value>
+            <DataType Type="IntegerDataType" />
+          </Filter>
+          <And>
+            <Filter>
+              <Field NativeName="Person" />
+              <Value>True</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+          </And>
+        </Or>
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ResponsibleUserSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="UserPrimaryGetDataConnection" />
+      <Filter Type="Nested">
+        <Or>
+          <Filter Type="In">
+            <Field NativeName="UserId" />
+            <Value>
+              <DataConnection SourceDataConnection="ResponsibleUserIdPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ResponsibleUserId" />
+                </Fields>
+              </DataConnection>
+            </Value>
+            <DataType Type="IntegerDataType" />
+          </Filter>
+          <And>
+            <Filter>
+              <Field NativeName="Person" />
+              <Value>True</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+          </And>
+        </Or>
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="IsCurrentUserSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="UserPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="IsCurrentUser" />
+        <Value>True</Value>
+        <DataType Type="BooleanDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TaskSaveDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Model">
+          <Value>
+            <Command Name="TaskDictionarySerializeToJsonCommand" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TaskSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="UserIsAdminNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Or>
+          <Not>
+            <Parameter Name="Edit" />
+          </Not>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UserIsAdmin" />
+            </Fields>
+          </DataConnection>
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="TaskTypeComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TaskStatusComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskStatusComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="DeadlineDateDateTimePickerIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="DeadlineDateDateTimePicker" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ResponsibleUserCheckedComboBoxSelectedNoneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ResponsibleUserCheckedComboBoxSelectedGreaterOneCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="ItemsCount" />
+          </Object>
+        </Item>
+        <Item>
+          <Object Name="ResponsibleUserCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CommentDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="CommentDatabaseTable" />
+    </Condition>
+
+    <Condition Name="CommentSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CommentDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskLoanClientReferenceDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="TaskLoanClientReferenceDatabaseTable" />
+    </Condition>
+
+    <Condition Name="TaskLoanClientReferenceSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskStatusComboBoxEqualInWorkCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskStatusComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="TaskStatusInWorkSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskStatusComboBoxEqualExecutedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskStatusComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="TaskStatusExecutedSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskStatusComboBoxEqualClosedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskStatusComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="TaskStatusClosedSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskStatusEqualClosedCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="TaskStatusClosedSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TaskStatusComboBoxChangedCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskStatusComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TaskLoanClientReferenceSelectedLoanIdIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TaskLoanClientReferenceSelectedClientIdIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="IsAutotaskCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="IsAutotask" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="TrySaveSequentialCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="FormChangedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">True</Property>
+      </Form>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="TaskDictionaryVariableRefreshCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TaskDictionaryVariable">
+        <Property Name="Refresh" />
+      </Object>
+    </Command>
+
+    <Command Name="TaskDictionarySerializeToJsonCommand" Type="SerializeToJsonCommand" Assembly="Commands">
+      <Variable>
+        <Object Name="TaskDictionaryVariable" />
+      </Variable>
+    </Command>
+
+    <Command Name="TaskSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TaskSaveDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TaskIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="TaskId">
+        <Command Name="TaskSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="ConfirmChangeStatusMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Text>В данной задаче есть и другие исполнители. \rВы уверены, что хотите изменить статус всей задачи?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="TaskDictionaryVariableRefreshCommand" />
+        <Command Name="TaskDictionarySerializeToJsonCommand" />
+        <Command Name="TaskSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Parameter Name="Edit" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="TaskIdValueSetCommand" />
+          </Then>
+        </If>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="TrySaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <And>
+              <Parameter Name="Edit" />
+              <Condition Name="TaskStatusComboBoxChangedCondition" />
+              <Condition Name="ResponsibleUserCheckedComboBoxSelectedGreaterOneCondition" />
+            </And>
+          </When>
+          <Then>
+            <Command Name="ConfirmChangeStatusMessageBoxCommand" />
+            <If>
+              <When>
+                <Command Name="ConfirmChangeStatusMessageBoxCommand" Parameter="Yes" />
+              </When>
+              <Then>
+                <Command Name="SaveSequentialCommand" />
+                <Command Name="FormCloseCommand" />
+              </Then>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="SaveSequentialCommand" />
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="TaskCommentAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTaskCommentEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters />
+    </Command>
+
+    <Command Name="TaskCommentEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectTaskCommentEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="ID">
+          <DataConnection SourceDataConnection="TaskCommentByIDConvertDataConnection">
+            <Fields>
+              <Field Name="ID" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="TaskCommentId">
+          <DataConnection SourceDataConnection="TaskCommentByIDConvertDataConnection">
+            <Fields>
+              <Field Name="TaskCommentId" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="AuthorTitle">
+          <DataConnection SourceDataConnection="TaskCommentByIDConvertDataConnection">
+            <Fields>
+              <Field Name="AuthorTitle" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="CreateDate">
+          <DataConnection SourceDataConnection="TaskCommentByIDConvertDataConnection">
+            <Fields>
+              <Field Name="CreateDate" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="Comment">
+          <DataConnection SourceDataConnection="TaskCommentByIDConvertDataConnection">
+            <Fields>
+              <Field Name="Comment" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CommentSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CommentDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">ID</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="CommentAddRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TaskCommentConvertDataConnection">
+        <Property Name="AddRow">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ID</Item>
+                <Item>Comment</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Input />
+                </Item>
+                <Item>
+                  <Command Name="TaskCommentAddFormShowCommand" Parameter="Comment" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="CommentUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TaskCommentConvertDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="TaskCommentConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Command Name="TaskCommentEditFormShowCommand" Parameter="ID" />
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>Comment</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Command Name="TaskCommentEditFormShowCommand" Parameter="Comment" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="CommentDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TaskCommentConvertDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="TaskCommentConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="CommentDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">ID</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="CommentDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранный комментарий?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ExecutionDateDateTimePickerValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ExecutionDateDateTimePicker">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="CloseDateDateTimePickerValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CloseDateDateTimePicker">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="FormLoadedVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FormLoadedVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="LoanEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="LoanClientId">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="LoanClientPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="LoanId" />
+                  <Field Name="ClientId" />
+                  <Field Name="LoanClientId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <Value>
+                <Object Name="TaskLoanClientReferenceDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">LoanId</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+            <Filter>
+              <Index Value="1" />
+              <Value>
+                <Object Name="TaskLoanClientReferenceDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">ClientId</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+            <Select>
+              <Items>
+                <Item Type="Index">2</Item>
+              </Items>
+            </Select>
+            <First />
+          </Array>
+        </Parameter>
+        <Parameter Name="LoanId">
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">LoanId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ClientEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectClientEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="ClientId">
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="LoanClientReferenceAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanClientReferenceEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Mode">task</Parameter>
+        <Parameter Name="ClientIds">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TaskLoanConvertDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Distinct />
+          </Array>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="LoanClientReferenceEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectLoanClientReferenceEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="Mode">task</Parameter>
+        <Parameter Name="ClientId">
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+        <Parameter Name="ClientIds">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TaskLoanConvertDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Distinct />
+          </Array>
+        </Parameter>
+        <Parameter Name="LoanIds">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TaskLoanConvertDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                  <Field Name="LoanId" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Filter>
+              <Or>
+                <Filter>
+                  <Index Value="0" />
+                  <DataType Type="IntegerDataType" />
+                  <Value>
+                    <Object Name="TaskLoanClientReferenceDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">ClientId</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Value>
+                </Filter>
+                <Filter>
+                  <Index Value="1" />
+                  <DataType Type="IntegerDataType" />
+                  <Value>
+                    <Object Name="TaskLoanClientReferenceDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">LoanId</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Value>
+                </Filter>
+              </Or>
+            </Filter>
+            <Select>
+              <Items>
+                <Item Type="Index">1</Item>
+              </Items>
+            </Select>
+          </Array>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="TaskLoanClientReferenceSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="TaskLoanClientReferenceDatabaseTable">
+        <Property Name="SelectedRowsIndices">
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="RowsIndicesOf">
+              <Parameters>
+                <Parameter Name="ColumnNames">
+                  <Structure Type="List">
+                    <Item>ClientId</Item>
+                  </Structure>
+                </Parameter>
+                <Parameter Name="Values">
+                  <Structure Type="List">
+                    <Item>
+                      <Input />
+                    </Item>
+                  </Structure>
+                </Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="TaskLoanClientReferenceAddRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TaskLoanConvertDataConnection">
+        <Property Name="AddRows">
+          <Parameters>
+            <Parameter Name="RawValues">True</Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ID</Item>
+                <Item>ClientId</Item>
+                <Item>LoanId</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Array>
+                <Source>
+                  <Input Name="LoanIds" />
+                </Source>
+                <Select>
+                  <Items>
+                    <Item Type="Value">
+                      <Object Name="CounterVariable" Refresh="False" />
+                    </Item>
+                    <Item Type="Value">
+                      <Input Name="ClientId" />
+                    </Item>
+                    <Item Type="Index">0</Item>
+                  </Items>
+                </Select>
+              </Array>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TaskLoanClientReferenceDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TaskLoanConvertDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="TaskLoanConvertDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ClientId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Input />
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TaskLoanClientReferenceDeleteRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TaskLoanConvertDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="TaskLoanConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Object Name="TaskLoanClientReferenceDatabaseTable">
+                        <Property Name="SelectedRowCellValueByColumnName">
+                          <Parameters>
+                            <Parameter Name="ColumnName">ID</Parameter>
+                          </Parameters>
+                        </Property>
+                      </Object>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TaskLoanClientReferenceDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранную запись?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TaskLoanClientReferenceNotAvailableMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Text>
+        <String>
+          <Format>Для просмотра карточки {0} недостаточно прав.</Format>
+          <Items>
+            <Item>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="TaskLoanClientReferenceSelectedLoanIdIsNotNullCondition" />
+                  </When>
+                  <Then>дела</Then>
+                </Case>
+                <Case>
+                  <When>
+                    <Condition Name="TaskLoanClientReferenceSelectedClientIdIsNotNullCondition" />
+                  </When>
+                  <Then>должника</Then>
+                </Case>
+              </Switch>
+            </Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormLoadedVariableValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CommentDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TaskCommentEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TaskLoanClientReferenceDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Not>
+              <Condition Name="IsAutotaskCondition" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="LoanClientReferenceEditFormShowCommand" />
+          </Then>
+          <Else>
+            <If>
+              <When>
+                <Object Name="TaskLoanClientReferenceDatabaseTable">
+                  <Property Name="SelectedRowCellValueByColumnName">
+                    <Parameters>
+                      <Parameter Name="ColumnName">Allowed</Parameter>
+                    </Parameters>
+                  </Property>
+                </Object>
+              </When>
+              <Then>
+                <If>
+                  <When>
+                    <Condition Name="TaskLoanClientReferenceSelectedLoanIdIsNotNullCondition" />
+                  </When>
+                  <Then>
+                    <Command Name="LoanEditFormShowCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Condition Name="TaskLoanClientReferenceSelectedClientIdIsNotNullCondition" />
+                    </When>
+                    <Then>
+                      <Command Name="ClientEditFormShowCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="TaskLoanClientReferenceNotAvailableMessageBoxCommand" />
+              </Else>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TaskCommentAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CommentAddRowCommand">
+          <Object Name="CounterVariable" />
+        </Command>
+        <Command Name="CommentSelectRowCommand">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="TaskCommentConvertDataConnection">
+                <Fields>
+                  <Field Name="ID" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Max Type="IntegerDataType" />
+          </Array>
+        </Command>
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TaskCommentEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CommentUpdateRowCommand" />
+        <Command Name="CommentSelectRowCommand">
+          <Command Name="TaskCommentEditFormShowCommand" Parameter="ID" />
+        </Command>
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CommentDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CommentDeleteRowsCommand" />
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TaskStatusComboBoxChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Object Name="FormLoadedVariable" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="TaskStatusComboBoxEqualInWorkCondition" />
+              </When>
+              <Then>
+                <Command Name="ExecutionDateDateTimePickerValueSetCommand" />
+                <Command Name="CloseDateDateTimePickerValueSetCommand" />
+              </Then>
+              <ElseIf>
+                <When>
+                  <Condition Name="TaskStatusComboBoxEqualExecutedCondition" />
+                </When>
+                <Then>
+                  <Command Name="CloseDateDateTimePickerValueSetCommand" />
+                </Then>
+              </ElseIf>
+            </If>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="LoanClientReferenceAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TaskLoanClientReferenceDeleteRowsCommand">
+          <Command Name="LoanClientReferenceAddFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="TaskLoanClientReferenceAddRowsCommand">
+          <Input Name="LoanIds">
+            <Command Name="LoanClientReferenceAddFormShowCommand" Parameter="LoanIds" />
+          </Input>
+          <Input Name="ClientId">
+            <Command Name="LoanClientReferenceAddFormShowCommand" Parameter="ClientId" />
+          </Input>
+        </Command>
+        <Command Name="TaskLoanClientReferenceSelectRowCommand">
+          <Command Name="LoanClientReferenceAddFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="LoanClientReferenceEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TaskLoanClientReferenceDeleteRowsCommand">
+          <Command Name="LoanClientReferenceEditFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="TaskLoanClientReferenceAddRowsCommand">
+          <Input Name="LoanIds">
+            <Command Name="LoanClientReferenceEditFormShowCommand" Parameter="LoanIds" />
+          </Input>
+          <Input Name="ClientId">
+            <Command Name="LoanClientReferenceEditFormShowCommand" Parameter="ClientId" />
+          </Input>
+        </Command>
+        <Command Name="TaskLoanClientReferenceSelectRowCommand">
+          <Command Name="LoanClientReferenceEditFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="TaskLoanClientReferenceDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TaskLoanClientReferenceDeleteRowCommand" />
+        <Command Name="FormChangedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="TaskTypeComboBox" />
+      <ConditionExpression>
+        <Condition Name="TaskTypeComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Тип действия" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="DeadlineDateDateTimePicker" />
+      <ConditionExpression>
+        <Condition Name="DeadlineDateDateTimePickerIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Срок" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="TaskStatusComboBox" />
+      <ConditionExpression>
+        <Condition Name="TaskStatusComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Статус" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ResponsibleUserCheckedComboBox" />
+      <ConditionExpression>
+        <Condition Name="ResponsibleUserCheckedComboBoxSelectedNoneCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Исполнители задачи" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="FormLoadedVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>False</Value>
+    </MyObject>
+
+    <MyObject Name="CounterVariable" Type="CounterVariable" Assembly="WorkflowServer" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="TaskDictionaryVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="Dictionary" Refresh="False">
+          <Key Name="common">
+            <Structure Type="Dictionary" Refresh="False">
+              <Key Name="task_id">
+                <DataTypeConvert Type="IntegerDataType">
+                  <Parameter Name="TaskId" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="task_type_id">
+                <DataTypeConvert Type="IntegerDataType" AllowNull="True">
+                  <Object Name="TaskTypeComboBox" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="deadline_date">
+                <DataTypeConvert Type="DateDataType">
+                  <Object Name="DeadlineDateDateTimePicker" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="execution_date">
+                <DataTypeConvert Type="DateDataType">
+                  <Object Name="ExecutionDateDateTimePicker" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="close_date">
+                <DataTypeConvert Type="DateDataType">
+                  <Object Name="CloseDateDateTimePicker" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="task_status_id">
+                <DataTypeConvert Type="IntegerDataType" AllowNull="True">
+                  <Object Name="TaskStatusComboBox" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="description">
+                <Object Name="DescriptionTextBox" Refresh="False" />
+              </Key>
+            </Structure>
+          </Key>
+          <Key Name="task_responsible_user_list">
+            <Array>
+              <Source>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+                    </When>
+                    <Then>
+                      <DataConnection SourceDataConnection="ResponsibleUserSecondaryGetDataConnection">
+                        <Fields>
+                          <Field Name="UserId" />
+                        </Fields>
+                      </DataConnection>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="ResponsibleUserCheckedComboBox" />
+                  </Case>
+                </Switch>
+              </Source>
+              <ToDictionary>
+                <Key Name="user_id" Index="0" />
+              </ToDictionary>
+            </Array>
+          </Key>
+          <Key Name="task_comment_list">
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="TaskCommentConvertDataConnection" Refresh="False">
+                  <Fields>
+                    <Field Name="TaskCommentId" />
+                    <Field Name="Comment" />
+                    <Field Name="ID" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <ToDictionary>
+                <Key Name="task_comment_id" Index="0" />
+                <Key Name="comment" Index="1" />
+                <Key Name="id" Index="2" />
+              </ToDictionary>
+            </Array>
+          </Key>
+          <Key Name="task_loan_list">
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="TaskLoanConvertDataConnection" Refresh="False">
+                  <Fields>
+                    <Field Name="TaskLoanId" />
+                    <Field Name="LoanId" />
+                    <Field Name="ClientId" />
+                    <Field Name="ID" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <ToDictionary>
+                <Key Name="task_loan_id" Index="0" />
+                <Key Name="loan_id" Index="1" />
+                <Key Name="client_id" Index="2" />
+                <Key Name="id" Index="3" />
+              </ToDictionary>
+            </Array>
+          </Key>
+        </Structure>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Formula>
+                <Plus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Plus>
+              </Formula>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="TaskTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>3</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Тип действия</Text>
+      </MyObject>
+
+      <MyObject Name="TaskTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="TaskTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskTypeId" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="IsAutotaskCondition" />
+            </Not>
+            <Condition Name="UserIsAdminNestedCondition" />
+          </And>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="CreateDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата создания</Text>
+      </MyObject>
+
+      <MyObject Name="CreateDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CreateDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CreateDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CreateDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <NullValue Show="True" />
+        <Format> d MMMM yyyy</Format>
+        <Value>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CreateDate" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <Enabled>False</Enabled>
+      </MyObject>
+
+      <MyObject Name="DeadlineDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CreateDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>25</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Срок</Text>
+      </MyObject>
+
+      <MyObject Name="DeadlineDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="DeadlineDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="DeadlineDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DeadlineDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="DeadlineDate" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="IsAutotaskCondition" />
+            </Not>
+            <Condition Name="UserIsAdminNestedCondition" />
+          </And>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="ExecutionDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DeadlineDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата выполнения</Text>
+      </MyObject>
+
+      <MyObject Name="ExecutionDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ExecutionDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ExecutionDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ExecutionDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ExecutionDate" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <Enabled>
+          <And>
+            <Condition Name="UserIsAdminNestedCondition" />
+            <Or>
+              <Condition Name="TaskStatusComboBoxEqualExecutedCondition" />
+              <Condition Name="TaskStatusComboBoxEqualClosedCondition" />
+            </Or>
+          </And>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="CloseDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ExecutionDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата закрытия</Text>
+      </MyObject>
+
+      <MyObject Name="CloseDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CloseDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CloseDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CloseDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CloseDate" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <Enabled>
+          <And>
+            <Condition Name="UserIsAdminNestedCondition" />
+            <Condition Name="TaskStatusComboBoxEqualClosedCondition" />
+          </And>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="TaskStatusLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CloseDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Текущий статус</Text>
+      </MyObject>
+
+      <MyObject Name="TaskStatusComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="TaskStatusLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TaskStatusLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskStatusLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="TaskStatusSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="TaskStatusId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>
+                <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="TaskStatusId" />
+                  </Fields>
+                </DataConnection>
+              </Then>
+            </Case>
+            <Case>
+              <DataConnection SourceDataConnection="TaskStatusInWorkSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="TaskStatusId" />
+                </Fields>
+              </DataConnection>
+            </Case>
+          </Switch>
+        </Value>
+        <Enabled>
+          <And>
+            <Parameter Name="Edit" />
+            <Or>
+              <Condition Name="UserIsAdminNestedCondition" />
+              <Not>
+                <Condition Name="TaskStatusComboBoxEqualClosedCondition" />
+              </Not>
+            </Or>
+            <Not>
+              <Condition Name="IsAutotaskCondition" />
+            </Not>
+          </And>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="AuthorLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskStatusComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>24</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Автор задачи</Text>
+      </MyObject>
+
+      <MyObject Name="AuthorComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="AuthorLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="AuthorLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="AuthorLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="AuthorSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="UserId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>
+                <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="AuthorId" />
+                  </Fields>
+                </DataConnection>
+              </Then>
+            </Case>
+            <Case>
+              <DataConnection SourceDataConnection="IsCurrentUserSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="UserId" />
+                </Fields>
+              </DataConnection>
+            </Case>
+          </Switch>
+        </Value>
+        <Enabled>False</Enabled>
+      </MyObject>
+
+      <MyObject Name="ResponsibleUserLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="AuthorComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Исполнители задачи</Text>
+      </MyObject>
+
+      <MyObject Name="ResponsibleUserCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ResponsibleUserLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ResponsibleUserLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ResponsibleUserLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>8</TabIndex>
+        <ValueList>
+          <DataConnection SourceDataConnection="ResponsibleUserSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="UserId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <NullValue Show="True" Title="[Все]" />
+        <Value>
+          <DataConnection SourceDataConnection="ResponsibleUserIdPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ResponsibleUserId" />
+            </Fields>
+          </DataConnection>
+        </Value>
+        <DropDownHeight>150</DropDownHeight>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="IsAutotaskCondition" />
+            </Not>
+            <Condition Name="UserIsAdminNestedCondition" />
+          </And>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="DescriptionLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskTypeLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="CommentLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="TaskTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="TaskTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="TaskTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="TaskTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Описание</Text>
+      </MyObject>
+
+      <MyObject Name="DescriptionTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="DescriptionLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="DescriptionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CreateDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="DescriptionTextBox">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="DescriptionLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>9</TabIndex>
+        <Multiline>True</Multiline>
+        <Text>
+          <DataConnection SourceDataConnection="TaskPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Description" />
+            </Fields>
+          </DataConnection>
+        </Text>
+        <ReadOnly>
+          <Not>
+            <Condition Name="UserIsAdminNestedCondition" />
+          </Not>
+        </ReadOnly>
+      </MyObject>
+
+      <MyObject Name="TaskLoanClientReferenceLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="DescriptionTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DescriptionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DescriptionLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="DescriptionLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="DescriptionLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="DescriptionLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="DescriptionLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Список дел и должников</Text>
+      </MyObject>
+
+      <MyObject Name="TaskLoanClientReferenceDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+        <Top>
+          <Object Name="TaskLoanClientReferenceLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TaskLoanClientReferenceLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="TaskLoanClientReferenceAddButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Object Name="LoanOrClientOpenButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Formula>
+                      <Plus DataType="IntegerDataType">
+                        <Item>
+                          <Object Name="TaskLoanClientReferenceDeleteButton">
+                            <Property Name="Bottom" />
+                          </Object>
+                        </Item>
+                        <Item>
+                          <Object Name="LoanOrClientOpenButton">
+                            <Property Name="Height" />
+                          </Object>
+                        </Item>
+                        <Item>5</Item>
+                      </Plus>
+                    </Formula>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Object Name="TaskLoanClientReferenceAddButton">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskLoanClientReferenceLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TaskLoanClientReferenceAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>10</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="TaskLoanConvertDataConnection" />
+        <Formatting>
+          <BackColor>
+            <Expression>NOT Allowed</Expression>
+            <Color>Gray175</Color>
+          </BackColor>
+        </Formatting>
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ID" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="TaskLoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="LoanTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Номер КД</Title>
+            <Width>100</Width>
+            <Substitution SourceColumn="LoanId">
+              <Array>
+                <Source>
+                  <DataConnection SourceDataConnection="LoanClientPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="LoanId" />
+                      <Field Name="CreditNumber" />
+                    </Fields>
+                  </DataConnection>
+                </Source>
+                <Distinct />
+              </Array>
+            </Substitution>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Должник</Title>
+            <Width>300</Width>
+            <Substitution SourceColumn="ClientId">
+              <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+            <AutoSizeMode Value="Fill" />
+            <WrapMode Value="True" />
+          </Column>
+          <Column Name="LoanAllowed" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+            <Substitution SourceColumn="LoanId">
+              <DataConnection SourceDataConnection="LoanAllowedForUserPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="LoanId" />
+                  <Field Name="LoanAllowed" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+          </Column>
+          <Column Name="ClientAllowed" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+            <Substitution SourceColumn="ClientId">
+              <DataConnection SourceDataConnection="ClientAllowedForUserPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ClientId" />
+                  <Field Name="ClientAllowed" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+          </Column>
+          <Column Name="Allowed" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+            <Calculate>
+              <Expression>ISNULL(ISNULL(LoanAllowed, ClientAllowed), false)</Expression>
+            </Calculate>
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="TaskLoanClientReferenceAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TaskLoanClientReferenceDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskLoanClientReferenceDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>11</TabIndex>
+        <Hint>Добавить запись...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="LoanClientReferenceAddFormShowCommand" />
+        </Commands>
+        <Visible>
+          <Not>
+            <Condition Name="IsAutotaskCondition" />
+          </Not>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="TaskLoanClientReferenceEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskLoanClientReferenceAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>12</TabIndex>
+        <Hint>Редактировать запись...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="LoanClientReferenceEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TaskLoanClientReferenceSelectedCondition" />
+        </Enabled>
+        <Visible>
+          <Not>
+            <Condition Name="IsAutotaskCondition" />
+          </Not>
+        </Visible>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите запись для редактирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="TaskLoanClientReferenceDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskLoanClientReferenceEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>13</TabIndex>
+        <Hint>Удалить запись</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TaskLoanClientReferenceDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="TaskLoanClientReferenceSelectedCondition" />
+        </Enabled>
+        <Visible>
+          <Not>
+            <Condition Name="IsAutotaskCondition" />
+          </Not>
+        </Visible>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите запись для удаления.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="LoanOrClientOpenButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="TaskLoanClientReferenceDeleteButton">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="TaskLoanClientReferenceDeleteButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Plus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="TaskLoanClientReferenceAddButton">
+                <Property Name="Top" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="TaskLoanClientReferenceAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>14</TabIndex>
+        <Hint>
+          <String>
+            <Format>Перейти в карточку {0}...</Format>
+            <Items>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Condition Name="TaskLoanClientReferenceSelectedLoanIdIsNotNullCondition" />
+                    </When>
+                    <Then>дела</Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <Condition Name="TaskLoanClientReferenceSelectedClientIdIsNotNullCondition" />
+                    </When>
+                    <Then>должника</Then>
+                  </Case>
+                </Switch>
+              </Item>
+            </Items>
+          </String>
+        </Hint>
+        <Image>Images\24x24\loan_view.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <If>
+            <When>
+              <Object Name="TaskLoanClientReferenceDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Allowed</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </When>
+            <Then>
+              <If>
+                <When>
+                  <Condition Name="TaskLoanClientReferenceSelectedLoanIdIsNotNullCondition" />
+                </When>
+                <Then>
+                  <Command Name="LoanEditFormShowCommand" />
+                </Then>
+                <ElseIf>
+                  <When>
+                    <Condition Name="TaskLoanClientReferenceSelectedClientIdIsNotNullCondition" />
+                  </When>
+                  <Then>
+                    <Command Name="ClientEditFormShowCommand" />
+                  </Then>
+                </ElseIf>
+              </If>
+            </Then>
+            <Else>
+              <Command Name="TaskLoanClientReferenceNotAvailableMessageBoxCommand" />
+            </Else>
+          </If>
+        </Commands>
+        <Enabled>
+          <Condition Name="TaskLoanClientReferenceSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите дело или должника для просмотра.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="CommentLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TaskLoanClientReferenceDatabaseTable">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="DescriptionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="DescriptionLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="DescriptionLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="DescriptionLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="DescriptionLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="DescriptionLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Комментарии</Text>
+      </MyObject>
+
+      <MyObject Name="CommentDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+        <Top>
+          <Object Name="CommentLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CommentLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>10</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>
+                <Object Name="CommentDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CommentLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="CommentAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>15</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <RowHeight Value="40" />
+        <SourceDataConnection Name="TaskCommentConvertDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>30</Width>
+            <AutoFill Type="RowNumber" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ID" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="AuthorId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="AuthorTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+            <Substitution SourceColumn="AuthorId">
+              <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="UserId" />
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Substitution>
+          </Column>
+          <Column Name="CreateDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="AuthorTitleFormatted" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Автор</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <Calculate>
+              <Expression>IIF(AuthorTitle IS NULL, '[Не сохранено]', AuthorTitle)</Expression>
+            </Calculate>
+          </Column>
+          <Column Name="CreateDateFormatted" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата создания</Title>
+            <Width>120</Width>
+            <AutoSizeMode Value="None" />
+            <Calculate>
+              <Expression>IIF(CreateDate IS NULL, '[Не сохранено]', CreateDate)</Expression>
+            </Calculate>
+          </Column>
+          <Column Name="Comment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Комментарий</Title>
+            <MinimumWidth>150</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <WrapMode Value="True" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="CommentAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="CommentDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CommentDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>16</TabIndex>
+        <Hint>Добавить комментарий...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TaskCommentAddFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="CommentEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CommentAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CommentAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="CommentAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CommentAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>17</TabIndex>
+        <Hint>Редактировать комментарий...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TaskCommentEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="CommentSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите комментарий для редактирования.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="CommentDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CommentEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CommentAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="CommentAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="CommentAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>18</TabIndex>
+        <Hint>Удалить комментарий</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="CommentDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="CommentSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите комментарий для удаления.</DisabledText>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TrySaveSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="TaskTypeComboBoxIsNullCondition" />
+              </When>
+              <Then>Поле "Тип действия" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="DeadlineDateDateTimePickerIsNullCondition" />
+              </When>
+              <Then>Поле "Срок" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="TaskStatusComboBoxIsNullCondition" />
+              </When>
+              <Then>Поле "Статус" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="ResponsibleUserCheckedComboBoxSelectedNoneCondition" />
+                  <Not>
+                    <Condition Name="ResponsibleUserCheckedComboBoxSelectedAllCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Поле "Исполнители задачи" должно быть заполнено.</Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

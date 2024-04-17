@@ -1,0 +1,1452 @@
+<?xml version="1.0"?>
+<Form Name="CollectScanForm" Width="1044" Height="692" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">Сканирование документов</Parameter>
+    <Parameter Name="FileTitle" />
+    <Parameter Name="FileList" />
+    <Parameter Name="Description" />
+    <Parameter Name="LoanClientFormID" />
+    <Parameter Name="LoanClientList" />
+    <Parameter Name="Type">common</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="LoanClientArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Parameter Name="LoanClientList" />
+      </Source>
+      <Fields>
+        <Field Name="LoanClientFormID" DataType="IntegerDataType" Index="0" />
+        <Field Name="Title" DataType="StringDataType" Index="1" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="ScanFileArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source />
+      <Fields>
+        <Field Name="Title" DataType="StringDataType" Index="0" />
+        <Field Name="FullPath" DataType="StringDataType" Index="1" />
+      </Fields>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="ScanDpiComboBoxIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ScanDpiComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ScanFileDatabaseTableSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ScanFileDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ScanFileDatabaseTableSelectionChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ScanFileDatabaseTable">
+            <Property Name="SelectedRowIndex" />
+          </Object>
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="FullPathVariableChangedCondition" Type="ChangedCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="FullPathVariable" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="ScanFileArrayGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="TypeEqualLoanCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="Type" />
+        </Item>
+        <Item>loan</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="SaveFormatVariableEqualJpgCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SaveFormatVariable" />
+        </Item>
+        <Item>jpg</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="SaveFormatVariableEqualPdfCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SaveFormatVariable" />
+        </Item>
+        <Item>pdf</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="ScanFileDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="ScanFileDatabaseTable" />
+    </Condition>
+
+    <Condition Name="ScanPictureBoxDoubleClickCondition" Type="DoubleClickCondition" Assembly="Conditions">
+      <Object Name="ScanPictureBox" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="SaveOnCloseMessageBoxCommand" />
+            <If>
+              <When>
+                <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+              </When>
+              <Then>
+                <Command Name="SaveSequentialCommand" />
+                <Command Name="FormCloseCommand" />
+              </Then>
+              <ElseIf>
+                <When>
+                  <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                </When>
+                <Then>
+                  <Command Name="ScanPictureBoxImageValueSetCommand">Images\scan_null_image.png</Command>
+                  <Command Name="DeleteAllTempScanFileCommand" />
+                  <Command Name="FormCloseCommand" />
+                </Then>
+              </ElseIf>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="ScanPictureBoxImageValueSetCommand">Images\scan_null_image.png</Command>
+            <Command Name="DeleteAllTempScanFileCommand" />
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="ScanCommand" Type="ScanCommand" Assembly="Collect">
+      <ScannerDpi>
+        <Object Name="ScanDpiComboBox" />
+      </ScannerDpi>
+    </Command>
+
+    <Command Name="ErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Text>
+        <Command Name="ScanCommand" Parameter="Result" />
+      </Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="ScanFileAddRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ScanFileArrayGetDataConnection">
+        <Property Name="AddRow">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>Title</Item>
+                <Item>FullPath</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Command Name="ScanCommand" Parameter="FileName" />
+                </Item>
+                <Item>
+                  <Command Name="ScanCommand" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ScanFileDatabaseTableSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ScanFileDatabaseTable">
+        <Property Name="SelectedRowIndex">
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <DataConnection SourceDataConnection="ScanFileArrayGetDataConnection">
+                  <Property Name="Count" />
+                </DataConnection>
+              </Item>
+              <Item>1</Item>
+            </Minus>
+          </Formula>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="ScanPictureBoxImageValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ScanPictureBox">
+        <Property Name="Image">
+          <Input />
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="RotateImageCommand" Type="RotateImageCommand" Assembly="Collect">
+      <FullPath>
+        <Object Name="ScanFileDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">FullPath</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </FullPath>
+      <Rotate>
+        <Input Name="Rotate" />
+      </Rotate>
+    </Command>
+
+    <Command Name="ScanFileDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранный скан документа?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="DeleteTempScanFileCommand" Type="DeleteTempScanFileCommand" Assembly="Collect">
+      <FullPath>
+        <Object Name="ScanFileDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">FullPath</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </FullPath>
+    </Command>
+
+    <Command Name="ScanFileDeleteRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="ScanFileArrayGetDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="ScanFileArrayGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>FullPath</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="ScanFileDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">FullPath</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="ScanFileDeleteSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="ScanPictureBoxImageValueSetCommand">Images\scan_null_image.png</Command>
+        <Command Name="DeleteTempScanFileCommand" />
+        <Command Name="ScanFileDeleteRowCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="DeleteAllTempScanFileCommand" Type="DeleteTempScanFolderCommand" Assembly="Collect" />
+
+    <Command Name="FileArrayPdfValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="FileList">
+        <Array>
+          <Source>
+            <Command Name="UploadPdfFileCommand" />
+          </Source>
+          <Zip>
+            <Command Name="CreatePdfCommand" Parameter="FileName" />
+          </Zip>
+        </Array>
+      </Parameter>
+    </Command>
+
+    <Command Name="FileArrayJpgValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="FileList">
+        <Array>
+          <Source>
+            <Command Name="UploadJpgFileCommand" />
+          </Source>
+          <Zip>
+            <DataConnection SourceDataConnection="ScanFileArrayGetDataConnection">
+              <Fields>
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </Zip>
+        </Array>
+      </Parameter>
+    </Command>
+
+    <Command Name="DescriptionValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Description">
+        <Object Name="ScanDescriptionTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="LoanClientFormIDValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="LoanClientFormID">
+        <Object Name="LoanClientComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="FileTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="FileTitle">
+        <String>
+          <Format>Скан документов от {0}</Format>
+          <Items>
+            <Item>
+              <DataTypeFormat Type="DateTimeDataType" Format="dd-MM-yyyy HH-mm-ss">
+                <DateTime Variable="ActualNow" />
+              </DataTypeFormat>
+            </Item>
+          </Items>
+        </String>
+      </Parameter>
+    </Command>
+
+    <Command Name="CreatePdfCommand" Type="CreatePdfCommand" Assembly="Collect" />
+
+    <Command Name="UploadPdfFileCommand" Type="UploadFileCommand" Assembly="Commands">
+      <FileName>
+        <Command Name="CreatePdfCommand" />
+      </FileName>
+    </Command>
+
+    <Command Name="UploadJpgFileCommand" Type="UploadFileCommand" Assembly="Commands">
+      <FileName>
+        <DataConnection SourceDataConnection="ScanFileArrayGetDataConnection">
+          <Fields>
+            <Field Name="FullPath" />
+          </Fields>
+        </DataConnection>
+      </FileName>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveFormatVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="SaveFormatVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="SaveFormatVariableEqualJpgCondition" />
+          </When>
+          <Then>
+            <Command Name="UploadJpgFileCommand" />
+            <Command Name="FileArrayJpgValueSetCommand" />
+          </Then>
+          <ElseIf>
+            <When>
+              <Condition Name="SaveFormatVariableEqualPdfCondition" />
+            </When>
+            <Then>
+              <Command Name="CreatePdfCommand" />
+              <Command Name="UploadPdfFileCommand" />
+              <Command Name="FileArrayPdfValueSetCommand" />
+            </Then>
+          </ElseIf>
+        </If>
+        <Command Name="DescriptionValueSetCommand" />
+        <Command Name="LoanClientFormIDValueSetCommand" />
+        <Command Name="FileTitleValueSetCommand" />
+        <Command Name="ScanPictureBoxImageValueSetCommand">Images\scan_null_image.png</Command>
+        <Command Name="DeleteAllTempScanFileCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="FullPathVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="FullPathVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="ScanFileApplicationRunCommand" Type="ApplicationRunCommand" Assembly="Commands">
+      <Application>
+        <Object Name="ScanFileDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">FullPath</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Application>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ScanFileDatabaseTableSelectionChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FullPathVariableValueSetCommand">
+          <Object Name="ScanFileDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">FullPath</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FullPathVariableChangedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ScanPictureBoxImageValueSetCommand">
+          <Object Name="FullPathVariable" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ScanFileDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ScanFileDeleteSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ScanFileDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ScanFileApplicationRunCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ScanPictureBoxDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ScanFileApplicationRunCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="ScanDpiComboBox" />
+      <ConditionExpression>
+        <Not>
+          <Condition Name="ScanDpiComboBoxIsNotNullCondition" />
+        </Not>
+      </ConditionExpression>
+      <AsteriskHint>Выберите качество сканирования.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="SaveFormatVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>jpg</Value>
+    </MyObject>
+
+    <MyObject Name="FullPathVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>
+                <Object Name="HeadLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="LoanClientLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>250</Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Фигурант</Text>
+        <Visible>
+          <Condition Name="TypeEqualLoanCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="LoanClientComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="LoanClientLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Все фигуранты]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="LoanClientArrayGetDataConnection">
+            <Fields>
+              <Field Name="LoanClientFormID" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="LoanClientFormID" />
+        </Value>
+        <Visible>
+          <Condition Name="TypeEqualLoanCondition" />
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ScanDpiLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="LoanClientComboBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="LoanClientComboBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>15</Item>
+                  </Plus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="LoanClientLabel">
+                <Property Name="Top" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Качество</Text>
+      </MyObject>
+
+      <MyObject Name="ScanDpiComboBox" Type="ComboBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>75</Item>
+              <Item>Низкое</Item>
+            </Row>
+            <Row>
+              <Item>150</Item>
+              <Item>Обычное</Item>
+            </Row>
+            <Row>
+              <Item>300</Item>
+              <Item>Высокое</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>75</Value>
+      </MyObject>
+
+      <MyObject Name="ScanButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ScanDpiComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\scan.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>Gray100</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сканировать</Text>
+        <Enabled>
+          <Condition Name="ScanDpiComboBoxIsNotNullCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите качество сканирования.</DisabledText>
+        <Commands Lock="True">
+          <Command Name="ScanCommand" />
+          <If>
+            <When>
+              <Command Name="ScanCommand" Parameter="Error" />
+            </When>
+            <Then>
+              <Command Name="ErrorMessageBoxCommand" />
+            </Then>
+            <Else>
+              <Command Name="ScanFileAddRowCommand" />
+              <Command Name="ScanFileDatabaseTableSelectRowCommand" />
+            </Else>
+          </If>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ScanFileLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ScanButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сканы документов</Text>
+      </MyObject>
+
+      <MyObject Name="ScanFileDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>
+          <Object Name="ScanFileLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ScanFileLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Multiply DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Divide DataType="IntegerDataType">
+                    <Item>
+                      <Formula>
+                        <Minus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ContentPanel">
+                              <Property Name="Height" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="ScanFileDatabaseTable">
+                              <Property Name="Top" />
+                            </Object>
+                          </Item>
+                        </Minus>
+                      </Formula>
+                    </Item>
+                    <Item>3</Item>
+                  </Divide>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Multiply>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="ScanFileLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <SourceDataConnection Name="ScanFileArrayGetDataConnection" />
+        <Columns>
+          <Column Name="Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Наименование</Title>
+            <Width>170</Width>
+            <AutoSizeMode Value="Fill" />
+          </Column>
+          <Column Name="FullPath" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="ScanFileDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ScanFileDatabaseTable">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ScanButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ScanDpiLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\delete.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Удалить скан документа...</Text>
+        <Commands>
+          <Command Name="ScanFileDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ScanFileDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите скан документа для удаления.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="ScanDescriptionLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ScanFileDeleteButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanClientLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="LoanClientLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="LoanClientLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="LoanClientLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="LoanClientLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="LoanClientLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Описание</Text>
+      </MyObject>
+
+      <MyObject Name="ScanDescriptionTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ScanDescriptionLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ScanDescriptionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ScanDescriptionTextBox">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="ScanDescriptionLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Multiline>True</Multiline>
+        <Text />
+      </MyObject>
+
+      <MyObject Name="ScanPictureBox" Type="PictureBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>10</Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="LoanClientLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ScanPictureBox">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ImageRotateLeftButton">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ScanPictureBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <InitialImage>Images\scan_null_image.png</InitialImage>
+        <ErrorImage>Images\scan_null_image.png</ErrorImage>
+        <NullImage>Images\scan_null_image.png</NullImage>
+        <WaitOnLoad>False</WaitOnLoad>
+        <ImagesLoad Value="ByRequest" />
+        <Image />
+      </MyObject>
+
+      <MyObject Name="ImageRotateLeftButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ScanPictureBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ScanPictureBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Formula>
+                  <Divide DataType="IntegerDataType">
+                    <Item>
+                      <Formula>
+                        <Minus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ScanPictureBox">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="ImageRotateLeftButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="ImageRotateRightButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>30</Item>
+                        </Minus>
+                      </Formula>
+                    </Item>
+                    <Item>2</Item>
+                  </Divide>
+                </Formula>
+              </Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>36</Width>
+        <Height>36</Height>
+        <TabIndex>8</TabIndex>
+        <Hint>Повернуть изображение против часовой стрелки</Hint>
+        <Image>Images\24x24\rotate_left.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands Lock="True">
+          <Command Name="ScanPictureBoxImageValueSetCommand">Images\scan_null_image.png</Command>
+          <Command Name="RotateImageCommand">
+            <Input Name="Rotate">Left</Input>
+          </Command>
+          <Command Name="FullPathVariableValueSetCommand">
+            <Object Name="ScanFileDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">FullPath</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Command>
+        </Commands>
+        <Enabled>
+          <Condition Name="ScanFileDatabaseTableSelectedCondition" />
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="ImageRotateRightButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ImageRotateLeftButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ImageRotateLeftButton">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>30</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Object Name="ImageRotateLeftButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ImageRotateLeftButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <TabIndex>9</TabIndex>
+        <Hint>Повернуть изображение по часовой стрелке</Hint>
+        <Image>Images\24x24\rotate_right.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ScanPictureBoxImageValueSetCommand">Images\scan_null_image.png</Command>
+          <Command Name="RotateImageCommand">
+            <Input Name="Rotate">Right</Input>
+          </Command>
+          <Command Name="FullPathVariableValueSetCommand">
+            <Object Name="ScanFileDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">FullPath</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Command>
+        </Commands>
+        <Enabled>
+          <Condition Name="ScanFileDatabaseTableSelectedCondition" />
+        </Enabled>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveAsJpgButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SaveAsPdfButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SaveAsPdfButton">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="SaveAsPdfButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SaveAsPdfButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\jpg.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить в jpg</Text>
+        <Hint>Сканы документов будут сохранены по отдельности в формате ".jpg" (изображение).</Hint>
+        <Commands Lock="True">
+          <Command Name="SaveFormatVariableValueSetCommand">jpg</Command>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Для сохранения отсканируйте документы.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="SaveAsPdfButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>2</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\pdf.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить в pdf</Text>
+        <Hint>Сканы документов будут объединены в один файл формата ".pdf".</Hint>
+        <Commands Lock="True">
+          <Command Name="SaveFormatVariableValueSetCommand">pdf</Command>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Для сохранения отсканируйте документы.</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

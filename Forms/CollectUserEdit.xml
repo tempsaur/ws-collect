@@ -1,0 +1,5525 @@
+<?xml version="1.0"?>
+<Form Name="CollectUserEditForm" Width="500" Height="550" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="UserId" />
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование пользователя</Then>
+        </Case>
+        <Case>Добавление пользователя</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorHeadPanelButtonBorder" Red="160" Green="160" Blue="160" Alpha="255" />
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="ButtonBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="TabButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="UserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Title" />
+          <Field Name="FullTitle" />
+          <Field Name="FullTitleGenitive" />
+          <Field Name="GroupId" />
+          <Field Name="Post" />
+          <Field Name="ProcurationNumber" />
+          <Field Name="ProcurationDate" />
+          <Field Name="Email" />
+          <Field Name="ReportPayment" />
+          <Field Name="ReportInteraction" />
+          <Field Name="ReportDebt" />
+          <Field Name="ReportApplicationTaxPayment" />
+   	      <Field Name="ReportUsers" />
+          <Field Name="ListClaimant" />
+          <Field Name="ListInnerOrg" />
+          <Field Name="ListCession" />
+          <Field Name="ListClient" />
+          <Field Name="ListAddress" />
+          <Field Name="ListDocument" />
+          <Field Name="ListCourt" />
+          <Field Name="ListOsp" />
+          <Field Name="ListTaskType" />
+          <Field Name="ListAudioFile" />
+          <Field Name="ListEmail" />
+          <Field Name="ListApplicationTaxPaymentExport" />
+          <Field Name="SmtpServerAddress" />
+          <Field Name="SmtpServerPort" />
+          <Field Name="EmailSender" />
+          <Field Name="EmailPassword" />
+          <Field Name="EmailSenderName" />
+          <Field Name="EmailSignature" />
+          <Field Name="ListPochtaRuOrders" />
+          <Field Name="ListBankruptType" />
+          <Field Name="DebexFsspCheck" />
+          <Field Name="DebexBankruptCheck" />
+          <Field Name="DebexJurisdictionCheck" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="EditUserId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="UserId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="EmailPermission" />
+          <Field Name="ModulePochtaRuPermission" />
+          <Field Name="ModuleDebexFsspPermission" />
+          <Field Name="ModuleDebexBankruptPermission" />
+          <Field Name="ModuleDebexJurisdictionPermission" />
+          <Field Name="ModuleApplicationTaxPermission" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="UserListPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserId" />
+          <Field Name="Title" />
+          <Field Name="GroupName" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <And>
+            <Filter>
+              <Field NativeName="GroupName" />
+              <Value>SpecialistGroup</Value>
+              <DataType Type="StringDataType" />
+            </Filter>
+            <Filter Type="NotEqual">
+              <Field NativeName="UserId" />
+              <Value>
+                <Parameter Name="UserId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+            <Or>
+              <Filter>
+                <Field NativeName="Archive" />
+                <Value>False</Value>
+                <DataType Type="BooleanDataType" />
+              </Filter>
+              <Filter Type="In">
+                <Field NativeName="UserId" />
+                <Value>
+                  <DataConnection SourceDataConnection="UserUserPrimaryGetDataConnection">
+                    <Fields>
+                      <Field Name="ChildUserId" />
+                    </Fields>
+                  </DataConnection>
+                </Value>
+                <DataType Type="IntegerDataType" />
+              </Filter>
+            </Or>
+          </And>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="UserUserPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserUserByIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ChildUserId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="EditUserId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="UserId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="UserPhonePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="UserPhoneByUserIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="UserPhoneId" />
+          <Field Name="PhoneNumber" />
+          <Field Name="IsMain" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="EditUserId" RefreshQuery="False">
+            <Value>
+              <Parameter Name="UserId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="UserPhoneConvertDataConnection" Type="ConvertDataConnection" Assembly="WorkflowServer">
+      <SourceDataConnection Name="UserPhonePrimaryGetDataConnection" />
+      <Fields>
+        <Field Name="ID" Type="Value">
+          <Object Name="CounterVariable" />
+        </Field>
+        <Field Name="UserPhoneId" />
+        <Field Name="PhoneNumber" />
+        <Field Name="IsMain" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="UserPhoneByIDSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="UserPhoneConvertDataConnection" />
+      <Filter>
+        <Field NativeName="ID" />
+        <Value>
+          <Object Name="PhoneDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ID</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="GroupPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="GroupSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="GroupId" />
+          <Field Name="Name" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="AdministratorGroupSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="GroupPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>AdministratorGroup</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="LeadingSpecialistGroupSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="GroupPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>LeadingSpecialistGroup</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="UserSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="Model">
+          <Value>
+            <Command Name="UserDictionarySerializeToJsonCommand" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="UserSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="CurrentTabEqualMainCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentTabVariable" />
+        </Item>
+        <Item>main</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentTabEqualPhoneCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentTabVariable" />
+        </Item>
+        <Item>phone</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentTabEqualReportCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentTabVariable" />
+        </Item>
+        <Item>report</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentTabEqualListCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentTabVariable" />
+        </Item>
+        <Item>list</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentTabEqualEmailCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentTabVariable" />
+        </Item>
+        <Item>email</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CurrentTabEqualDebexCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentTabVariable" />
+        </Item>
+        <Item>debex</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="TitleTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TitleTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="GroupComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GroupComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PasswordTextBoxIsIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PasswordTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PasswordTextBoxLess6Condition" Type="LessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PasswordTextBox">
+            <Property Name="Length" />
+          </Object>
+        </Item>
+        <Item>6</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="EmailTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="EmailTextBoxIsEmailCondition" Type="IsEmailCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="EmailPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="EmailPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ModuleDebexFsspPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleDebexFsspPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ModuleDebexBankruptPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleDebexBankruptPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ModuleDebexJurisdictionPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleDebexJurisdictionPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ModuleApplicationTaxPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ListClientComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ListClientComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PhoneDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="PhoneDatabaseTable" />
+    </Condition>
+
+    <Condition Name="PhoneSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PhoneDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="UserIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="UserId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="GroupComboBoxEqualLeadingSpecialistCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GroupComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="LeadingSpecialistGroupSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="GroupId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="GroupComboBoxEqualAdministratorCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="GroupComboBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="AdministratorGroupSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="GroupId" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="UserUserCheckedComboBoxSelectedAllCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="UserUserCheckedComboBox">
+            <Property Name="ItemsCount" />
+          </Object>
+        </Item>
+        <Item>
+          <Object Name="UserUserCheckedComboBox">
+            <Property Name="SelectedItemsCount" />
+          </Object>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SmtpServerAddressTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="SmtpServerAddressTextBoxBoxIsMatchRegexCondition" Type="IsMatchRegexCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SmtpServerAddressTextBox" />
+        </Item>
+      </Items>
+      <Regex>^([a-z0-9]{1})((\.[a-z0-9-])|([a-z0-9-]))*\.([a-z]{2,6})(\/?)$</Regex>
+    </Condition>
+
+    <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SmtpServerPortTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="SmtpServerPortTextBoxIsIntegerDataTypeCondition" Type="IsDataTypeCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="SmtpServerPortTextBox" />
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailSenderTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="EmailSenderTextBoxIsEmailCondition" Type="IsEmailCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailSenderTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="EmailPasswordTextBoxIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="EmailPasswordTextBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="EmailDetailsFilledNotCorrectlyNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Or>
+          <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" />
+          <Not>
+            <Condition Name="SmtpServerAddressTextBoxBoxIsMatchRegexCondition" />
+          </Not>
+          <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" />
+          <Not>
+            <Condition Name="SmtpServerPortTextBoxIsIntegerDataTypeCondition" />
+          </Not>
+          <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" />
+          <Not>
+            <Condition Name="EmailSenderTextBoxIsEmailCondition" />
+          </Not>
+          <Condition Name="EmailPasswordTextBoxIsNullOrEmptyCondition" />
+        </Or>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="EmailDetailsNotFilledNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" />
+          <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" />
+          <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" />
+          <Condition Name="EmailPasswordTextBoxIsNullOrEmptyCondition" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ModulePochtaRuPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModulePochtaRuPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="PasswordTextBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>581</Then>
+            </Case>
+            <Case>543</Case>
+          </Switch>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="CurrentTabValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentTabVariable">
+        <Input Name="Value" />
+      </Object>
+    </Command>
+
+    <Command Name="UserPhoneAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectUserPhoneEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+    </Command>
+
+    <Command Name="UserPhoneEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectUserPhoneEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="ID">
+          <DataConnection SourceDataConnection="UserPhoneByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ID" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="PhoneNumber">
+          <DataConnection SourceDataConnection="UserPhoneByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="PhoneNumber" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="IsMain">
+          <DataConnection SourceDataConnection="UserPhoneByIDSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="IsMain" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="PhoneSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="PhoneDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">ID</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="PhoneAddRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="UserPhoneConvertDataConnection">
+        <Property Name="AddRow">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ID</Item>
+                <Item>PhoneNumber</Item>
+                <Item>IsMain</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Input />
+                </Item>
+                <Item>
+                  <Command Name="UserPhoneAddFormShowCommand" Parameter="PhoneNumber" />
+                </Item>
+                <Item>
+                  <Command Name="UserPhoneAddFormShowCommand" Parameter="IsMain" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PhoneSetMainFalseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="UserPhoneConvertDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="RowIndices">
+              <DataConnection SourceDataConnection="UserPhoneConvertDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>IsMain</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>True</Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>IsMain</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>False</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PhoneUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="UserPhoneConvertDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="UserPhoneConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Command Name="UserPhoneEditFormShowCommand" Parameter="ID" />
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>PhoneNumber</Item>
+                <Item>IsMain</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Command Name="UserPhoneEditFormShowCommand" Parameter="PhoneNumber" />
+                </Item>
+                <Item>
+                  <Command Name="UserPhoneEditFormShowCommand" Parameter="IsMain" />
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PhoneDeleteRowsCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="UserPhoneConvertDataConnection">
+        <Property Name="DeleteRowsByIndices">
+          <Parameters>
+            <Parameter Name="Value">
+              <DataConnection SourceDataConnection="UserPhoneConvertDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>ID</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="PhoneDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">ID</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="PhoneDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранный телефон?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="EmailPasswordTextBoxPasswordValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="EmailPasswordTextBox">
+        <Property Name="Password">
+          <Not>
+            <Object Name="EmailPasswordTextBox">
+              <Property Name="Password" />
+            </Object>
+          </Not>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="UserSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="UserSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UserIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="UserId">
+        <Command Name="UserSaveCommand" />
+      </Parameter>
+    </Command>
+
+    <Command Name="FormChangedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">
+          <Input />
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="UserDictionaryVariableRefreshCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="UserDictionaryVariable">
+        <Property Name="Refresh" />
+      </Object>
+    </Command>
+
+    <Command Name="UserDictionarySerializeToJsonCommand" Type="SerializeToJsonCommand" Assembly="Commands">
+      <Variable>
+        <Object Name="UserDictionaryVariable" />
+      </Variable>
+    </Command>
+
+    <Command Name="EditValueSetTrueCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Edit">True</Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="PasswordComputeHashCommand" />
+        <Command Name="UserDictionaryVariableRefreshCommand" />
+        <Command Name="UserDictionarySerializeToJsonCommand" />
+        <Command Name="UserSaveCommand" />
+        <Command Name="UserIdValueSetCommand" />
+        <Command Name="EditValueSetTrueCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="PasswordComputeHashCommand" Type="ComputeHashCommand" Assembly="Commands">
+      <Condition Name="UserIdIsNullCondition" />
+      <Source>
+        <Object Name="PasswordTextBox" />
+      </Source>
+    </Command>
+
+    <Command Name="HelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>
+        <Input Name="Caption" />
+      </Caption>
+      <Text>
+        <Input Name="Text" />
+      </Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="PhoneDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="UserPhoneEditFormShowCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="UserPhoneAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="UserPhoneAddFormShowCommand" Parameter="IsMain" />
+          </When>
+          <Then>
+            <Command Name="PhoneSetMainFalseCommand" />
+          </Then>
+        </If>
+        <Command Name="PhoneAddRowCommand">
+          <Object Name="CounterVariable" />
+        </Command>
+        <Command Name="PhoneSelectRowCommand">
+          <Array>
+            <Source>
+              <DataConnection SourceDataConnection="UserPhoneConvertDataConnection">
+                <Fields>
+                  <Field Name="ID" />
+                </Fields>
+              </DataConnection>
+            </Source>
+            <Max Type="IntegerDataType" />
+          </Array>
+        </Command>
+        <Command Name="FormChangedValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="UserPhoneEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="UserPhoneEditFormShowCommand" Parameter="IsMain" />
+          </When>
+          <Then>
+            <Command Name="PhoneSetMainFalseCommand" />
+          </Then>
+        </If>
+        <Command Name="PhoneUpdateRowCommand" />
+        <Command Name="PhoneSelectRowCommand">
+          <Command Name="UserPhoneEditFormShowCommand" Parameter="ID" />
+        </Command>
+        <Command Name="FormChangedValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="PhoneDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="PhoneDeleteRowsCommand" />
+        <Command Name="FormChangedValueSetCommand">True</Command>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <Checkings>
+    <Checking>
+      <Object Name="TitleTextBox" />
+      <ConditionExpression>
+        <Condition Name="TitleTextBoxIsNullOrEmptyCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Фамилия и инициалы (логин)" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="PasswordTextBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="PasswordTextBoxIsIsNullOrEmptyCondition" />
+          <Not>
+            <Parameter Name="Edit" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Поле "Пароль" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="PasswordTextBox" />
+      <ConditionExpression>
+        <And>
+          <Condition Name="PasswordTextBoxLess6Condition" />
+          <Not>
+            <Parameter Name="Edit" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Минимальная длина пароля - 6 символов.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="GroupComboBox" />
+      <ConditionExpression>
+        <Condition Name="GroupComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Группа" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="EmailTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="EmailTextBoxIsNullOrEmptyCondition" />
+          </Not>
+          <Not>
+            <Condition Name="EmailTextBoxIsEmailCondition" />
+          </Not>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>Некорректный адрес эл. почты.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="ListClientComboBox" />
+      <ConditionExpression>
+        <Condition Name="ListClientComboBoxIsNullCondition" />
+      </ConditionExpression>
+      <AsteriskHint>Поле "Доступ к списку должников" должно быть заполнено.</AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="SmtpServerAddressTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="EmailDetailsNotFilledNestedCondition" />
+          </Not>
+          <Or>
+            <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" />
+            <Not>
+              <Condition Name="SmtpServerAddressTextBoxBoxIsMatchRegexCondition" />
+            </Not>
+          </Or>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>
+        <String>
+          <Format>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" />
+                </When>
+                <Then>При {0} поле "Адрес SMTP-сервера" должно быть заполнено.</Then>
+              </Case>
+              <Case>При {0} необходимо корректно заполнить поле "Адрес SMTP-сервера"</Case>
+            </Switch>
+          </Format>
+          <Items>
+            <Item>заполнении одной из основных настроек модуля электронной корреспонденции,</Item>
+          </Items>
+        </String>
+      </AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="SmtpServerPortTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="EmailDetailsNotFilledNestedCondition" />
+          </Not>
+          <Or>
+            <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" />
+            <Not>
+              <Condition Name="SmtpServerPortTextBoxIsIntegerDataTypeCondition" />
+            </Not>
+          </Or>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>
+        <String>
+          <Format>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" />
+                </When>
+                <Then>При {0} поле "Порт SMTP-сервера" должно быть заполнено.</Then>
+              </Case>
+              <Case>При {0} необходимо корректно заполнить поле "Порт SMTP-сервера"</Case>
+            </Switch>
+          </Format>
+          <Items>
+            <Item>заполнении одной из основных настроек модуля электронной корреспонденции,</Item>
+          </Items>
+        </String>
+      </AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="EmailSenderTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="EmailDetailsNotFilledNestedCondition" />
+          </Not>
+          <Or>
+            <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" />
+            <Not>
+              <Condition Name="EmailSenderTextBoxIsEmailCondition" />
+            </Not>
+          </Or>
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>
+        <String>
+          <Format>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" />
+                </When>
+                <Then>При {0} поле "Адрес электронной почты для отправки сообщений" должно быть заполнено.</Then>
+              </Case>
+              <Case>При {0} необходимо корректно заполнить поле "Адрес электронной почты для отправки сообщений"</Case>
+            </Switch>
+          </Format>
+          <Items>
+            <Item>заполнении одной из основных настроек модуля электронной корреспонденции,</Item>
+          </Items>
+        </String>
+      </AsteriskHint>
+    </Checking>
+
+    <Checking>
+      <Object Name="EmailPasswordTextBox" />
+      <ConditionExpression>
+        <And>
+          <Not>
+            <Condition Name="EmailDetailsNotFilledNestedCondition" />
+          </Not>
+          <Condition Name="EmailPasswordTextBoxIsNullOrEmptyCondition" />
+        </And>
+      </ConditionExpression>
+      <AsteriskHint>При заполнении одной из основных настроек модуля электронной корреспонденции, поле "Пароль" должно быть заполнено.</AsteriskHint>
+    </Checking>
+  </Checkings>
+
+  <MyObjects>
+    <MyObject Name="CurrentTabVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>main</Value>
+    </MyObject>
+
+    <MyObject Name="CounterVariable" Type="CounterVariable" Assembly="WorkflowServer" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="UserDictionaryVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="Dictionary" Refresh="False">
+          <Key Name="common">
+            <Structure Type="Dictionary" Refresh="False">
+              <Key Name="user_id">
+                <Parameter Name="UserId" Refresh="False" />
+              </Key>
+              <Key Name="title">
+                <Object Name="TitleTextBox" Refresh="False" />
+              </Key>
+              <Key Name="full_title">
+                <Object Name="FullTitleTextBox" Refresh="False" />
+              </Key>
+              <Key Name="full_title_genitive">
+                <Object Name="FullTitleGenitiveTextBox" Refresh="False" />
+              </Key>
+              <Key Name="group_id">
+                <DataTypeConvert Type="IntegerDataType" AllowNull="True">
+                  <Object Name="GroupComboBox" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="password">
+                <Command Name="PasswordComputeHashCommand" Refresh="False" />
+              </Key>
+              <Key Name="post">
+                <Object Name="PostTextBox" Refresh="False" />
+              </Key>
+              <Key Name="procuration_number">
+                <Object Name="ProcurationNumberTextBox" Refresh="False" />
+              </Key>
+              <Key Name="procuration_date">
+                <DataTypeConvert Type="DateDataType">
+                  <Object Name="ProcurationDateDateTimePicker" Refresh="False" />
+                </DataTypeConvert>
+              </Key>
+              <Key Name="email">
+                <Object Name="EmailTextBox" Refresh="False" />
+              </Key>
+            </Structure>
+          </Key>
+          <Key Name="user_user_list">
+            <Array>
+              <Source>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="UserUserCheckedComboBox" Refresh="False">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Condition Name="UserUserCheckedComboBoxSelectedAllCondition" />
+                          </When>
+                          <Then>
+                            <DataConnection SourceDataConnection="UserListPrimaryGetDataConnection" Refresh="False">
+                              <Fields>
+                                <Field Name="UserId" />
+                              </Fields>
+                            </DataConnection>
+                          </Then>
+                        </Case>
+                        <Case>
+                          <Object Name="UserUserCheckedComboBox" Refresh="False" />
+                        </Case>
+                      </Switch>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Structure Type="Table" Refresh="False" />
+                  </Case>
+                </Switch>
+              </Source>
+              <ToDictionary>
+                <Key Name="child_user_id" Index="0" />
+              </ToDictionary>
+            </Array>
+          </Key>
+          <Key Name="phone_list">
+            <Array>
+              <Source>
+                <DataConnection SourceDataConnection="UserPhoneConvertDataConnection" Refresh="False">
+                  <Fields>
+                    <Field Name="UserPhoneId" />
+                    <Field Name="PhoneNumber" />
+                    <Field Name="IsMain" />
+                    <Field Name="ID" />
+                  </Fields>
+                </DataConnection>
+              </Source>
+              <ToDictionary>
+                <Key Name="user_phone_id" Index="0" />
+                <Key Name="phone_number" Index="1" />
+                <Key Name="is_main" Index="2" />
+                <Key Name="id" Index="3" />
+              </ToDictionary>
+            </Array>
+          </Key>
+          <Key Name="report_name_array">
+            <Structure Type="List" Refresh="False">
+              <Item>report_payment</Item>
+              <Item>report_interaction</Item>
+              <Item>report_debt</Item>
+              <Item>report_application_tax_payment</Item>
+              <Item>report_users</Item>
+            </Structure>
+          </Key>
+          <Key Name="report_permission_array">
+            <Structure Type="List" Refresh="False">
+              <Item>
+                <Object Name="ReportPaymentCheckBox" Refresh="False" />
+              </Item>
+              <Item>
+                <Object Name="ReportInteractionCheckBox" Refresh="False" />
+              </Item>
+              <Item>
+                <Object Name="ReportDebtCheckBox" Refresh="False" />
+              </Item>
+              <Item>
+                <Object Name="ReportApplicationTaxPaymentCheckBox" Refresh="False" />
+              </Item>
+              <Item>
+                <Object Name="ReportusersCheckBox" Refresh="False" />
+              </Item>
+            </Structure>
+          </Key>
+          <Key Name="list_name_array">
+            <Structure Type="List" Refresh="False">
+              <Item>list_claimant</Item>
+              <Item>list_inner_org</Item>
+              <Item>list_cession</Item>
+              <Item>list_client</Item>
+              <Item>list_address</Item>
+              <Item>list_document</Item>
+              <Item>list_court</Item>
+              <Item>list_osp</Item>
+              <Item>list_task_type</Item>
+              <Item>list_audio_file</Item>
+              <Item>list_email</Item>
+              <Item>list_pochtaru_orders</Item>
+              <Item>list_bankrupt_type</Item>
+              <Item>list_application_tax_payment_export</Item>
+            </Structure>
+          </Key>
+          <Key Name="list_permission_array">
+            <Structure Type="List" Refresh="False">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListClaimantCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListInnerOrgCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListCessionCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Object Name="ListClientComboBox" Refresh="False" />
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListAddressCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListDocumentCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListCourtCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListOspCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListTaskTypeCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListAudioFileCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListEmailCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListPochtaRuOrderCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListBankruptTypeCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ListApplicationTaxPaymentExportCheckBox" Refresh="False" />
+                    </When>
+                    <Then>full</Then>
+                  </Case>
+                  <Case>none</Case>
+                </Switch>
+              </Item>
+            </Structure>
+          </Key>
+          <Key Name="email_settings_dictionary">
+            <Structure Type="Dictionary">
+              <Key Name="smtp_server_address">
+                <Object Name="SmtpServerAddressTextBox" />
+              </Key>
+              <Key Name="smtp_server_port">
+                <Object Name="SmtpServerPortTextBox" />
+              </Key>
+              <Key Name="email_sender">
+                <Object Name="EmailSenderTextBox" />
+              </Key>
+              <Key Name="email_password">
+                <Object Name="EmailPasswordTextBox" />
+              </Key>
+              <Key Name="email_sender_name">
+                <Object Name="EmailSenderNameTextBox" />
+              </Key>
+              <Key Name="email_signature">
+                <Object Name="EmailSignatureTextBox" />
+              </Key>
+            </Structure>
+          </Key>
+          <Key Name="debex_settings_dictionary">
+            <Structure Type="Dictionary">
+              <Key Name="debex_fssp_check">
+                <Object Name="DebexFsspCheckCheckBox" Refresh="False" />
+              </Key>
+              <Key Name="debex_bankrupt_check">
+                <Object Name="DebexBankruptCheckCheckBox" Refresh="False" />
+              </Key>
+              <Key Name="debex_jurisdiction_check">
+                <Object Name="DebexJurisdictionCheckCheckBox" Refresh="False" />
+              </Key>
+            </Structure>
+          </Key>
+        </Structure>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>4</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ControlPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>150</Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+
+      <MyObject Name="MainButton" Type="Button" Assembly="BaseControls">
+        <Top>1</Top>
+        <Left>0</Left>
+        <Height>36</Height>
+        <Width>
+          <Object Name="ControlPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <BackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualMainCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>ButtonBackColor</Case>
+          </Switch>
+        </BackColor>
+        <ForeColor>Black</ForeColor>
+        <FontStyle>TabButtonFont</FontStyle>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualMainCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>FlatMouseOverBackColor</Case>
+          </Switch>
+        </FlatMouseOverBackColor>
+        <Image>Images\24x24\settings.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Text>        Основное</Text>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Commands>
+          <Command Name="CurrentTabValueSetCommand">
+            <Input Name="Value">main</Input>
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="PhoneButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="MainButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MainButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MainButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MainButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <BackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualPhoneCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>ButtonBackColor</Case>
+          </Switch>
+        </BackColor>
+        <ForeColor>Black</ForeColor>
+        <FontStyle>TabButtonFont</FontStyle>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualPhoneCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>FlatMouseOverBackColor</Case>
+          </Switch>
+        </FlatMouseOverBackColor>
+        <Image>Images\24x24\phone.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Text>        Телефоны</Text>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Commands>
+          <Command Name="CurrentTabValueSetCommand">
+            <Input Name="Value">phone</Input>
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ReportButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PhoneButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MainButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MainButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MainButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <BackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualReportCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>ButtonBackColor</Case>
+          </Switch>
+        </BackColor>
+        <ForeColor>Black</ForeColor>
+        <FontStyle>TabButtonFont</FontStyle>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualReportCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>FlatMouseOverBackColor</Case>
+          </Switch>
+        </FlatMouseOverBackColor>
+        <Image>Images\24x24\report_permission.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Text>        Отчеты</Text>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Commands>
+          <Command Name="CurrentTabValueSetCommand">
+            <Input Name="Value">report</Input>
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ListButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ReportButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MainButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MainButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MainButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <BackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualListCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>ButtonBackColor</Case>
+          </Switch>
+        </BackColor>
+        <ForeColor>Black</ForeColor>
+        <FontStyle>TabButtonFont</FontStyle>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualListCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>FlatMouseOverBackColor</Case>
+          </Switch>
+        </FlatMouseOverBackColor>
+        <Image>Images\24x24\list.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Text>        Списки</Text>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Commands>
+          <Command Name="CurrentTabValueSetCommand">
+            <Input Name="Value">list</Input>
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="EmailButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ListButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MainButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MainButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MainButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <BackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualEmailCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>ButtonBackColor</Case>
+          </Switch>
+        </BackColor>
+        <ForeColor>Black</ForeColor>
+        <FontStyle>TabButtonFont</FontStyle>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualEmailCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>FlatMouseOverBackColor</Case>
+          </Switch>
+        </FlatMouseOverBackColor>
+        <Image>Images\24x24\email.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Text>        Email</Text>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Visible>
+          <Condition Name="EmailPermissionCondition" />
+        </Visible>
+        <Commands>
+          <Command Name="CurrentTabValueSetCommand">
+            <Input Name="Value">email</Input>
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="DebexButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="EmailButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="MainButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="MainButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="MainButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <BackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualDebexCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>ButtonBackColor</Case>
+          </Switch>
+        </BackColor>
+        <ForeColor>Black</ForeColor>
+        <FontStyle>TabButtonFont</FontStyle>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="CurrentTabEqualDebexCondition" />
+              </When>
+              <Then>FlatMouseDownBackColor</Then>
+            </Case>
+            <Case>FlatMouseOverBackColor</Case>
+          </Switch>
+        </FlatMouseOverBackColor>
+        <Image>Images\24x24\debex_user_settings.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Text>        Debex</Text>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Visible>
+          <Or>
+            <Condition Name="ModuleDebexFsspPermissionCondition" />
+            <Condition Name="ModuleDebexBankruptPermissionCondition" />
+            <Condition Name="ModuleDebexJurisdictionPermissionCondition" />
+          </Or>
+        </Visible>
+        <Commands>
+          <Command Name="CurrentTabValueSetCommand">
+            <Input Name="Value">debex</Input>
+          </Command>
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SeparatePanel1" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Or>
+                        <Condition Name="ModuleDebexFsspPermissionCondition" />
+                        <Condition Name="ModuleDebexBankruptPermissionCondition" />
+                        <Condition Name="ModuleDebexJurisdictionPermissionCondition" />
+                      </Or>
+                    </When>
+                    <Then>
+                      <Object Name="DebexButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <When>
+                      <Condition Name="EmailPermissionCondition" />
+                    </When>
+                    <Then>
+                      <Object Name="EmailButton">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Then>
+                  </Case>
+                  <Case>
+                    <Object Name="ListButton">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Case>
+                </Switch>
+              </Item>
+              <Item>1</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ControlPanel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ControlPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="SeparatePanel1">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="ControlPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <BackColor>ButtonBackColor</BackColor>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="ControlPanel">
+          <Property Name="Right" />
+        </Object>
+      </Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="ContentPanel">
+                <Property Name="Left" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="MainPanel" Type="Panel" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <BackColor>
+          <Object Name="ContentPanel">
+            <Property Name="BackColor" />
+          </Object>
+        </BackColor>
+        <Visible>
+          <Condition Name="CurrentTabEqualMainCondition" />
+        </Visible>
+
+        <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="MainPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="TitleLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Фамилия и инициалы (логин)</Text>
+        </MyObject>
+
+        <MyObject Name="TitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="TitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="FullTitleLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ФИО полностью</Text>
+        </MyObject>
+
+        <MyObject Name="FullTitleTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="FullTitleLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="FullTitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="FullTitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="FullTitle" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="FullTitleGenitiveLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FullTitleTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>ФИО в родительном падеже</Text>
+        </MyObject>
+
+        <MyObject Name="FullTitleGenitiveTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="FullTitleGenitiveLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="FullTitleGenitiveLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="FullTitleGenitiveLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="FullTitleGenitive" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="GroupLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FullTitleGenitiveTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Группа пользователя</Text>
+        </MyObject>
+
+        <MyObject Name="GroupComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="GroupLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="GroupLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="GroupLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <DataConnection SourceDataConnection="GroupPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="GroupId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="GroupId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="UserUserLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="GroupComboBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Специалисты</Text>
+          <Visible>
+            <Condition Name="GroupComboBoxEqualLeadingSpecialistCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="UserUserCheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="UserUserLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="UserUserLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="UserUserLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <NullValue Show="True" Title="[Все]" />
+          <ValueList>
+            <DataConnection SourceDataConnection="UserListPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="UserId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <DataConnection SourceDataConnection="UserUserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ChildUserId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+          <Visible>
+            <Condition Name="GroupComboBoxEqualLeadingSpecialistCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="PasswordLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Object Name="UserUserCheckedComboBox">
+                          <Property Name="Visible" />
+                        </Object>
+                      </When>
+                      <Then>
+                        <Object Name="UserUserCheckedComboBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Then>
+                    </Case>
+                    <Case>
+                      <Object Name="GroupComboBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Case>
+                  </Switch>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Пароль</Text>
+          <Visible>
+            <Not>
+              <Parameter Name="Edit" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="PasswordTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="PasswordLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PasswordLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PasswordLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Text />
+          <Password>True</Password>
+          <Visible>
+            <Not>
+              <Parameter Name="Edit" />
+            </Not>
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="PostLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Object Name="PasswordTextBox">
+                          <Property Name="Visible" />
+                        </Object>
+                      </When>
+                      <Then>
+                        <Object Name="PasswordTextBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Then>
+                    </Case>
+                    <Case>
+                      <Switch>
+                        <Case>
+                          <When>
+                            <Object Name="UserUserCheckedComboBox">
+                              <Property Name="Visible" />
+                            </Object>
+                          </When>
+                          <Then>
+                            <Object Name="UserUserCheckedComboBox">
+                              <Property Name="Bottom" />
+                            </Object>
+                          </Then>
+                        </Case>
+                        <Case>
+                          <Object Name="GroupComboBox">
+                            <Property Name="Bottom" />
+                          </Object>
+                        </Case>
+                      </Switch>
+                    </Case>
+                  </Switch>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Должность</Text>
+        </MyObject>
+
+        <MyObject Name="PostTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="PostLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PostLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="PostLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Post" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="ProcurationNumberLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PostTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Доверенность</Text>
+        </MyObject>
+
+        <MyObject Name="ProcurationNumberTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="ProcurationNumberLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ProcurationNumberLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ProcurationNumberLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>8</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ProcurationNumber" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="ProcurationDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ProcurationNumberTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата доверенности</Text>
+        </MyObject>
+
+        <MyObject Name="ProcurationDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="ProcurationDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="ProcurationDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ProcurationDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>9</TabIndex>
+          <NullValue Show="True" />
+          <Value>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ProcurationDate" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </MyObject>
+
+        <MyObject Name="EmailLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ProcurationDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="TitleLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="TitleLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="TitleLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="TitleLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="TitleLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="TitleLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Адрес электронной почты</Text>
+        </MyObject>
+
+        <MyObject Name="EmailTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="EmailLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="EmailLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>10</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Email" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="PhonePanel" Type="Panel" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <BackColor>
+          <Object Name="ContentPanel">
+            <Property Name="BackColor" />
+          </Object>
+        </BackColor>
+        <Visible>
+          <Condition Name="CurrentTabEqualPhoneCondition" />
+        </Visible>
+
+        <MyObject Name="PhoneLabel" Type="Label" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PhonePanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PhoneLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Телефоны</Text>
+        </MyObject>
+
+        <MyObject Name="PhoneDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+          <Change User="True" Source="False" ValueSet="True" />
+          <Top>
+            <Object Name="PhoneLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="PhoneLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PhonePanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PhoneDatabaseTable">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PhoneLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="PhoneAddButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <AllowInsert>False</AllowInsert>
+          <AllowUpdate>False</AllowUpdate>
+          <AllowDelete>False</AllowDelete>
+          <AllowResizeRows Value="False" />
+          <AutoSizeColumnsMode Value="Fill" />
+          <BorderStyle Value="Fixed3D" />
+          <BackgroundColor Value="Gray200" />
+          <SelectionColor Name="SelectionColor" />
+          <ShowCellHints Value="True" />
+          <SourceDataConnection Name="UserPhoneConvertDataConnection" />
+          <Columns>
+            <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>№</Title>
+              <Width>30</Width>
+              <AutoFill Type="RowNumber" />
+              <AutoSizeMode Value="None" />
+            </Column>
+            <Column Name="ID" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Visible>False</Visible>
+            </Column>
+            <Column Name="PhoneNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Номер телефона</Title>
+              <MinimumWidth>100</MinimumWidth>
+              <AutoSizeMode Value="Fill" />
+            </Column>
+            <Column Name="IsMain" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+              <Title>ОТ</Title>
+              <Hint>Основной телефон</Hint>
+              <Width>30</Width>
+              <AutoSizeMode Value="None" />
+            </Column>
+          </Columns>
+        </MyObject>
+
+        <MyObject Name="PhoneAddButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="PhoneDatabaseTable">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PhoneDatabaseTable">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>30</Height>
+          <Width>30</Width>
+          <TabIndex>2</TabIndex>
+          <Hint>Добавить телефон...</Hint>
+          <Image>Images\18x18\add.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="UserPhoneAddFormShowCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="PhoneEditButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PhoneAddButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PhoneAddButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="PhoneAddButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="PhoneAddButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Hint>Редактировать телефон...</Hint>
+          <Image>Images\18x18\edit.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="UserPhoneEditFormShowCommand" />
+          </Commands>
+          <Enabled>
+            <Condition Name="PhoneSelectedCondition" />
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Выберите телефон для редактирования.</DisabledText>
+        </MyObject>
+
+        <MyObject Name="PhoneDeleteButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PhoneEditButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="PhoneAddButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="PhoneAddButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="PhoneAddButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Hint>Удалить телефон</Hint>
+          <Image>Images\18x18\delete.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="PhoneDeleteMessageBoxCommand" />
+          </Commands>
+          <Enabled>
+            <Condition Name="PhoneSelectedCondition" />
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Выберите телефон для удаления.</DisabledText>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="ReportPanel" Type="Panel" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <BackColor>
+          <Object Name="ContentPanel">
+            <Property Name="BackColor" />
+          </Object>
+        </BackColor>
+        <Visible>
+          <Condition Name="CurrentTabEqualReportCondition" />
+        </Visible>
+
+        <MyObject Name="ReportPaymentCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>10</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReportPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ReportPanel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>Доступ к отчету по оплатам</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ReportPayment" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ReportInteractionCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReportPaymentCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>Доступ к отчету по взаимодействиям</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ReportInteraction" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ReportDebtCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReportInteractionCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>Доступ к отчету по задолженностям</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ReportDebt" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ReportApplicationTaxPaymentCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReportDebtCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>Доступ к отчету по оплатам госпошлин заявлений</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ReportApplicationTaxPayment" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+          <Visible>
+            <Condition Name="ModuleApplicationTaxPermissionCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ReportusersCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ReportApplicationTaxPaymentCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ReportPaymentCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>Доступ к отчету по сотрудникам</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ReportUsers" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="ListPanel" Type="Panel" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <BackColor>
+          <Object Name="ContentPanel">
+            <Property Name="BackColor" />
+          </Object>
+        </BackColor>
+        <Visible>
+          <Condition Name="CurrentTabEqualListCondition" />
+        </Visible>
+
+        <MyObject Name="ListClaimantCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>10</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ListClaimantCheckBox">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <Text>Доступ к списку цедентов</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListClaimant" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListInnerOrgCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListClaimantCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Text>Доступ к списку цессионариев</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListInnerOrg" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListCessionCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListInnerOrgCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>Доступ к списку цессий</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListCession" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListClientLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListCessionCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>20</Height>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Доступ к списку должников</Text>
+        </MyObject>
+
+        <MyObject Name="ListClientComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListClientLabel">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>2</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClientLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListClientLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ListHelpButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <ValueList>
+            <Structure Type="Table">
+              <Row>
+                <Item>full</Item>
+                <Item>Полный доступ</Item>
+              </Row>
+              <Row>
+                <Item>partial</Item>
+                <Item>Частичный доступ</Item>
+              </Row>
+              <Row>
+                <Item>none</Item>
+                <Item>Нет доступа</Item>
+              </Row>
+            </Structure>
+          </ValueList>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>full</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListClient" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListHelpButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="ListClientComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListClientComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>20</Width>
+          <Height>
+            <Object Name="ListClientComboBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TabIndex>5</TabIndex>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <Text>?</Text>
+          <Commands>
+            <Command Name="HelpMessageBoxCommand">
+              <Input Name="Caption">Доступ</Input>
+              <Input Name="Text">Частичный доступ.
+Список должников доступен. Отображаются должники только по тем делам, в которых пользователь является ответственным специалистом.
+Если пользователь находится в группе "Ведущий специалист", дополнительно будут отображаться должники по всем делам подчиненных специалистов.</Input>
+            </Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="ListAddressCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListClientComboBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>8</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>6</TabIndex>
+          <Text>Доступ к спискам по адресам</Text>
+          <Hint>Доступ к спискам адресов должников, регионов, районов регионов, улиц и населенных пунктов</Hint>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListAddress" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListDocumentCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListAddressCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>7</TabIndex>
+          <Text>Доступ к спискам по документам</Text>
+          <Hint>Доступ к спискам шаблонов документов и категорий шаблонов</Hint>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListDocument" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListCourtCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListDocumentCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>8</TabIndex>
+          <Text>Доступ к списку судов</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListCourt" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListOspCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListCourtCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>9</TabIndex>
+          <Text>Доступ к списку ОСП</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListOsp" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListTaskTypeCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListOspCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>10</TabIndex>
+          <Text>Доступ к списку типов действий</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListTaskType" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListAudioFileCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListTaskTypeCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>11</TabIndex>
+          <Text>Доступ к загрузке и сохранению аудиозаписей</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListAudioFile" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListEmailCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListAudioFileCheckBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ListAudioFileCheckBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Plus>
+            </Formula>
+          </Height>
+          <TabIndex>12</TabIndex>
+          <Text>Доступ к отправке и редактированию электронной корреспонденции</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListEmail" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+          <Visible>
+            <Condition Name="EmailPermissionCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="ListPochtaRuOrderCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <TabIndex>13</TabIndex>
+          <Change User="True" Source="False" ValueSet="False" />
+          <Visible>
+            <Condition Name="ModulePochtaRuPermissionCondition" />
+          </Visible>
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="ListEmailCheckBox">
+                    <Property Name="Visible" />
+                  </Object>
+                </When>
+                <Then>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="ListEmailCheckBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Plus>
+                  </Formula>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="ListEmailCheckBox">
+                  <Property Name="Top" />
+                </Object>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>Доступ к реестру заказов "Почта России"</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListPochtaRuOrders" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListBankruptTypeCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <TabIndex>14</TabIndex>
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="ListPochtaRuOrderCheckBox">
+                    <Property Name="Visible" />
+                  </Object>
+                </When>
+                <Then>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="ListPochtaRuOrderCheckBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Plus>
+                  </Formula>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="ListPochtaRuOrderCheckBox">
+                  <Property Name="Top" />
+                </Object>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>Доступ к списку типов банкротств</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListBankruptType" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+        </MyObject>
+
+        <MyObject Name="ListApplicationTaxPaymentExportCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <TabIndex>15</TabIndex>
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="ListBankruptTypeCheckBox">
+                    <Property Name="Visible" />
+                  </Object>
+                </When>
+                <Then>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="ListBankruptTypeCheckBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Plus>
+                  </Formula>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="ListBankruptTypeCheckBox">
+                  <Property Name="Top" />
+                </Object>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="ListClaimantCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>Доступ к списку выгрузок оплат по госпошлине</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListApplicationTaxPaymentExport" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+          <Visible>
+            <Condition Name="ModuleApplicationTaxPermissionCondition" />
+          </Visible>
+      </MyObject>
+      </MyObject>
+
+      <MyObject Name="EmailPanel" Type="Panel" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <BackColor>
+          <Object Name="ContentPanel">
+            <Property Name="BackColor" />
+          </Object>
+        </BackColor>
+        <Visible>
+          <Condition Name="CurrentTabEqualEmailCondition" />
+        </Visible>
+
+        <MyObject Name="SmtpServerAddressLabel" Type="Label" Assembly="BaseControls">
+          <Top>10</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SmtpServerAddressLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Адрес SMTP-сервера</Text>
+        </MyObject>
+
+        <MyObject Name="SmtpServerAddressTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerAddressLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SmtpServerAddressHelpButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TabIndex>1</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="SmtpServerAddress" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="SmtpServerAddressHelpButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="SmtpServerAddressTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerAddressTextBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="SmtpServerAddressTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="SmtpServerAddressHelpButton">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <Text>?</Text>
+          <Commands>
+            <Command Name="HelpMessageBoxCommand">
+              <Input Name="Caption">Адрес SMTP сервера</Input>
+              <Input Name="Text">Настройки SMTP сервера найти во вкладках помощи вашего почтового сервера.
+К примеру, для "Mail.ru" - smtp.mail.ru, для "Яндекс" - smtp.yandex.ru</Input>
+            </Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="SmtpServerPortLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerAddressTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Порт SMTP-сервера</Text>
+        </MyObject>
+
+        <MyObject Name="SmtpServerPortTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="SmtpServerPortLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerAddressLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SmtpServerPortHelpButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TabIndex>3</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="SmtpServerPort" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="SmtpServerPortHelpButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="SmtpServerPortTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerPortTextBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="SmtpServerPortTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="SmtpServerPortHelpButton">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <Text>?</Text>
+          <Commands>
+            <Command Name="HelpMessageBoxCommand">
+              <Input Name="Caption">Порт SMTP сервера</Input>
+              <Input Name="Text">Настройки SMTP сервера найти во вкладках помощи вашего почтового сервера.
+К примеру, для "Mail.ru" и "Яндекс" порт - 25</Input>
+            </Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="EmailSenderLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerPortTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Адрес электронной почты для отправки сообщений</Text>
+        </MyObject>
+
+        <MyObject Name="EmailSenderTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailSenderLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TabIndex>5</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="EmailSender" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="EmailPasswordLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailSenderTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Пароль</Text>
+        </MyObject>
+
+        <MyObject Name="EmailPasswordTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailPasswordLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SmtpServerAddressLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="EmailPasswordButton">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TabIndex>6</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="EmailPassword" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <Password>True</Password>
+        </MyObject>
+
+        <MyObject Name="EmailPasswordButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailPasswordTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailPasswordTextBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="EmailPasswordTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>34</Width>
+          <TabIndex>7</TabIndex>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>BackThemeColor</FlatBorderColor>
+          <Image>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="EmailPasswordTextBox">
+                    <Property Name="Password" />
+                  </Object>
+                </When>
+                <Then>Images\18x18\eye.png</Then>
+              </Case>
+              <Case>Images\18x18\eye_off.png</Case>
+            </Switch>
+          </Image>
+          <Hint>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="EmailPasswordTextBox">
+                    <Property Name="Password" />
+                  </Object>
+                </When>
+                <Then>Показать пароль</Then>
+              </Case>
+              <Case>Скрыть пароль</Case>
+            </Switch>
+          </Hint>
+          <Commands>
+            <Command Name="EmailPasswordTextBoxPasswordValueSetCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="EmailSenderNameLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailPasswordTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Заголовок имени отправителя</Text>
+        </MyObject>
+
+        <MyObject Name="EmailSenderNameTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailSenderNameLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <TabIndex>8</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="EmailSenderName" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="EmailSignatureLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailSenderNameTextBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Подпись письма</Text>
+        </MyObject>
+
+        <MyObject Name="EmailSignatureTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Object Name="EmailSignatureLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="SmtpServerAddressLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>60</Height>
+          <Multiline>True</Multiline>
+          <TabIndex>9</TabIndex>
+          <Text>
+            <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="EmailSignature" />
+              </Fields>
+            </DataConnection>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="DebexPanel" Type="Panel" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>0</Left>
+        <Height>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ContentPanel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <BackColor>
+          <Object Name="ContentPanel">
+            <Property Name="BackColor" />
+          </Object>
+        </BackColor>
+        <Visible>
+          <Condition Name="CurrentTabEqualDebexCondition" />
+        </Visible>
+
+        <MyObject Name="DebexFsspCheckCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>10</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EmailPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="SmtpServerAddressLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Text>Доступ к проверке в ФССП</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DebexFsspCheck" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+          <Visible>
+            <Condition Name="ModuleDebexFsspPermissionCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="DebexBankruptCheckCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="DebexFsspCheckCheckBox">
+                    <Property Name="Visible" />
+                  </Object>
+                </When>
+                <Then>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="DebexFsspCheckCheckBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Plus>
+                  </Formula>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="DebexFsspCheckCheckBox">
+                  <Property Name="Top" />
+                </Object>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>
+            <Object Name="DebexFsspCheckCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DebexFsspCheckCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>Доступ к проверке на банкротство</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DebexBankruptCheck" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+          <Visible>
+            <Condition Name="ModuleDebexBankruptPermissionCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="DebexJurisdictionCheckCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <Top>
+            <Switch>
+              <Case>
+                <When>
+                  <Object Name="DebexBankruptCheckCheckBox">
+                    <Property Name="Visible" />
+                  </Object>
+                </When>
+                <Then>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="DebexBankruptCheckCheckBox">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Plus>
+                  </Formula>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="DebexBankruptCheckCheckBox">
+                  <Property Name="Top" />
+                </Object>
+              </Case>
+            </Switch>
+          </Top>
+          <Left>
+            <Object Name="DebexFsspCheckCheckBox">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="DebexFsspCheckCheckBox">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Text>Доступ к проверке на подсудность</Text>
+          <Value>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+                </When>
+                <Then>True</Then>
+              </Case>
+              <Case>
+                <DataConnection SourceDataConnection="UserPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DebexJurisdictionCheck" />
+                  </Fields>
+                </DataConnection>
+              </Case>
+            </Switch>
+          </Value>
+          <Enabled>
+            <Not>
+              <Condition Name="GroupComboBoxEqualAdministratorCondition" />
+            </Not>
+          </Enabled>
+          <Visible>
+            <Condition Name="ModuleDebexJurisdictionPermissionCondition" />
+          </Visible>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="ContentPanel">
+                <Property Name="Left" />
+              </Object>
+            </Item>
+            <Item>5</Item>
+          </Plus>
+        </Formula>
+      </Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Object Name="ContentPanel">
+                <Property Name="Width" />
+              </Object>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>
+        <Object Name="ContentPanel">
+          <Property Name="Left" />
+        </Object>
+      </Left>
+      <Height>40</Height>
+      <TabIndex>3</TabIndex>
+      <Width>
+        <Object Name="ContentPanel">
+          <Property Name="Width" />
+        </Object>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>TabButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="TitleTextBoxIsNullOrEmptyCondition" />
+              </When>
+              <Then>Вкладка "Основное". Поле "Фамилия и инициалы (логин)" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="GroupComboBoxIsNullCondition" />
+              </When>
+              <Then>Вкладка "Основное". Поле "Группа" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="PasswordTextBoxIsIsNullOrEmptyCondition" />
+                  <Not>
+                    <Parameter Name="Edit" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Вкладка "Основное". Поле "Пароль" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="PasswordTextBoxLess6Condition" />
+                  <Not>
+                    <Parameter Name="Edit" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Вкладка "Основное". Минимальная длина пароля - 6 символов.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Condition Name="EmailTextBoxIsNullOrEmptyCondition" />
+                  </Not>
+                  <Not>
+                    <Condition Name="EmailTextBoxIsEmailCondition" />
+                  </Not>
+                </And>
+              </When>
+              <Then>Вкладка "Основное". Некорректный адрес эл. почты.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Condition Name="ListClientComboBoxIsNullCondition" />
+                </And>
+              </When>
+              <Then>Вкладка "Списки". Поле "Доступ к списку должников" должно быть заполнено.</Then>
+            </Case>
+            <Case>
+              <When>
+                <And>
+                  <Not>
+                    <Condition Name="EmailDetailsNotFilledNestedCondition" />
+                  </Not>
+                  <Condition Name="EmailDetailsFilledNotCorrectlyNestedCondition" />
+                </And>
+              </When>
+              <Then>
+                <String>
+                  <Format>
+                    <Switch>
+                      <Case>
+                        <When>
+                          <Or>
+                            <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" />
+                            <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" />
+                            <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" />
+                            <Condition Name="EmailPasswordTextBoxIsNullOrEmptyCondition" />
+                          </Or>
+                        </When>
+                        <Then>При {0} поле "{1}" должно быть заполнено.</Then>
+                      </Case>
+                      <Case>При {0} необходимо корректно заполнить поле "{1}"</Case>
+                    </Switch>
+                  </Format>
+                  <Items>
+                    <Item>заполнении одной из основных настроек модуля электронной корреспонденции,</Item>
+                    <Item>
+                      <Array>
+                        <Source>
+                          <Structure Type="Table">
+                            <Row>
+                              <Item>
+                                <Condition Name="SmtpServerAddressTextBoxIsNullOrEmptyCondition" />
+                              </Item>
+                              <Item>
+                                <Not>
+                                  <Condition Name="SmtpServerAddressTextBoxBoxIsMatchRegexCondition" />
+                                </Not>
+                              </Item>
+                              <Item>Адрес SMTP-сервера</Item>
+                            </Row>
+                            <Row>
+                              <Item>
+                                <Condition Name="SmtpServerPortTextBoxIsNullOrEmptyCondition" />
+                              </Item>
+                              <Item>
+                                <Not>
+                                  <Condition Name="SmtpServerPortTextBoxIsIntegerDataTypeCondition" />
+                                </Not>
+                              </Item>
+                              <Item>Порт SMTP-сервера</Item>
+                            </Row>
+                            <Row>
+                              <Item>
+                                <Condition Name="EmailSenderTextBoxIsNullOrEmptyCondition" />
+                              </Item>
+                              <Item>
+                                <Not>
+                                  <Condition Name="EmailSenderTextBoxIsEmailCondition" />
+                                </Not>
+                              </Item>
+                              <Item>Адрес электронной почты для отправки сообщений</Item>
+                            </Row>
+                            <Row>
+                              <Item>
+                                <Condition Name="EmailPasswordTextBoxIsNullOrEmptyCondition" />
+                              </Item>
+                              <Item>False</Item>
+                              <Item>Пароль</Item>
+                            </Row>
+                          </Structure>
+                        </Source>
+                        <Select>
+                          <Items>
+                            <Item Type="Index">
+                              <Switch>
+                                <Case>
+                                  <When>
+                                    <Condition Name="EmailDetailsNotFilledNestedCondition" />
+                                  </When>
+                                  <Then>0</Then>
+                                </Case>
+                                <Case>1</Case>
+                              </Switch>
+                            </Item>
+                            <Item Type="Index">2</Item>
+                          </Items>
+                        </Select>
+                        <Filter>
+                          <Index Value="0" />
+                          <Value>True</Value>
+                          <DataType Type="BooleanDataType" />
+                        </Filter>
+                        <Select>
+                          <Items>
+                            <Item Type="Index">1</Item>
+                          </Items>
+                        </Select>
+                        <First />
+                      </Array>
+                    </Item>
+                  </Items>
+                </String>
+              </Then>
+            </Case>
+            <Case>Не все обязательные поля заполнены.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

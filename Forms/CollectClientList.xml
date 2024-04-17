@@ -1,0 +1,1852 @@
+<?xml version="1.0"?>
+<Form Name="CollectClientListForm" Width="1000" Height="500" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" FormState="Normal" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="ClientId" />
+    <Parameter Name="Title">Список должников</Parameter>
+    <Parameter Name="SelectionMode">False</Parameter>
+    <Parameter Name="ExcludeClientIds" />
+    <Parameter Name="SelectedClientId" />
+    <Parameter Name="SelectedClientTitle" />
+    <Parameter Name="Selected">False</Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ClientPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ClientSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ClientId" />
+          <Field Name="ClientTitle" />
+          <Field Name="ClientFullPassport" />
+          <Field Name="ClientBirthDate" />
+          <Field Name="ClientPhones" />
+          <Field Name="ClientRegistrationAddress" />
+          <Field Name="Archive" />
+
+          <Field Name="RowNumber" />
+          <Field Name="TotalRows" />
+          <Field Name="TotalPages" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="SearchString" RefreshQuery="False">
+            <Value>
+              <Object Name="SearchTextBox" />
+            </Value>
+          </Parameter>
+
+          <Parameter NativeName="CurrentPage" RefreshQuery="False">
+            <Value>
+              <Object Name="CurrentPageTextBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="RowsPerPage">
+            <Value>
+              <Object Name="RowsPerPageComboBox" />
+            </Value>
+          </Parameter>
+
+          <Parameter NativeName="Archive">
+            <Value>
+              <Object Name="ArchiveFilterComboBox" />
+            </Value>
+          </Parameter>
+          <Parameter NativeName="ExcludeClientIds" SendAsArray="True">
+            <Value>
+              <Switch>
+                <Case>
+                  <When>
+                    <Parameter Name="SelectionMode" />
+                  </When>
+                  <Then>
+                    <Parameter Name="ExcludeClientIds" />
+                  </Then>
+                </Case>
+                <Case />
+              </Switch>
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ClientArchiveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ClientId">
+          <Value>
+            <Object Name="ClientDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">ClientId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="Archive">
+          <Value>
+            <Not>
+              <Object Name="ClientDatabaseTable">
+                <Property Name="SelectedRowCellValueByColumnName">
+                  <Parameters>
+                    <Parameter Name="ColumnName">Archive</Parameter>
+                  </Parameters>
+                </Property>
+              </Object>
+            </Not>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ClientArchiveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="ClientDeleteSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="ClientId">
+          <Value>
+            <Object Name="ClientDatabaseTable">
+              <Property Name="SelectedRowCellValueByColumnName">
+                <Parameters>
+                  <Parameter Name="ColumnName">ClientId</Parameter>
+                </Parameters>
+              </Property>
+            </Object>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="ClientDeleteSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="ClientDatabaseTableCellDoubleClickCondition" Type="CellDoubleClickCondition" Assembly="Conditions">
+      <Table Name="ClientDatabaseTable" />
+    </Condition>
+
+    <Condition Name="ClientDatabaseTableSelectedCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientDatabaseTable">
+            <Property Name="SelectedRowsCount" />
+          </Object>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="ClientIsArchiveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ClientDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">Archive</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="F5KeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="F5" />
+    </Condition>
+
+    <!-- Постраничный просмотр -->
+    <Condition Name="LoanClientCountEqual0Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageEqual1Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageLess1Condition" Type="LessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageEqualMaxCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TotalPages" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageGreaterMaxCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TotalPages" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageTextBoxUpKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="CurrentPageTextBox" />
+      <Key Value="Up" />
+    </Condition>
+
+    <Condition Name="CurrentPageTextBoxDownKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="CurrentPageTextBox" />
+      <Key Value="Down" />
+    </Condition>
+
+    <Condition Name="CurrentPageTextBoxEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="CurrentPageTextBox" />
+      <Key Value="Enter" />
+    </Condition>
+
+    <Condition Name="SearchTextBoxEnterKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="SearchTextBox" />
+      <Key Value="Enter" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="ClientAddFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectClientEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+    </Command>
+
+    <Command Name="ClientEditFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectClientEdit.xml</Xml>
+      <Show Type="None" />
+      <Multiple Allow="False" Reload="False" />
+      <Parameters>
+        <Parameter Name="Edit">True</Parameter>
+        <Parameter Name="ClientId">
+          <Object Name="ClientDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">ClientId</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ClientArchiveSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ClientArchiveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ClientDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Вы действительно хотите удалить выбранного должника?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ClientDeleteSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ClientDeleteSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ClientPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ClientTryDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Удаление</Caption>
+      <Text>Должник не был удален, т.к. он используется в программе.\rЗапись перемещена в архив.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="ClientArchiveMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Архив</Caption>
+      <Text>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="ClientIsArchiveCondition" />
+            </When>
+            <Then>Вы действительно хотите восстановить должника из архива?</Then>
+          </Case>
+          <Case>Вы действительно хотите переместить должника в архив?</Case>
+        </Switch>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ClientTrySelectMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Выбор должника</Caption>
+      <Text>Невозможно выбрать должника, т.к. запись находится в архиве.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="ClientSelectRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ClientDatabaseTable">
+        <Property Name="SelectRowByFieldValue">
+          <Parameters>
+            <Parameter Name="ColumnName">ClientId</Parameter>
+            <Parameter Name="Value">
+              <Input />
+            </Parameter>
+          </Parameters>
+        </Property>
+      </Object>
+    </Command>
+
+    <Command Name="SelectedClientIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedClientId">
+        <Object Name="ClientDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">ClientId</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedClientTitleValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SelectedClientTitle">
+        <Object Name="ClientDatabaseTable">
+          <Property Name="SelectedRowCellValueByColumnName">
+            <Parameters>
+              <Parameter Name="ColumnName">ClientTitle</Parameter>
+            </Parameters>
+          </Property>
+        </Object>
+      </Parameter>
+    </Command>
+
+    <Command Name="SelectedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Selected">True</Parameter>
+    </Command>
+
+    <Command Name="SelectClientSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="SelectedClientIdValueSetCommand" />
+        <Command Name="SelectedClientTitleValueSetCommand" />
+        <Command Name="SelectedValueSetCommand" />
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="CurrentPageIncreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentPageTextBox">
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="CurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Plus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="CurrentPageDecreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentPageTextBox">
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Object Name="CurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Minus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="CurrentPageTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentPageTextBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="SearchTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="SearchTextBox" />
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientSelectRowCommand">
+          <Parameter Name="ClientId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ClientAddFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="ClientSelectRowCommand">
+          <Command Name="ClientAddFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ClientEditFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="ClientSelectRowCommand">
+          <Command Name="ClientEditFormShowCommand" Parameter="ClientId" />
+        </Command>
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ClientDatabaseTableCellDoubleClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Parameter Name="SelectionMode" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="ClientIsArchiveCondition" />
+              </When>
+              <Then>
+                <Command Name="ClientTrySelectMessageBoxCommand" />
+              </Then>
+              <Else>
+                <Command Name="SelectClientSequentialCommand" />
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <If>
+              <When>
+                <Object Name="ClientEditButton">
+                  <Property Name="Enabled" />
+                </Object>
+              </When>
+              <Then>
+                <Command Name="ClientEditFormShowCommand" />
+              </Then>
+            </If>
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ClientDeleteMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientDeleteSaveCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="ClientDeleteSaveCommand" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="ClientTryDeleteMessageBoxCommand" />
+          </Then>
+        </If>
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ClientArchiveMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientArchiveSaveCommand" />
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="F5KeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageLess1Condition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CurrentPageTextBoxValueSetCommand">1</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageGreaterMaxCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CurrentPageTextBoxValueSetCommand">
+          <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TotalPages" />
+            </Fields>
+          </DataConnection>
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageTextBoxUpKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Object Name="NextPageButton">
+              <Property Name="Enabled" />
+            </Object>
+          </When>
+          <Then>
+            <Command Name="CurrentPageIncreaseCommand" />
+            <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageTextBoxDownKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Object Name="PreviousPageButton">
+              <Property Name="Enabled" />
+            </Object>
+          </When>
+          <Then>
+            <Command Name="CurrentPageDecreaseCommand" />
+            <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageTextBoxEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="SearchTextBoxEnterKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="TitleLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>200</Width>
+        <ForeColor>HeadTextColor</ForeColor>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="SearchTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="ArchiveFilterComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TitleLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>
+                <Formula>
+                  <Divide DataType="IntegerDataType">
+                    <Item>
+                      <Formula>
+                        <Minus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ArchiveFilterComboBox">
+                              <Property Name="Left" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="TitleLabel">
+                              <Property Name="Right" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="SearchTextBox">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="SearchButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="SearchCancelButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                        </Minus>
+                      </Formula>
+                    </Item>
+                    <Item>2</Item>
+                  </Divide>
+                </Formula>
+              </Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>300</Width>
+        <TabIndex>1</TabIndex>
+        <TipText>Поиск...</TipText>
+      </MyObject>
+
+      <MyObject Name="SearchButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SearchTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SearchTextBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="SearchTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SearchTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Image>Images\11x11\search.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Hint>Искать</Hint>
+        <Commands>
+          <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SearchCancelButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="SearchTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SearchButton">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="SearchTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SearchTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Image>Images\11x11\cancel.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Hint>Сбросить</Hint>
+        <Commands>
+          <Command Name="SearchTextBoxValueSetCommand" />
+          <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ArchiveFilterComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="HeadPanel">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="ArchiveFilterComboBox">
+                        <Property Name="Height" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="HeadPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ArchiveFilterComboBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Left>
+        <Width>100</Width>
+        <TabIndex>4</TabIndex>
+        <NullValue Show="True" Title="Все" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <Structure Type="Table">
+            <Row>
+              <Item>False</Item>
+              <Item>Текущие</Item>
+            </Row>
+            <Row>
+              <Item>True</Item>
+              <Item>Архивные</Item>
+            </Row>
+          </Structure>
+        </ValueList>
+        <Value>False</Value>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Switch>
+          <Case>
+            <When>
+              <Parameter Name="SelectionMode" />
+            </When>
+            <Then>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Form>
+                      <Property Name="Height" />
+                    </Form>
+                  </Item>
+                  <Item>
+                    <Object Name="HeadPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootSeparatePanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                  <Item>
+                    <Object Name="FootPanel">
+                      <Property Name="Height" />
+                    </Object>
+                  </Item>
+                </Minus>
+              </Formula>
+            </Then>
+          </Case>
+          <Case>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Form>
+                    <Property Name="Height" />
+                  </Form>
+                </Item>
+                <Item>
+                  <Object Name="HeadPanel">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Case>
+        </Switch>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ClientDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls">
+        <Top>10</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PagePanel">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ClientDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ClientDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ClientAddButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="SelectionColor" />
+        <ShowCellHints Value="True" />
+        <RowHeight Value="50" />
+        <SourceDataConnection Name="ClientPrimaryGetDataConnection" />
+        <Columns>
+          <Column Name="RowNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>40</Width>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="Archive" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ClientTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>ФИО</Title>
+            <Width>200</Width>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+          </Column>
+          <Column Name="ClientFullPassport" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Паспортные данные</Title>
+            <Width>200</Width>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+          </Column>
+          <Column Name="ClientBirthDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Дата рождения</Title>
+            <Width>100</Width>
+            <DataType Type="DateDataType" Format="dd.MM.yyyy" />
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="ClientPhones" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Телефоны</Title>
+            <Width>100</Width>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="ClientRegistrationAddress" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>Адрес регистрации</Title>
+            <MinimumWidth>200</MinimumWidth>
+            <AutoSizeMode Value="Fill" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+        </Columns>
+        <Formatting>
+          <BackColor Name="ArchiveColor">
+            <Expression>Archive AND {0}</Expression>
+            <Items>
+              <Item>
+                <Not>
+                  <Object Name="ArchiveFilterComboBox" />
+                </Not>
+              </Item>
+            </Items>
+          </BackColor>
+        </Formatting>
+      </MyObject>
+
+      <MyObject Name="ClientAddButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ClientDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>36</Width>
+        <Height>36</Height>
+        <TabIndex>2</TabIndex>
+        <Hint>Добавить должника...</Hint>
+        <Image>Images\24x24\add.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ClientAddFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ClientEditButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientAddButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ClientAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ClientAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <Hint>Редактировать должника...</Hint>
+        <Image>Images\24x24\edit.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ClientEditFormShowCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Not>
+              <Condition Name="ClientIsArchiveCondition" />
+            </Not>
+            <Condition Name="ClientDatabaseTableSelectedCondition" />
+          </And>
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="ClientDatabaseTableSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите должника для редактирования.</Then>
+            </Case>
+            <Case>
+              <When>
+                <Condition Name="ClientIsArchiveCondition" />
+              </When>
+              <Then>Для редактирования восстановите должника из архива.</Then>
+            </Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="ClientArchiveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientEditButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ClientAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ClientAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Hint>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ClientIsArchiveCondition" />
+              </When>
+              <Then>Восстановить должника из архива</Then>
+            </Case>
+            <Case>Переместить должника в архив</Case>
+          </Switch>
+        </Hint>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Or>
+                  <Condition Name="ClientIsArchiveCondition" />
+                  <Object Name="ArchiveFilterComboBox" />
+                </Or>
+              </When>
+              <Then>Images\24x24\archive_restore.png</Then>
+            </Case>
+            <Case>Images\24x24\archive.png</Case>
+          </Switch>
+        </Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ClientArchiveMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ClientDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ClientIsArchiveCondition" />
+              </When>
+              <Then>Выберите должника для восстановления из архива.</Then>
+            </Case>
+            <Case>Выберите должника для перемещения в архив.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+
+      <MyObject Name="ClientDeleteButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ClientArchiveButton">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ClientAddButton">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="ClientAddButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ClientAddButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <Hint>Удалить должника</Hint>
+        <Image>Images\24x24\delete.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ClientDeleteMessageBoxCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ClientDatabaseTableSelectedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Выберите должника для удаления.</DisabledText>
+      </MyObject>
+
+      <MyObject Name="PagePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PagePanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="PagePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Object Name="TotalRowsLabel">
+            <Property Name="Right" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <BackColor>BackThemeColor</BackColor>
+
+        <MyObject Name="FirstPageButton" Type="Button" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>5</Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>26</Width>
+          <TabIndex>1</TabIndex>
+          <Image>Images\11x11\double_arrow_left.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqual1Condition" />
+              </Not>
+              <Not>
+                <Condition Name="LoanClientCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageTextBoxValueSetCommand">1</Command>
+            <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="PreviousPageButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FirstPageButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FirstPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>6</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Image>Images\11x11\arrow_left.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqual1Condition" />
+              </Not>
+              <Not>
+                <Condition Name="LoanClientCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageDecreaseCommand" />
+            <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="CurrentPageTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PreviousPageButton">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>1</Item>
+              </Minus>
+            </Formula>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PreviousPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>42</Width>
+          <TabIndex>3</TabIndex>
+          <AllowedSymbols>0123456789</AllowedSymbols>
+          <MaxLength>6</MaxLength>
+          <TextAlign>Right</TextAlign>
+          <Text>1</Text>
+        </MyObject>
+
+        <MyObject Name="TotalPagesLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Right" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="PreviousPageButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>58</Width>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>
+            <String>
+              <Format>из {0}</Format>
+              <Items>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Condition Name="LoanClientCountEqual0Condition" />
+                      </When>
+                      <Then>1</Then>
+                    </Case>
+                    <Case>
+                      <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+                        <Fields>
+                          <Field Name="TotalPages" />
+                        </Fields>
+                      </DataConnection>
+                    </Case>
+                  </Switch>
+                </Item>
+              </Items>
+            </String>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="NextPageButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FirstPageButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TotalPagesLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Image>Images\11x11\arrow_right.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqualMaxCondition" />
+              </Not>
+              <Not>
+                <Condition Name="LoanClientCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageIncreaseCommand" />
+            <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="LastPageButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="PreviousPageButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="NextPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>6</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="FirstPageButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Image>Images\11x11\double_arrow_right.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqualMaxCondition" />
+              </Not>
+              <Not>
+                <Condition Name="LoanClientCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageTextBoxValueSetCommand">
+              <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="TotalPages" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="ClientPrimaryGetDataConnectionRefreshCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="RowsPerPageLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="LastPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="PreviousPageButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>110</Width>
+          <TextAlign>MiddleRight</TextAlign>
+          <Text>строк на странице</Text>
+        </MyObject>
+
+        <MyObject Name="RowsPerPageComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="RowsPerPageLabel">
+              <Property Name="Right" />
+            </Object>
+          </Left>
+          <Width>50</Width>
+          <TabIndex>6</TabIndex>
+          <ValueList>
+            <Structure Type="Table">
+              <Row>
+                <Item>1000000000</Item>
+                <Item>[Все]</Item>
+              </Row>
+              <Row>
+                <Item>20</Item>
+                <Item>20</Item>
+              </Row>
+              <Row>
+                <Item>50</Item>
+                <Item>50</Item>
+              </Row>
+              <Row>
+                <Item>100</Item>
+                <Item>100</Item>
+              </Row>
+              <Row>
+                <Item>200</Item>
+                <Item>200</Item>
+              </Row>
+              <Row>
+                <Item>500</Item>
+                <Item>500</Item>
+              </Row>
+            </Structure>
+          </ValueList>
+          <Value>50</Value>
+        </MyObject>
+
+        <MyObject Name="TotalRowsLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="RowsPerPageComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>65</Width>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>
+            <String>
+              <Format>из {0}</Format>
+              <Items>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Condition Name="LoanClientCountEqual0Condition" />
+                      </When>
+                      <Then>0</Then>
+                    </Case>
+                    <Case>
+                      <DataConnection SourceDataConnection="ClientPrimaryGetDataConnection">
+                        <Fields>
+                          <Field Name="TotalRows" />
+                        </Fields>
+                      </DataConnection>
+                    </Case>
+                  </Switch>
+                </Item>
+              </Items>
+            </String>
+          </Text>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <BackColor>BackThemeColor</BackColor>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>2</TabIndex>
+      <Visible>
+        <Parameter Name="SelectionMode" />
+      </Visible>
+
+      <MyObject Name="SelectButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>ButtonFont</FontStyle>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <Image>Images\18x18\check.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Выбрать</Text>
+        <Enabled>
+          <And>
+            <Condition Name="ClientDatabaseTableSelectedCondition" />
+            <Not>
+              <Condition Name="ClientIsArchiveCondition" />
+            </Not>
+          </And>
+        </Enabled>
+        <Commands>
+          <Command Name="SelectClientSequentialCommand" />
+        </Commands>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="ClientDatabaseTableSelectedCondition" />
+                </Not>
+              </When>
+              <Then>Выберите нужного должника в таблице.</Then>
+            </Case>
+            <Case>Невозможно выбрать должника, т.к. запись находится в архиве.</Case>
+          </Switch>
+        </DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

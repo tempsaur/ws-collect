@@ -1,0 +1,3214 @@
+<?xml version="1.0"?>
+<Form Name="CollectOspImportForm" Width="1200" Height="650" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Updated" />
+    <Parameter Name="Title">Загрузка данных из файла Excel</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <Color Name="StatusLightPink" Red="229" Green="184" Blue="183" Alpha="255" />
+      <Color Name="StatusLightOrange" Red="250" Green="191" Blue="143" Alpha="255" />
+      <Color Name="StatusLightYellow" Red="255" Green="252" Blue="187" Alpha="255" />
+      <Color Name="StatusLightGreen" Red="230" Green="255" Blue="230" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="LittleFont" Font="Segoe UI" Size="8" />
+      <FontStyle Name="LittleBoldFont" Font="Segoe UI" Size="8" Bold="True" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="ExcelImportColumnPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ExcelImportColumnSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ColumnName" />
+          <Field Name="Title" />
+          <Field Name="DataType" />
+          <Field Name="IsArray" />
+          <Field Name="NeedToParse" />
+          <Field Name="Name" />
+          <Field Name="ResultColumnNames" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ImportType">
+            <Value>osp</Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <!-- secondary для колонок -->
+    <DataConnection Name="ExcelImportColumnOspTitleSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_osp_title</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnOspAddressSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_osp_address</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnOspUfsspTitleSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_osp_ufssp_title</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnOspPhoneSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_phone</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressIndexSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_index</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressRegionSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_region</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressDistrictSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_district</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressCityTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_city_type</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressCitySecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_city</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressCityDistrictSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_city_district</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressStreetTypeSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_street_type</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressStreetSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_street</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressBuildingSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_building</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressBlockSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_block</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressStructureSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_structure</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="ExcelImportColumnJurisdictionAddressFlatSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="Name" />
+        <Value>osp_jurisdiction_address_flat</Value>
+        <DataType Type="StringDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="TempOspPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <ManualLoad>True</ManualLoad>
+      <SqlQuery Name="TempOspSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="TempOspId" />
+          <Field Name="OspTitle" />
+          <Field Name="OspAddress" />
+          <Field Name="OspUfsspTitle" />
+          <Field Name="OspPhone" />
+          <Field Name="JurisdictionAddress" />
+          <Field Name="JurisdictionAddressIndex" />
+          <Field Name="JurisdictionAddressRegion" />
+          <Field Name="JurisdictionAddressDistrict" />
+          <Field Name="JurisdictionAddressCityType" />
+          <Field Name="JurisdictionAddressCity" />
+          <Field Name="JurisdictionAddressCityDistrict" />
+          <Field Name="JurisdictionAddressStreetType" />
+          <Field Name="JurisdictionAddressStreet" />
+          <Field Name="JurisdictionAddressBuilding" />
+          <Field Name="JurisdictionAddressBlock" />
+          <Field Name="JurisdictionAddressStructure" />
+          <Field Name="JurisdictionAddressFlat" />
+          <Field Name="RowStatus" />
+          <Field Name="CanSave" />
+          <Field Name="ToSave" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="TempOspReferencesUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempOspReferencesUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempOspSaveSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="TempOspId" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TempOspId" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="ToSave" SendAsArray="True">
+          <Value>
+            <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ToSave" />
+              </Fields>
+            </DataConnection>
+          </Value>
+        </Parameter>
+        <Parameter NativeName="VisibleColumns" SendAsArray="True">
+          <Value>
+            <Array>
+              <Source>
+                <Object Name="VisibleColumnsVariable" />
+              </Source>
+              <Select>
+                <Items>
+                  <Item Type="Index">0</Item>
+                </Items>
+              </Select>
+            </Array>
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="TempOspSaveSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempOspClearSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <SqlQueries>
+        <SqlQuery Name="TempOspClearSqlQuery" Type="Delete" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="TempOspArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Array>
+          <Source>
+            <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="TempOspId" />
+                <Field Name="RowStatus" />
+                <Field Name="OspTitle" />
+                <Field Name="OspAddress" />
+                <Field Name="OspUfsspTitle" />
+                <Field Name="OspPhone" />
+                <Field Name="JurisdictionAddress" />
+                <Field Name="JurisdictionAddressIndex" />
+                <Field Name="JurisdictionAddressRegion" />
+                <Field Name="JurisdictionAddressDistrict" />
+                <Field Name="JurisdictionAddressCityType" />
+                <Field Name="JurisdictionAddressCity" />
+                <Field Name="JurisdictionAddressCityDistrict" />
+                <Field Name="JurisdictionAddressStreetType" />
+                <Field Name="JurisdictionAddressStreet" />
+                <Field Name="JurisdictionAddressBuilding" />
+                <Field Name="JurisdictionAddressBlock" />
+                <Field Name="JurisdictionAddressStructure" />
+                <Field Name="JurisdictionAddressFlat" />
+                <Field Name="CanSave" />
+                <Field Name="ToSave" />
+              </Fields>
+            </DataConnection>
+          </Source>
+          <Order>
+            <By Index="0" />
+          </Order>
+          <Filter Type="In">
+            <Index Value="1" />
+            <DataType Type="StringDataType" />
+            <Value>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="StatusVariableIsNullCondition" />
+                  </When>
+                  <Then>
+                    <Structure Type="List">
+                      <Item>error</Item>
+                      <Item>no_match</Item>
+                      <Item>entity_match</Item>
+                      <Item>full_match</Item>
+                    </Structure>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="StatusVariable" />
+                </Case>
+              </Switch>
+            </Value>
+          </Filter>
+          <Skip>
+            <Formula>
+              <Multiply DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="CurrentPageTextBox" />
+                      </Item>
+                      <Item>1</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Condition Name="RowsPerPageComboBoxIsNullCondition" />
+                      </When>
+                      <Then>
+                        <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                          <Property Name="Count" />
+                        </DataConnection>
+                      </Then>
+                    </Case>
+                    <Case>
+                      <Object Name="RowsPerPageComboBox" />
+                    </Case>
+                  </Switch>
+                </Item>
+              </Multiply>
+            </Formula>
+          </Skip>
+          <Take>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="RowsPerPageComboBoxIsNullCondition" />
+                </When>
+                <Then>
+                  <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                    <Property Name="Count" />
+                  </DataConnection>
+                </Then>
+              </Case>
+              <Case>
+                <Object Name="RowsPerPageComboBox" />
+              </Case>
+            </Switch>
+          </Take>
+        </Array>
+      </Source>
+      <Fields>
+        <Field Name="TempOspId" />
+        <Field Name="RowStatus" />
+        <Field Name="OspTitle" />
+        <Field Name="OspAddress" />
+        <Field Name="OspUfsspTitle" />
+        <Field Name="OspPhone" />
+        <Field Name="JurisdictionAddress" />
+        <Field Name="JurisdictionAddressIndex" />
+        <Field Name="JurisdictionAddressRegion" />
+        <Field Name="JurisdictionAddressDistrict" />
+        <Field Name="JurisdictionAddressCityType" />
+        <Field Name="JurisdictionAddressCity" />
+        <Field Name="JurisdictionAddressCityDistrict" />
+        <Field Name="JurisdictionAddressStreetType" />
+        <Field Name="JurisdictionAddressStreet" />
+        <Field Name="JurisdictionAddressBuilding" />
+        <Field Name="JurisdictionAddressBlock" />
+        <Field Name="JurisdictionAddressStructure" />
+        <Field Name="JurisdictionAddressFlat" />
+        <Field Name="CanSave" />
+        <Field Name="ToSave" />
+      </Fields>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="ImportFromExcelCommandErrorIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="ImportFromExcelCommand" Parameter="Error" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ParseColumnsCountGreater0Condition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Command Name="ImportFromExcelCommand" Parameter="ParseColumns" />
+            </Source>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="NeedToParseAddressTypeVariableCountGreater0Condition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="NeedToParseAddressTypeVariable" />
+            </Source>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="AddressParseCommandHasErrorCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Command Name="AddressParseCommand" Parameter="Error" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <!--видимость столбцов таблицы-->
+    <Condition Name="VisibleColumnExistsCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsOspTitleCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_osp_title</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsOspAddressCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_osp_address</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsOspUfsspTitleCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_osp_ufssp_title</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsOspPhoneCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_phone</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressIndexCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_index</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressRegionCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_region</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressDistrictCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_district</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressCityTypeCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_city_type</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressCityCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_city</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressCityDistrictCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_city_district</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressStreetTypeCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_street_type</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressStreetCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_street</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressBuildingCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_building</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressBlockCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_block</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressStructureCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_structure</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="VisibleColumnContainsJurisdictionAddressFlatCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Array>
+            <Source>
+              <Object Name="VisibleColumnsVariable" />
+            </Source>
+            <Filter>
+              <Index Value="0" />
+              <DataType Type="StringDataType" />
+              <Value>osp_jurisdiction_address_flat</Value>
+            </Filter>
+            <Count />
+          </Array>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="RowsPerPageComboBoxIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="RowsPerPageComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="StatusVariableEqualNoMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>no_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualEntityMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>entity_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualFullMatchCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>full_match</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="StatusVariableEqualErrorCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="StatusVariable" />
+        </Item>
+        <Item>error</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="TempOspDatabaseTableCellClickCondition" Type="CellClickCondition" Assembly="Conditions">
+      <Table Name="TempOspDatabaseTable" />
+    </Condition>
+
+    <Condition Name="SelectedColumnNameEqualToSaveCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="LastCellClickedColumnName" />
+          </Object>
+        </Item>
+        <Item>ToSave</Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="CanEditToSaveNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="SelectedRowCellValueByColumnName">
+              <Parameters>
+                <Parameter Name="ColumnName">CanSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+          <Condition Name="SelectedColumnNameEqualToSaveCondition" />
+        </And>
+      </ConditionExpression>
+    </Condition>
+
+    <!-- Постраничный просмотр -->
+    <Condition Name="TempOspCountEqual0Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+            <Property Name="Count" />
+          </DataConnection>
+        </Item>
+        <Item>0</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageEqual1Condition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageLess1Condition" Type="LessCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>1</Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageEqualMaxCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>
+          <Object Name="TotalPagesVariable" />
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageGreaterMaxCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CurrentPageTextBox" />
+        </Item>
+        <Item>
+          <Object Name="TotalPagesVariable" />
+        </Item>
+      </Items>
+      <DataType Type="IntegerDataType" />
+    </Condition>
+
+    <Condition Name="CurrentPageTextBoxUpKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="CurrentPageTextBox" />
+      <Key Value="Up" />
+    </Condition>
+
+    <Condition Name="CurrentPageTextBoxDownKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Object Name="CurrentPageTextBox" />
+      <Key Value="Down" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="TempOspClearCommand" />
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="TempOspClearCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="TempOspClearCommand" />
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="TempOspClearCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempOspClearSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ExcelImportColumnListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectExcelImportColumnList.xml</Xml>
+      <UpdateResult Type="Always" />
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="ImportType">osp</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ImportFileDialogShowCommand" Type="FileDialogShowCommand" Assembly="Commands">
+      <Title>Выберите файл для загрузки данных</Title>
+      <Type Value="Open" />
+      <Filter>Файлы Excel (*.xls,*.xlsx)|*.xls;*.xlsx</Filter>
+      <InitialDirectory>
+        <Command Name="ImportFileDialogShowCommand" Parameter="Path" />
+      </InitialDirectory>
+    </Command>
+
+    <Command Name="ImportFromExcelCommand" Type="ImportFromExcelCommand" Assembly="Collect">
+      <Columns>
+        <DataConnection SourceDataConnection="ExcelImportColumnPrimaryGetDataConnection">
+          <Fields>
+            <Field Name="ColumnName" />
+            <Field Name="Title" />
+            <Field Name="DataType" />
+            <Field Name="IsArray" />
+            <Field Name="NeedToParse" />
+            <Field Name="Name" />
+            <Field Name="ResultColumnNames" />
+          </Fields>
+        </DataConnection>
+      </Columns>
+      <ImportFile>
+        <Command Name="ImportFileDialogShowCommand" Parameter="FullPath" />
+      </ImportFile>
+      <TempInsertSqlQuery Name="TempOspInsertSqlQuery" />
+      <Workflow Name="Collect" />
+    </Command>
+
+    <Command Name="ImportFromExcelCommandErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Ошибка загрузки данных из файла</Caption>
+      <Text>
+        <String>
+          <Format>{0}\r{1}\r{2}</Format>
+          <Items>
+            <Item>При загрузке данных из файла возникли ошибки:</Item>
+            <Item>
+              <Command Name="ImportFromExcelCommand" Parameter="ErrorShort" />
+            </Item>
+            <Item>Открыть текст с ошибками в текстовом редакторе?</Item>
+          </Items>
+        </String>
+      </Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="ImportFromExcelCommandErrorExportToTxtCommand" Type="ExportToTxtCommand" Assembly="Collect">
+      <Text>
+        <Command Name="ImportFromExcelCommand" Parameter="Error" />
+      </Text>
+    </Command>
+
+    <Command Name="ImportFromExcelCommandErrorApplicationRunCommand" Type="ApplicationRunCommand" Assembly="Commands">
+      <Application>
+        <Command Name="ImportFromExcelCommandErrorExportToTxtCommand" />
+      </Application>
+    </Command>
+
+    <Command Name="ExcelImportSettingsFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectExcelImportSettings.xml</Xml>
+      <Show Type="Modal" />
+      <Parameters>
+        <Parameter Name="ParseColumnList">
+          <Command Name="ImportFromExcelCommand" Parameter="ParseColumns" />
+        </Parameter>
+        <Parameter Name="ImportType">osp</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="NeedToParseAddressTypeVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="NeedToParseAddressTypeVariable">
+        <Structure Type="List" />
+      </Object>
+    </Command>
+
+    <Command Name="NeedToParseAddressTypeVariableAddValueCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="NeedToParseAddressTypeVariable">
+        <Array>
+          <Source>
+            <Object Name="NeedToParseAddressTypeVariable" />
+          </Source>
+          <Add>
+            <Input />
+          </Add>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="TempOspPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempOspPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ExcelImportColumnPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ExcelImportColumnPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="TempOspReferencesUpdateCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempOspReferencesUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="AddressParseCommandErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Автоматический разбор адресов</Caption>
+      <Text>При разборе адресов произошла ошибка. Обратитесь к разработчику.</Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="AddressParseCommand" Type="AddressParseCommand" Assembly="Collect">
+      <Workflow Name="Collect" />
+      <Condition Name="NeedToParseAddressTypeVariableCountGreater0Condition" />
+      <AddressType>
+        <Object Name="NeedToParseAddressTypeVariable" />
+      </AddressType>
+      <AddressShortDictionarySelectSqlQuery Name="AddressShortDictionarySelectSqlQuery" />
+      <AddressDictionarySelectSqlQuery Name="AddressDictionarySelectSqlQuery" />
+      <TempAddressSelectSqlQuery Name="TempOspAddressSelectSqlQuery" />
+      <TempAddressUpdateSqlQuery Name="TempOspAddressUpdateSqlQuery" />
+    </Command>
+
+    <Command Name="AutoParseColumnsSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="AddressParseCommand" />
+        <If>
+          <When>
+            <Condition Name="AddressParseCommandHasErrorCondition" />
+          </When>
+          <Then>
+            <Command Name="AddressParseCommandErrorMessageBoxCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="VisibleColumnsVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="VisibleColumnsVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="StatusVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="StatusVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="TempOspToSaveUpdateRowCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempOspPrimaryGetDataConnection">
+        <Property Name="UpdateRow">
+          <Parameters>
+            <Parameter Name="RowIndex">
+              <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                <Property Name="RowIndexOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>TempOspId</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Object Name="TempOspDatabaseTable">
+                            <Property Name="SelectedRowCellValueByColumnName">
+                              <Parameters>
+                                <Parameter Name="ColumnName">TempOspId</Parameter>
+                              </Parameters>
+                            </Property>
+                          </Object>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>
+                  <Not>
+                    <Object Name="TempOspDatabaseTable">
+                      <Property Name="SelectedRowCellValueByColumnName">
+                        <Parameters>
+                          <Parameter Name="ColumnName">ToSave</Parameter>
+                        </Parameters>
+                      </Property>
+                    </Object>
+                  </Not>
+                </Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempOspToSaveCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempOspPrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="RowIndices">
+              <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                <Property Name="RowsIndicesOf">
+                  <Parameters>
+                    <Parameter Name="ColumnNames">
+                      <Structure Type="List">
+                        <Item>CanSave</Item>
+                      </Structure>
+                    </Parameter>
+                    <Parameter Name="Values">
+                      <Structure Type="List">
+                        <Item>
+                          <Structure Type="List">
+                            <Item>True</Item>
+                          </Structure>
+                        </Item>
+                      </Structure>
+                    </Parameter>
+                  </Parameters>
+                </Property>
+              </DataConnection>
+            </Parameter>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>True</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempOspToSaveUnCheckAllCommand" Type="ValueSetCommand" Assembly="Commands">
+      <DataConnection Name="TempOspPrimaryGetDataConnection">
+        <Property Name="UpdateRows">
+          <Parameters>
+            <Parameter Name="ColumnNames">
+              <Structure Type="List">
+                <Item>ToSave</Item>
+              </Structure>
+            </Parameter>
+            <Parameter Name="Values">
+              <Structure Type="List">
+                <Item>False</Item>
+              </Structure>
+            </Parameter>
+          </Parameters>
+        </Property>
+      </DataConnection>
+    </Command>
+
+    <Command Name="TempOspSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="TempOspSaveSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="FormChangedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="FormChanged">True</Property>
+      </Form>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="TempOspSaveCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+
+    <Command Name="VisibleColumnsVariableRemoveResultColumnCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="VisibleColumnsVariable">
+        <Array>
+          <Source>
+            <Object Name="VisibleColumnsVariable" />
+          </Source>
+          <Filter>
+            <Or>
+              <Filter>
+                <Index Value="1" />
+                <DataType Type="BooleanDataType" />
+                <Value>True</Value>
+              </Filter>
+              <Filter Type="NotIn">
+                <Index Value="0" />
+                <DataType Type="StringDataType" />
+                <Value>
+                  <Command Name="ExcelImportSettingsFormShowCommand" Parameter="ResultColumnListToRemove" />
+                </Value>
+              </Filter>
+            </Or>
+          </Filter>
+        </Array>
+      </Object>
+    </Command>
+
+    <Command Name="CurrentPageIncreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentPageTextBox">
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="CurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Plus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="CurrentPageDecreaseCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentPageTextBox">
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Object Name="CurrentPageTextBox" />
+            </Item>
+            <Item>1</Item>
+          </Minus>
+        </Formula>
+      </Object>
+    </Command>
+
+    <Command Name="CurrentPageTextBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CurrentPageTextBox">
+        <Input />
+      </Object>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="TempOspClearCommand" />
+        <Command Name="VisibleColumnsVariableValueSetCommand">
+          <Structure Type="Table" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ImportFileDialogShowCommand" Parameter="OK" />
+      </ConditionExpression>
+      <Commands Lock="True">
+        <Command Name="ImportFromExcelCommand" />
+        <If>
+          <When>
+            <Condition Name="ImportFromExcelCommandErrorIsNotNullCondition" />
+          </When>
+          <Then>
+            <Command Name="ImportFromExcelCommandErrorMessageBoxCommand" />
+            <If>
+              <When>
+                <Command Name="ImportFromExcelCommandErrorMessageBoxCommand" Parameter="Yes" />
+              </When>
+              <Then>
+                <Command Name="ImportFromExcelCommandErrorExportToTxtCommand" />
+                <Command Name="ImportFromExcelCommandErrorApplicationRunCommand" />
+              </Then>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="NeedToParseAddressTypeVariableValueSetCommand" />
+            <If>
+              <When>
+                <Condition Name="ParseColumnsCountGreater0Condition" />
+              </When>
+              <Then>
+                <Command Name="ExcelImportSettingsFormShowCommand" />
+                <If>
+                  <When>
+                    <Command Name="ExcelImportSettingsFormShowCommand" Parameter="Updated" />
+                  </When>
+                  <Then>
+                    <If>
+                      <When>
+                        <Command Name="ExcelImportSettingsFormShowCommand" Parameter="NeedToParseJurisdictionAddress" />
+                      </When>
+                      <Then>
+                        <Command Name="NeedToParseAddressTypeVariableAddValueCommand">osp_jurisdiction_address</Command>
+                      </Then>
+                    </If>
+                    <Command Name="AutoParseColumnsSequentialCommand" />
+                  </Then>
+                </If>
+              </Then>
+            </If>
+            <Command Name="TempOspReferencesUpdateCommand" />
+            <Command Name="TempOspPrimaryGetDataConnectionRefreshCommand" />
+            <Command Name="VisibleColumnsVariableValueSetCommand">
+              <Command Name="ImportFromExcelCommand" Parameter="VisibleColumns" />
+            </Command>
+            <Command Name="VisibleColumnsVariableRemoveResultColumnCommand" />
+            <Command Name="FormChangedTrueValueSetCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="TempOspDatabaseTableCellClickCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="CanEditToSaveNestedCondition" />
+          </When>
+          <Then>
+            <Command Name="TempOspToSaveUpdateRowCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ExcelImportColumnListFormShowCommand" Parameter="Updated" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ExcelImportColumnPrimaryGetDataConnectionRefreshCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageLess1Condition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CurrentPageTextBoxValueSetCommand">1</Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageGreaterMaxCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="CurrentPageTextBoxValueSetCommand">
+          <Object Name="TotalPagesVariable" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageTextBoxUpKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Object Name="NextPageButton">
+              <Property Name="Enabled" />
+            </Object>
+          </When>
+          <Then>
+            <Command Name="CurrentPageIncreaseCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="CurrentPageTextBoxDownKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Object Name="PreviousPageButton">
+              <Property Name="Enabled" />
+            </Object>
+          </When>
+          <Then>
+            <Command Name="CurrentPageDecreaseCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="StatusVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="TotalPagesVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="RowsPerPageComboBoxIsNullCondition" />
+            </When>
+            <Then>1</Then>
+          </Case>
+          <Case>
+            <Calculate>
+              <Expression>Ceiling(Max({0}, 1) / {1})</Expression>
+              <Items>
+                <Item>
+                  <Array>
+                    <Source>
+                      <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                        <Fields>
+                          <Field Name="RowStatus" />
+                        </Fields>
+                      </DataConnection>
+                    </Source>
+                    <Filter Type="In">
+                      <Index Value="0" />
+                      <DataType Type="StringDataType" />
+                      <Value>
+                        <Switch>
+                          <Case>
+                            <When>
+                              <Condition Name="StatusVariableIsNullCondition" />
+                            </When>
+                            <Then>
+                              <Structure Type="List">
+                                <Item>error</Item>
+                                <Item>no_match</Item>
+                                <Item>entity_match</Item>
+                                <Item>full_match</Item>
+                              </Structure>
+                            </Then>
+                          </Case>
+                          <Case>
+                            <Object Name="StatusVariable" />
+                          </Case>
+                        </Switch>
+                      </Value>
+                    </Filter>
+                    <Count />
+                  </Array>
+                </Item>
+                <Item>
+                  <Object Name="RowsPerPageComboBox" />
+                </Item>
+              </Items>
+            </Calculate>
+          </Case>
+        </Switch>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="VisibleColumnsVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="Table" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="NeedToParseAddressTypeVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Structure Type="List" />
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>305</Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveAllLinkLabel" Type="LinkLabel" Assembly="BaseControls" ChangeForm="False">
+        <Top>5</Top>
+        <Left>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="ColumnOffset">
+              <Parameters>
+                <Parameter Name="ColumnName">ToSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Left>
+        <Height>15</Height>
+        <Width>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="ColumnWidth">
+              <Parameters>
+                <Parameter Name="ColumnName">ToSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <TextAlign>MiddleCenter</TextAlign>
+        <FontStyle>TitleFont</FontStyle>
+        <LinkColor>Gray100</LinkColor>
+        <ActiveLinkColor>Black</ActiveLinkColor>
+        <DisabledLinkColor>Gray200</DisabledLinkColor>
+        <Text>Все</Text>
+        <Commands>
+          <Command Name="TempOspToSaveCheckAllCommand" />
+        </Commands>
+        <Visible>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="ColumnVisible">
+              <Parameters>
+                <Parameter Name="ColumnName">ToSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="SaveNoneLinkLabel" Type="LinkLabel" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <TextAlign>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <FontStyle>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <LinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="LinkColor" />
+          </Object>
+        </LinkColor>
+        <ActiveLinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="ActiveLinkColor" />
+          </Object>
+        </ActiveLinkColor>
+        <DisabledLinkColor>
+          <Object Name="SaveAllLinkLabel">
+            <Property Name="DisabledLinkColor" />
+          </Object>
+        </DisabledLinkColor>
+        <Text>Очистить</Text>
+        <Commands>
+          <Command Name="TempOspToSaveUnCheckAllCommand" />
+        </Commands>
+        <Visible>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="ColumnVisible">
+              <Parameters>
+                <Parameter Name="ColumnName">ToSave</Parameter>
+              </Parameters>
+            </Property>
+          </Object>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="TempOspDatabaseTable" Type="DatabaseTable" Assembly="ComplexControls" ChangeForm="False">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="SaveNoneLinkLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempOspDatabaseTable">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="StatusPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PagePanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="TempOspDatabaseTable">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="SelectFileButton">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <AllowInsert>False</AllowInsert>
+        <AllowUpdate>False</AllowUpdate>
+        <AllowDelete>False</AllowDelete>
+        <AllowResizeRows Value="False" />
+        <AutoSizeColumnsMode Value="Fill" />
+        <BorderStyle Value="Fixed3D" />
+        <BackgroundColor Value="Gray200" />
+        <SelectionColor Name="Gray200" />
+        <ShowCellHints Value="True" />
+        <ColumnHeadersHeight Value="54" />
+        <RowHeight Value="50" />
+        <SourceDataConnection Name="TempOspArrayGetDataConnection" />
+        <Formatting>
+          <BackColor Name="StatusLightPink">
+            <Expression>RowStatus = 'error'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightYellow">
+            <Expression>RowStatus = 'entity_match'</Expression>
+          </BackColor>
+          <BackColor Name="StatusLightGreen">
+            <Expression>RowStatus = 'full_match'</Expression>
+          </BackColor>
+        </Formatting>
+        <Columns>
+          <Column Name="TempOspId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>№</Title>
+            <Width>40</Width>
+            <Visible>
+              <Condition Name="VisibleColumnExistsCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+          </Column>
+          <Column Name="RowStatus" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="CanSave" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Visible>False</Visible>
+          </Column>
+          <Column Name="ToSave" Type="DatabaseTableColumnCheckBox" Assembly="DatabaseTableColumnControls">
+            <Title>Обновить данные</Title>
+            <Width>70</Width>
+            <Visible>
+              <Condition Name="VisibleColumnExistsCondition" />
+            </Visible>
+            <HeaderAlignment Value="MiddleCenter" />
+            <AutoSizeMode Value="None" />
+            <Alignment Value="TopRight" />
+          </Column>
+          <Column Name="OspTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnOspTitleSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsOspTitleCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="OspAddress" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnOspAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsOspAddressCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="OspUfsspTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnOspUfsspTitleSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsOspUfsspTitleCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="OspPhone" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnOspPhoneSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsOspPhoneCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddress" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressIndex" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressIndexSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressIndexCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressRegion" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressRegionSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressRegionCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressDistrict" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressDistrictSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressDistrictCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressCityType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressCityTypeSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressCityTypeCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressCity" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressCitySecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressCityCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressCityDistrict" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressCityDistrictSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressCityDistrictCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressStreetType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressStreetTypeSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressStreetTypeCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressStreet" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressStreetSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressStreetCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressBuilding" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressBuildingSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressBuildingCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressBlock" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressBlockSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressBlockCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressStructure" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressStructureSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressStructureCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+          <Column Name="JurisdictionAddressFlat" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Title>
+              <DataConnection SourceDataConnection="ExcelImportColumnJurisdictionAddressFlatSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="Title" />
+                </Fields>
+              </DataConnection>
+            </Title>
+            <Width>200</Width>
+            <Visible>
+              <Condition Name="VisibleColumnContainsJurisdictionAddressFlatCondition" />
+            </Visible>
+            <AutoSizeMode Value="None" />
+            <WrapMode Value="True" />
+            <Alignment Value="TopLeft" />
+          </Column>
+        </Columns>
+      </MyObject>
+
+      <MyObject Name="SelectFileButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TempOspDatabaseTable">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>36</Height>
+        <Width>36</Width>
+        <TabIndex>4</TabIndex>
+        <Hint>Выбрать файл для загрузки...</Hint>
+        <Image>Images\24x24\download.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="TempOspClearCommand" />
+          <Command Name="VisibleColumnsVariableValueSetCommand">
+            <Structure Type="Table" />
+          </Command>
+          <Command Name="ImportFileDialogShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="PagePanel" Type="Panel" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="StatusPanel">
+                  <Property Name="Top" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="PagePanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Top>
+        <Left>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="PagePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Left>
+        <Height>30</Height>
+        <Width>
+          <Object Name="TotalRowsLabel">
+            <Property Name="Right" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <BackColor>BackThemeColor</BackColor>
+
+        <MyObject Name="FirstPageButton" Type="Button" Assembly="BaseControls">
+          <Top>5</Top>
+          <Left>5</Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>26</Width>
+          <TabIndex>1</TabIndex>
+          <Image>Images\11x11\double_arrow_left.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqual1Condition" />
+              </Not>
+              <Not>
+                <Condition Name="TempOspCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageTextBoxValueSetCommand">1</Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="PreviousPageButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FirstPageButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FirstPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>6</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Image>Images\11x11\arrow_left.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqual1Condition" />
+              </Not>
+              <Not>
+                <Condition Name="TempOspCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageDecreaseCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="CurrentPageTextBox" Type="TextBox" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PreviousPageButton">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+                <Item>1</Item>
+              </Minus>
+            </Formula>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="PreviousPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>42</Width>
+          <TabIndex>3</TabIndex>
+          <AllowedSymbols>0123456789</AllowedSymbols>
+          <MaxLength>6</MaxLength>
+          <TextAlign>Right</TextAlign>
+          <Text>1</Text>
+        </MyObject>
+
+        <MyObject Name="TotalPagesLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Right" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="PreviousPageButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>58</Width>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>
+            <String>
+              <Format>из {0}</Format>
+              <Items>
+                <Item>
+                  <Object Name="TotalPagesVariable" />
+                </Item>
+              </Items>
+            </String>
+          </Text>
+        </MyObject>
+
+        <MyObject Name="NextPageButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="FirstPageButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TotalPagesLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>3</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <Image>Images\11x11\arrow_right.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqualMaxCondition" />
+              </Not>
+              <Not>
+                <Condition Name="TempOspCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageIncreaseCommand" />
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="LastPageButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="PreviousPageButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="NextPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>6</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="FirstPageButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <Image>Images\11x11\double_arrow_right.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>0</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Enabled>
+            <And>
+              <Not>
+                <Condition Name="CurrentPageEqualMaxCondition" />
+              </Not>
+              <Not>
+                <Condition Name="TempOspCountEqual0Condition" />
+              </Not>
+            </And>
+          </Enabled>
+          <Commands>
+            <Command Name="CurrentPageTextBoxValueSetCommand">
+              <Object Name="TotalPagesVariable" />
+            </Command>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="RowsPerPageLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="LastPageButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="PreviousPageButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>110</Width>
+          <TextAlign>MiddleRight</TextAlign>
+          <Text>строк на странице</Text>
+        </MyObject>
+
+        <MyObject Name="RowsPerPageComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="RowsPerPageLabel">
+              <Property Name="Right" />
+            </Object>
+          </Left>
+          <Width>50</Width>
+          <TabIndex>6</TabIndex>
+          <ValueList>
+            <Structure Type="Table">
+              <Row>
+                <Item>1000000000</Item>
+                <Item>[Все]</Item>
+              </Row>
+              <Row>
+                <Item>20</Item>
+                <Item>20</Item>
+              </Row>
+              <Row>
+                <Item>50</Item>
+                <Item>50</Item>
+              </Row>
+              <Row>
+                <Item>100</Item>
+                <Item>100</Item>
+              </Row>
+              <Row>
+                <Item>200</Item>
+                <Item>200</Item>
+              </Row>
+              <Row>
+                <Item>500</Item>
+                <Item>500</Item>
+              </Row>
+            </Structure>
+          </ValueList>
+          <Value>20</Value>
+        </MyObject>
+
+        <MyObject Name="TotalRowsLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CurrentPageTextBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="RowsPerPageComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>65</Width>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>
+            <String>
+              <Format>из {0}</Format>
+              <Items>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Condition Name="TempOspCountEqual0Condition" />
+                      </When>
+                      <Then>0</Then>
+                    </Case>
+                    <Case>
+                      <When>
+                        <Condition Name="StatusVariableIsNullCondition" />
+                      </When>
+                      <Then>
+                        <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                          <Property Name="Count" />
+                        </DataConnection>
+                      </Then>
+                    </Case>
+                    <Case>
+                      <Array>
+                        <Source>
+                          <DataConnection SourceDataConnection="TempOspPrimaryGetDataConnection">
+                            <Fields>
+                              <Field Name="RowStatus" />
+                            </Fields>
+                          </DataConnection>
+                        </Source>
+                        <Filter>
+                          <Index Value="0" />
+                          <DataType Type="StringDataType" />
+                          <Value>
+                            <Object Name="StatusVariable" />
+                          </Value>
+                        </Filter>
+                        <Count />
+                      </Array>
+                    </Case>
+                  </Switch>
+                </Item>
+              </Items>
+            </String>
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="StatusPanel" Type="Panel" Assembly="BaseControls">
+        <Bottom>
+          <Object Name="ContentPanel">
+            <Property Name="Height" />
+          </Object>
+        </Bottom>
+        <Left>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="NoMatchStatusButton">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="TempOspDatabaseTable">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+
+        <MyObject Name="NoMatchStatusButton" Type="Button" Assembly="BaseControls" ChangeForm="False">
+          <Top>5</Top>
+          <Left>0</Left>
+          <Height>42</Height>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="StatusPanel">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>20</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>4</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <BackColor>White</BackColor>
+          <Text>Не найдено совпадений по ОСП и адресу</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualNoMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualNoMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">no_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="EntityMatchStatusButton" Type="Button" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="NoMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <BackColor>StatusLightYellow</BackColor>
+          <Text>Найдено совпадение:
+по ОСП</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualEntityMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualEntityMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualEntityMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualEntityMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">entity_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="FullMatchStatusButton" Type="Button" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="EntityMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>4</TabIndex>
+          <BackColor>StatusLightGreen</BackColor>
+          <Text>Найдено совпадение:
+по ОСП и по адресу</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualFullMatchCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualFullMatchCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualFullMatchCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualFullMatchCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">full_match</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+
+        <MyObject Name="ErrorStatusButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="FullMatchStatusButton">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="NoMatchStatusButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="StatusPanel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="ErrorStatusButton">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>5</TabIndex>
+          <BackColor>StatusLightPink</BackColor>
+          <Text>Указанный адрес относится к другому ОСП</Text>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderColor>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualErrorCondition" />
+                </When>
+                <Then>Black</Then>
+              </Case>
+              <Case>ThemeColorBackButtonBorder</Case>
+            </Switch>
+          </FlatBorderColor>
+          <FlatBorderSize>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualErrorCondition" />
+                </When>
+                <Then>2</Then>
+              </Case>
+              <Case>1</Case>
+            </Switch>
+          </FlatBorderSize>
+          <FontStyle>
+            <Switch>
+              <Case>
+                <When>
+                  <Condition Name="StatusVariableEqualErrorCondition" />
+                </When>
+                <Then>LittleBoldFont</Then>
+              </Case>
+              <Case>LittleFont</Case>
+            </Switch>
+          </FontStyle>
+          <Commands>
+            <If>
+              <When>
+                <Condition Name="StatusVariableEqualErrorCondition" />
+              </When>
+              <Then>
+                <Command Name="StatusVariableValueSetCommand" />
+              </Then>
+              <Else>
+                <Command Name="StatusVariableValueSetCommand">error</Command>
+              </Else>
+            </If>
+          </Commands>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ColumnListButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>Список столбцов...</Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\list.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ExcelImportColumnListFormShowCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ColumnListButton">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>
+          <Object Name="ColumnListButton">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ColumnListButton">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>Images\18x18\save.png</Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Text>Сохранить</Text>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>

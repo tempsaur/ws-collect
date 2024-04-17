@@ -1,0 +1,3194 @@
+<?xml version="1.0"?>
+<Form Name="CollectPochtaRuOrderForm" Title="Заказ" Width="1030" Height="570" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Condition Name="BatchIdIsNullCondition" />
+          </When>
+          <Then>Создание партии</Then>
+        </Case>
+        <Case>Редактирование партии</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="OrderIds" />
+    <Parameter Name="BatchId" />
+    <Parameter Name="SendingDate">
+      <Formula>
+        <Plus DataType="DateTimeDataType">
+          <Item>
+            <DateTime Variable="NowDate" />
+          </Item>
+          <Item>
+            <DateTime Variable="Interval">7d</DateTime>
+          </Item>
+        </Plus>
+      </Formula>
+    </Parameter>
+    <Parameter Name="UseOnlineBalance">False</Parameter>
+
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorHeadPanelButtonBorder" Red="160" Green="160" Blue="160" Alpha="255" />
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="ButtonBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="LightGreen" Red="180" Green="255" Blue="180" Alpha="255" />
+
+      <!-- Цвет выделенной строки в таблице -->
+      <Color Name="SelectionColor" Red="200" Green="200" Blue="200" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleSmallFont" Font="Segoe UI" Size="7" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="TitleBoldFont" Font="Segoe UI" Size="9" Bold="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+      <FontStyle Name="FootTitleBoldFont" Font="Segoe UI" Size="13" Bold="True" />
+      <FontStyle Name="TabButtonFont" Font="Segoe UI" Size="10" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="BatchPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PochtaRuBatchSelectByIdSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="SendingDate" />
+          <Field Name="UseOnlineBalance" />
+
+          <Field Name="AcceptedCount" />
+          <Field Name="BatchName" />
+          <Field Name="BatchStatusText" />
+          <Field Name="BatchStatusDate" />
+          <Field Name="BkHash" />
+          <Field Name="BranchName" />
+          <Field Name="DeliveryCount" />
+          <Field Name="DeliveryNoticePaymentMethodText" />
+          <Field Name="DocumentDownloadStatusText" />
+          <Field Name="ElectronicF103" />
+          <Field Name="GroupName" />
+          <Field Name="ListNumber" />
+          <Field Name="ListNumberDate" />
+          <Field Name="MailCategoryText" />
+          <Field Name="MailRankText" />
+          <Field Name="MailTypeText" />
+          <Field Name="NoticePaymentMethodText" />
+          <Field Name="PaymentMethodText" />
+          <Field Name="PostofficeAddress" />
+          <Field Name="PostofficeCode" />
+          <Field Name="PostofficeName" />
+          <Field Name="PrePostalPreparation" />
+          <Field Name="ShipmentMass" />
+          <Field Name="ShipmentCount" />
+          <Field Name="ShipmentNoticeTypeText" />
+          <Field Name="TransportTypeText" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="BatchId">
+            <Value>
+              <Parameter Name="BatchId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="BatchUpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
+      <Workflow Name="Collect" />
+      <Parameters>
+        <Parameter NativeName="BatchId">
+          <Value>
+            <Parameter Name="BatchId" />
+          </Value>
+        </Parameter>
+        <Parameter NativeName="SendingDate">
+          <Value>
+            <Object Name="SendingDateDateTimePicker" />
+          </Value>
+        </Parameter>
+      </Parameters>
+      <SqlQueries>
+        <SqlQuery Name="BatchUpdateSqlQuery" Type="Update" />
+      </SqlQueries>
+    </DataConnection>
+
+    <DataConnection Name="OrderErrorsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PochtaRuOrderErrorsSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="Message" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="OrderIds" RefreshQuery="False" SendAsArray="True">
+            <Value>
+              <Parameter Name="OrderIds" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="BatchIdIsNullCondition" Type="IsNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Parameter Name="BatchId" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="OrderErrorsMessageIsNullOrEmptyCondition" Type="IsNullOrEmptyCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="OrderErrorsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="Message" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="StringDataType" />
+    </Condition>
+
+    <Condition Name="OrderErrorsMessageIsNotNullOrEmptyCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Condition Name="OrderErrorsMessageIsNullOrEmptyCondition" />
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <!-- !CN -->
+  </Conditions>
+
+  <Commands>
+
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="FormLoadedSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Not>
+              <Condition Name="BatchIdIsNullCondition" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="SendingDateValueSetCommand">
+              <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="SendingDate" />
+                </Fields>
+              </DataConnection>
+            </Command>
+            <Command Name="UseOnlineBalanceValueSetCommand">
+              <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="UseOnlineBalance" />
+                </Fields>
+              </DataConnection>
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- valueset -->
+
+    <Command Name="SendingDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SendingDate">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <Command Name="UseOnlineBalanceValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="UseOnlineBalance">
+        <Input />
+      </Parameter>
+    </Command>
+
+    <!-- api -->
+
+    <Command Name="ApiErrorMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Ошибка при выполнении запроса к системе PochtaRu</Caption>
+      <Text>
+        <Input />
+      </Text>
+      <Icon Type="Error" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="OrderErrorsDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="OrderErrorsPrimaryGetDataConnection" Packet="True" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="OrderErrorsMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Condition Name="OrderErrorsMessageIsNotNullOrEmptyCondition" />
+      <Caption>Ошибка</Caption>
+      <Text>При сохранении партии возникли ошибки.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="OnOrderApiCallSuccessSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="OrderErrorsDataConnectionRefreshCommand" />
+        <Command Name="OrderErrorsMessageBoxCommand" />
+      </Commands>
+    </Command>
+
+    <!-- BatchCreate -->
+
+    <Command Name="BatchCreateCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchCreateCommand" />
+      <Parameters>
+        <Parameter Name="OrderIds" SendAsArray="True">
+          <Parameter Name="OrderIds" />
+        </Parameter>
+        <Parameter Name="SendingDate">
+          <Object Name="SendingDateDateTimePicker" />
+        </Parameter>
+        <Parameter Name="TimezoneOffset">0</Parameter>
+        <Parameter Name="UseOnlineBalance">
+          <Object Name="UseOnlineBalanceCheckBox" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchCreateCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="BatchCreateCallCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="BatchCreateCallCommand" Parameter="Success" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="ApiErrorMessageBoxCommand">
+              <Command Name="BatchCreateCallCommand" Parameter="Message" />
+            </Command>
+          </Then>
+          <Else>
+            <Command Name="OnOrderApiCallSuccessSequentialCommand" />
+          </Else>
+        </If>
+        <If>
+          <When>
+            <And>
+              <Command Name="BatchCreateCallCommand" Parameter="Success" />
+              <Condition Name="OrderErrorsMessageIsNullOrEmptyCondition" />
+            </And>
+          </When>
+          <Then>
+            <Command Name="UpdatedTrueValueSetCommand" />
+            <Command Name="FormCloseCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- UpdateSendingDate -->
+
+    <Command Name="BatchUpdateSaveCommand" Type="SaveCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="BatchUpdateSetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="BatchUpdateSendingDateCallCommand" Type="CallCommand" Assembly="Commands">
+      <Workflow Name="Collect" />
+      <Command Name="PochtaRuBatchUpdateSendingDateCommand" />
+      <Parameters>
+        <Parameter Name="BatchId">
+          <Parameter Name="BatchId" />
+        </Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="BatchUpdateSendingDateCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <Command Name="BatchUpdateSaveCommand" />
+        <Command Name="BatchUpdateSendingDateCallCommand" />
+        <If>
+          <When>
+            <Not>
+              <Command Name="BatchUpdateSendingDateCallCommand" Parameter="Success" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="ApiErrorMessageBoxCommand">
+              <Command Name="BatchUpdateSendingDateCallCommand" Parameter="Message" />
+            </Command>
+          </Then>
+        </If>
+        <If>
+          <When>
+            <And>
+              <Command Name="BatchUpdateSendingDateCallCommand" Parameter="Success" />
+              
+            </And>
+          </When>
+          <Then>
+            <Command Name="UpdatedTrueValueSetCommand" />
+            <Command Name="FormCloseCommand" />
+          </Then>
+        </If>
+      </Commands>
+    </Command>
+
+    <!--  -->
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="BatchIdIsNullCondition" />
+          </When>
+          <Then>
+            <Command Name="BatchCreateCommand" />
+          </Then>
+          <Else>
+            <Command Name="BatchUpdateSendingDateCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <!-- !CM -->
+
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Or>
+          <And>
+            <Or>
+              <Condition Name="FormClosingCondition" />
+              <Condition Name="FormEscapeKeyDownCondition" />
+            </Or>
+            <Not>
+              <Condition Name="FormChangedTrueEqualCondition" />
+            </Not>
+          </And>
+          <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+          <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+        </Or>
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <And>
+          <Or>
+            <Condition Name="FormClosingCondition" />
+            <Condition Name="FormEscapeKeyDownCondition" />
+          </Or>
+          <Condition Name="FormChangedTrueEqualCondition" />
+        </And>
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Not>
+              <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+            </Not>
+          </When>
+          <Then>
+            <Command Name="CloseOnCloseMessageBoxCommand" />
+          </Then>
+          <Else>
+            <Command Name="SaveOnCloseMessageBoxCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="SaveSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormLoadedSequentialCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Change User="False" Source="False" ValueSet="False" />
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>700</Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <TabIndex>1</TabIndex>
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="BatchEditGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <TabIndex>1</TabIndex>
+        <Top>5</Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="UseOnlineBalanceCheckBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>260</Width>
+        <Text>Настройки партии</Text>
+
+        <MyObject Name="SendingDatePanel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>1</TabIndex>
+          <Top>16</Top>
+          <Left>5</Left>
+          <Height>43</Height>
+          <Width>
+            <Object Name="Column1Panel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+
+          <MyObject Name="SendingDateLabel" Type="Label" Assembly="BaseControls">
+            <Top>0</Top>
+            <Left>5</Left>
+            <Width>
+              <Formula>
+                <Minus DataType="IntegerDataType">
+                  <Item>
+                    <Object Name="SendingDatePanel">
+                      <Property Name="Width" />
+                    </Object>
+                  </Item>
+                  <Item>5</Item>
+                </Minus>
+              </Formula>
+            </Width>
+            <Height>20</Height>
+            <FontStyle>TitleItalicFont</FontStyle>
+            <ForeColor>Gray100</ForeColor>
+            <TextAlign>MiddleLeft</TextAlign>
+            <Text>Дата отправки партии</Text>
+            <Hint>Дата отправки партии в почтовое отделение</Hint>
+          </MyObject>
+
+          <MyObject Name="SendingDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Change User="True" Source="False" ValueSet="False" />
+            <Top>
+              <Object Name="SendingDateLabel">
+                <Property Name="Bottom" />
+              </Object>
+            </Top>
+            <Left>
+              <Object Name="SendingDateLabel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Width>
+              <Object Name="SendingDateLabel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+            <Format> d MMMM yyyy</Format>
+            <ShowCalendar>True</ShowCalendar>
+            <NullValue Show="False" />
+            <Value>
+              <Parameter Name="SendingDate" />
+            </Value>
+          </MyObject>
+        </MyObject>
+
+        <MyObject Name="UseOnlineBalanceCheckBox" Type="CheckBox" Assembly="BaseControls">
+          <TabIndex>2</TabIndex>
+          <Change User="True" Source="False" ValueSet="False" />
+          <Enabled>
+            <Condition Name="BatchIdIsNullCondition" />
+          </Enabled>
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Plus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="SendingDatePanel">
+                          <Property Name="Bottom" />
+                        </Object>
+                      </Item>
+                      <Item>5</Item>
+                    </Plus>
+                  </Formula>
+                </Item>
+                <Item>1</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="SendingDatePanel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchEditGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Text>Использовать онлайн-баланс</Text>
+          <Value>
+            <Parameter Name="UseOnlineBalance" />
+          </Value>
+        </MyObject>
+
+      </MyObject>
+
+      <MyObject Name="ErrorsGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Visible>
+          <Not>
+            <Condition Name="OrderErrorsMessageIsNullOrEmptyCondition" />
+          </Not>
+        </Visible>
+        <TabIndex>3</TabIndex>
+        <Top>
+          <Object Name="BatchEditGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="BatchEditGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="BatchEditGroupBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="BatchEditGroupBox">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>30</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Text>Ошибки сохранения заказа</Text>
+
+        <MyObject Name="ErrorsTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="False" Source="False" ValueSet="False" />
+          <Top>16</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ErrorsGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="ErrorsGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>26</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Text>
+            <DataConnection SourceDataConnection="OrderErrorsPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="Message" />
+              </Fields>
+            </DataConnection>
+          </Text>
+          <Multiline>True</Multiline>
+          <ReadOnly>True</ReadOnly>
+        </MyObject>
+
+      </MyObject>
+
+      <MyObject Name="BatchDataGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <TabIndex>2</TabIndex>
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="BatchEditGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>10</Left>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="BatchEditGroupBox">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>20</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Text>Информация о партии</Text>
+
+        <MyObject Name="Column1Panel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>1</TabIndex>
+          <Top>16</Top>
+          <Left>5</Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchDataGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>21</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>245</Width>
+
+          <MyObject Name="AcceptedCountPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="AcceptedCountLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="AcceptedCountPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Кол-во принятых заказов</Text>
+              <Hint>Количество отправлений, прибывших в отделение связи</Hint>
+            </MyObject>
+
+            <MyObject Name="AcceptedCountTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="AcceptedCountLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="AcceptedCountLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="AcceptedCountLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="AcceptedCount" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="BatchNamePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>2</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="AcceptedCountPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="AcceptedCountPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="AcceptedCountPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="BatchNameLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="BatchNamePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Номер партии</Text>
+            </MyObject>
+
+            <MyObject Name="BatchNameTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="BatchNameLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="BatchNameLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="BatchNameLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="BatchName" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="BatchStatusPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>3</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="BatchNamePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="BatchNamePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="BatchNamePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="BatchStatusLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="BatchStatusPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Статус партии</Text>
+            </MyObject>
+
+            <MyObject Name="BatchStatusTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="BatchStatusLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="BatchStatusLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="BatchStatusLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="BatchStatusText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="BatchStatusDatePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>4</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="BatchStatusPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="BatchStatusPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="BatchStatusPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="BatchStatusDateLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="BatchStatusDatePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Дата обновления статуса</Text>
+            </MyObject>
+
+            <MyObject Name="BatchStatusDateTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="BatchStatusDateLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="BatchStatusDateLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="BatchStatusDateLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="BatchStatusDate" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="BkHashPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>5</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="BatchStatusDatePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="BatchStatusDatePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="BatchStatusDatePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="BkHashLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="BkHashPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Хэш-код бандероль-комплектов</Text>
+            </MyObject>
+
+            <MyObject Name="BkHashTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="BkHashLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="BkHashLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="BkHashLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="BkHash" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="BranchNamePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>6</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="BkHashPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="BkHashPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="BkHashPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="BranchNameLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="BranchNamePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Идентификатор подразделения</Text>
+            </MyObject>
+
+            <MyObject Name="BranchNameTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="BranchNameLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="BranchNameLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="BranchNameLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="BranchName" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="DeliveryCountPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>7</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="BranchNamePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="BranchNamePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="BranchNamePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="DeliveryCountLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="DeliveryCountPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Кол-во врученных отправлений</Text>
+            </MyObject>
+
+            <MyObject Name="DeliveryCountTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="DeliveryCountLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="DeliveryCountLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="DeliveryCountLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DeliveryCount" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="DeliveryNoticePaymentMethodPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>8</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="DeliveryCountPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="DeliveryCountPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="DeliveryCountPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column1Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="DeliveryNoticePaymentMethodLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="DeliveryNoticePaymentMethodPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Способ оплаты уведомления о вручении</Text>
+            </MyObject>
+
+            <MyObject Name="DeliveryNoticePaymentMethodTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="DeliveryNoticePaymentMethodLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="DeliveryNoticePaymentMethodLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="DeliveryNoticePaymentMethodLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DeliveryNoticePaymentMethodText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+        </MyObject>
+
+        <MyObject Name="Column2Panel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>2</TabIndex>
+          <Top>16</Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="Column1Panel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchDataGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>21</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Object Name="Column1Panel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+
+          <MyObject Name="DocumentDownloadStatusPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="DocumentDownloadStatusLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="DocumentDownloadStatusPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Статус загрузки документов</Text>
+            </MyObject>
+
+            <MyObject Name="DocumentDownloadStatusTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="DocumentDownloadStatusLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="DocumentDownloadStatusLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="DocumentDownloadStatusLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="DocumentDownloadStatusText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="ElectronicF103Panel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>2</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="DocumentDownloadStatusPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="DocumentDownloadStatusPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="DocumentDownloadStatusPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="DocumentDownloadStatusPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="ElectronicF103Label" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ElectronicF103Panel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Электронная F103 отправлена</Text>
+            </MyObject>
+
+            <MyObject Name="ElectronicF103TextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="ElectronicF103Label">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="ElectronicF103Label">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="ElectronicF103Label">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ElectronicF103" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="GroupNamePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>3</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="ElectronicF103Panel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="ElectronicF103Panel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="ElectronicF103Panel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="ElectronicF103Panel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="GroupNameLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="GroupNamePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Наименование группы бандероль-комплектов</Text>
+            </MyObject>
+
+            <MyObject Name="GroupNameTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="GroupNameLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="GroupNameLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="GroupNameLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="GroupName" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="ListNumberPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>4</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="GroupNamePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="GroupNamePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="GroupNamePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="GroupNamePanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="ListNumberLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ListNumberPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Номер документа для сдачи партии</Text>
+            </MyObject>
+
+            <MyObject Name="ListNumberTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="ListNumberLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="ListNumberLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="ListNumberLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListNumber" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="ListNumberDatePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>5</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="ListNumberPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="ListNumberPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="ListNumberPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="ListNumberPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="ListNumberDateLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ListNumberDatePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Дата документа для сдачи партии</Text>
+            </MyObject>
+
+            <MyObject Name="ListNumberDateTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="ListNumberDateLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="ListNumberDateLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="ListNumberDateLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ListNumberDate" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="MailCategoryPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>6</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="ListNumberDatePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="ListNumberDatePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="ListNumberDatePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="ListNumberDatePanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="MailCategoryLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="MailCategoryPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Категория РПО</Text>
+            </MyObject>
+
+            <MyObject Name="MailCategoryTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="MailCategoryLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="MailCategoryLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="MailCategoryLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="MailCategoryText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="MailRankPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>7</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="MailCategoryPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="MailCategoryPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="MailCategoryPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="MailCategoryPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="MailRankLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="MailRankPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Код разряда партии</Text>
+            </MyObject>
+
+            <MyObject Name="MailRankTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="MailRankLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="MailRankLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="MailRankLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="MailRankText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="MailTypePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>8</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="MailRankPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="MailRankPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="MailRankPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="MailRankPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="MailTypeLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="MailTypePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Вид РПО</Text>
+            </MyObject>
+
+            <MyObject Name="MailTypeTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="MailTypeLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="MailTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="MailTypeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="MailTypeText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+        </MyObject>
+
+        <MyObject Name="Column3Panel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>3</TabIndex>
+          <Top>16</Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="Column2Panel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchDataGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>21</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Object Name="Column1Panel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+
+          <MyObject Name="NoticePaymentMethodPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column3Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="NoticePaymentMethodLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="NoticePaymentMethodPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Способ оплаты уведомления</Text>
+            </MyObject>
+
+            <MyObject Name="NoticePaymentMethodTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="NoticePaymentMethodLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="NoticePaymentMethodLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="NoticePaymentMethodLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="NoticePaymentMethodText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="PaymentMethodPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>2</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="NoticePaymentMethodPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="NoticePaymentMethodPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="NoticePaymentMethodPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="NoticePaymentMethodPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="PaymentMethodLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PaymentMethodPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Способ оплаты</Text>
+            </MyObject>
+
+            <MyObject Name="PaymentMethodTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="PaymentMethodLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="PaymentMethodLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="PaymentMethodLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="PaymentMethodText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="PostofficeAddressPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>3</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="PaymentMethodPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="PaymentMethodPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="PaymentMethodPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="PaymentMethodPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="PostofficeAddressLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PostofficeAddressPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Адрес места приема</Text>
+            </MyObject>
+
+            <MyObject Name="PostofficeAddressTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="PostofficeAddressLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="PostofficeAddressLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="PostofficeAddressLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="PostofficeAddress" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="PostofficeCodePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>4</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="PostofficeAddressPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="PostofficeAddressPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="PostofficeAddressPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="PostofficeAddressPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="PostofficeCodeLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PostofficeCodePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Индекс места приема</Text>
+            </MyObject>
+
+            <MyObject Name="PostofficeCodeTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="PostofficeCodeLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="PostofficeCodeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="PostofficeCodeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="PostofficeCode" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="PostofficeNamePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>5</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="PostofficeCodePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="PostofficeCodePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="PostofficeCodePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="PostofficeCodePanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="PostofficeNameLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PostofficeNamePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Наименование места приема</Text>
+            </MyObject>
+
+            <MyObject Name="PostofficeNameTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="PostofficeNameLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="PostofficeNameLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="PostofficeNameLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="PostofficeName" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="PrePostalPreparationPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>6</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="PostofficeNamePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="PostofficeNamePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="PostofficeNamePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="PostofficeNamePanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="PrePostalPreparationLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PrePostalPreparationPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Предпочтовая подготовка</Text>
+            </MyObject>
+
+            <MyObject Name="PrePostalPreparationTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="PrePostalPreparationLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="PrePostalPreparationLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="PrePostalPreparationLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="PrePostalPreparation" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="ShipmentMassPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>7</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="PrePostalPreparationPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="PrePostalPreparationPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="PrePostalPreparationPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="PrePostalPreparationPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="ShipmentMassLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ShipmentMassPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Общий вес в граммах</Text>
+            </MyObject>
+
+            <MyObject Name="ShipmentMassTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="ShipmentMassLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="ShipmentMassLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="ShipmentMassLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ShipmentMass" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="ShipmentNoticeTypePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>8</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="ShipmentMassPanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="ShipmentMassPanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="ShipmentMassPanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="ShipmentMassPanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column2Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="ShipmentNoticeTypeLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ShipmentNoticeTypePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Категория уведомления о вручении РПО</Text>
+            </MyObject>
+
+            <MyObject Name="ShipmentNoticeTypeTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="ShipmentNoticeTypeLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="ShipmentNoticeTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="ShipmentNoticeTypeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ShipmentNoticeTypeText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+        </MyObject>
+
+        <MyObject Name="Column4Panel" Type="Panel" Assembly="BaseControls">
+          <TabIndex>4</TabIndex>
+          <Top>16</Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="Column3Panel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="BatchDataGroupBox">
+                    <Property Name="Height" />
+                  </Object>
+                </Item>
+                <Item>21</Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>245</Width>
+
+          <MyObject Name="TransportTypePanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>1</TabIndex>
+            <Top>0</Top>
+            <Left>0</Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column4Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="TransportTypeLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="TransportTypePanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Вид транспортировки</Text>
+            </MyObject>
+
+            <MyObject Name="TransportTypeTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="TransportTypeLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="TransportTypeLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="TransportTypeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="TransportTypeText" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+          <MyObject Name="ShipmentCountPanel" Type="Panel" Assembly="BaseControls">
+            <TabIndex>2</TabIndex>
+            <Top>
+              <Switch>
+                <Case>
+                  <When>
+                    <Object Name="TransportTypePanel">
+                      <Property Name="Visible" />
+                    </Object>
+                  </When>
+                  <Then>
+                    <Object Name="TransportTypePanel">
+                      <Property Name="Bottom" />
+                    </Object>
+                  </Then>
+                </Case>
+                <Case>
+                  <Object Name="TransportTypePanel">
+                    <Property Name="Top" />
+                  </Object>
+                </Case>
+              </Switch>
+            </Top>
+            <Left>
+              <Object Name="TransportTypePanel">
+                <Property Name="Left" />
+              </Object>
+            </Left>
+            <Height>43</Height>
+            <Width>
+              <Object Name="Column4Panel">
+                <Property Name="Width" />
+              </Object>
+            </Width>
+
+            <MyObject Name="ShipmentCountLabel" Type="Label" Assembly="BaseControls">
+              <Top>0</Top>
+              <Left>5</Left>
+              <Width>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ShipmentCountPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Minus>
+                </Formula>
+              </Width>
+              <Height>20</Height>
+              <FontStyle>TitleItalicFont</FontStyle>
+              <ForeColor>Gray100</ForeColor>
+              <TextAlign>MiddleLeft</TextAlign>
+              <Text>Количество заказов</Text>
+            </MyObject>
+
+            <MyObject Name="ShipmentCountTextBox" Type="TextBox" Assembly="BaseControls">
+              <TabIndex>1</TabIndex>
+              <Change User="False" Source="False" ValueSet="False" />
+              <ReadOnly>True</ReadOnly>
+              <Top>
+                <Object Name="ShipmentCountLabel">
+                  <Property Name="Bottom" />
+                </Object>
+              </Top>
+              <Left>
+                <Object Name="ShipmentCountLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Left>
+              <Width>
+                <Object Name="ShipmentCountLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Width>
+              <Text>
+                <DataConnection SourceDataConnection="BatchPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ShipmentCount" />
+                  </Fields>
+                </DataConnection>
+              </Text>
+            </MyObject>
+          </MyObject>
+
+        </MyObject>
+
+      </MyObject>
+
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Bottom>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Bottom>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <TabIndex>1</TabIndex>
+        <Change User="False" Source="False" ValueSet="False" />
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="BatchIdIsNullCondition" />
+                </Not>
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Not>
+                  <Condition Name="BatchIdIsNullCondition" />
+                </Not>
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+        </Commands>
+        <Enabled>
+          <And>
+            <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+            <Or>
+              <Condition Name="FormChangedTrueEqualCondition" />
+              <Condition Name="BatchIdIsNullCondition" />
+            </Or>
+          </And>
+        </Enabled>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>
