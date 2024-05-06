@@ -528,7 +528,7 @@
         <DataType Type="IntegerDataType" />
       </Filter>
     </DataConnection>
-
+<!-- ахахахха -->
     <DataConnection Name="LoanClientStatsPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
       <SqlQuery Name="LoanClientStatsSelectSqlQuery" Type="Select">
         <Workflow Name="Collect" />
@@ -548,7 +548,7 @@
         </Parameters>
       </SqlQuery>
     </DataConnection>
-
+<!-- ахахахха -->
     <DataConnection Name="LoanClientPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
       <SqlQuery Name="LoanClientByClientIdSelectSqlQuery" Type="Select">
         <Workflow Name="Collect" />

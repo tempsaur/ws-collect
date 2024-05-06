@@ -7395,6 +7395,8 @@
               {LoanClientDebtRestTotalTo}::numeric,
               {LoanClientUserId}::smallint[],
               {LoanClientStatusId}::bigint[],
+              {LoanClientStatus2Id}::bigint[],
+              {LoanClientStatus3Id}::bigint[],
               {SuccessionCourtId}::bigint[],
               {SuccessionCourtDocumentId}::integer[],
               {SuccessionDocumentNumber}::character varying,
@@ -7642,6 +7644,8 @@
           LC.role_id AS "RoleId",
           LC.user_id AS "LoanClientUserId",
           LC.status_id AS "LoanClientStatusId",
+          LC.status2_id as "LoanClientStatus2Id",
+          LC.status3_id as "LoanClientStatus3Id",
           C.inner_org_id AS "InnerOrgId",
           LCS.court_id AS "SuccessionCourtId",
           LCS.court_document_id AS "SuccessionCourtDocumentId",
@@ -8085,6 +8089,76 @@
       </Text>
     </SqlQuery>
 
+    <SqlQuery Name="LoanClientStatus2UpdateSqlQuery">
+      <Text>
+        SELECT collect.loan_client_update(
+          LC.loan_client_id,
+          LC.client_id,
+          LC.surety_number,
+          LC.role_id,
+          LC.is_main,
+          LC.user_id,
+          LC.status_id,
+          {StatusId}::bigint,
+          LC.status3_id,
+          LC.court_sum,
+          LC.court_date,
+          LC.debt_base,
+          LC.debt_percent,
+          LC.debt_penalty,
+          LC.debt_tax,
+          LC.repayment_date,
+          LC.repayment_sum,
+          LC.repayment_number,
+          LC.surety_duty,
+          LC.surety_sum,
+          LC.unique_id,
+          COALESCE({CloseDate}::date, LC.close_date),
+          COALESCE({SaleDate}::date, LC.sale_date),
+          {UserId}::smallint)
+        FROM
+          collect.loan_client LC
+        WHERE
+          LC.loan_client_id = ANY({LoanClientId}::bigint[]) AND
+          {StatusId} IS NOT NULL;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="LoanClientStatus3UpdateSqlQuery">
+      <Text>
+        SELECT collect.loan_client_update(
+          LC.loan_client_id,
+          LC.client_id,
+          LC.surety_number,
+          LC.role_id,
+          LC.is_main,
+          LC.user_id,
+          LC.status_id,
+          LC.status2_id,
+          {StatusId}::bigint,
+          LC.court_sum,
+          LC.court_date,
+          LC.debt_base,
+          LC.debt_percent,
+          LC.debt_penalty,
+          LC.debt_tax,
+          LC.repayment_date,
+          LC.repayment_sum,
+          LC.repayment_number,
+          LC.surety_duty,
+          LC.surety_sum,
+          LC.unique_id,
+          COALESCE({CloseDate}::date, LC.close_date),
+          COALESCE({SaleDate}::date, LC.sale_date),
+          {UserId}::smallint)
+        FROM
+          collect.loan_client LC
+        WHERE
+          LC.loan_client_id = ANY({LoanClientId}::bigint[]) AND
+          {StatusId} IS NOT NULL;
+      </Text>
+    </SqlQuery>
+
     <SqlQuery Name="LoanClientUserUpdateSqlQuery">
       <Text>
         SELECT collect.loan_client_update(
@@ -8095,6 +8169,8 @@
           LC.is_main,
           {SelectedUserId}::smallint,
           LC.status_id,
+          LC.status2_id,
+          LC.status3_id,
           LC.court_sum,
           LC.court_date,
           LC.debt_base,
@@ -9048,6 +9124,8 @@
           LC.is_main AS "IsMain",
           LC.user_id AS "UserId",
           LC.status_id AS "StatusId",
+          LC.status2_id AS "Status2Id",
+          LC.status3_id AS "Status3Id",
           LC.court_sum AS "CourtSum",
           LC.court_date AS "CourtDate",
           LC.debt_base AS "DebtBase",
@@ -10018,7 +10096,7 @@
       </Text>
     </SqlQuery>
 
-    <SqlQuery Name="TaskStatusSelectSqlQuery">
+    <SqlQuery Name="TaskSetatusSelectSqlQuery">
       <Text>
         SELECT
           task_status_id AS "TaskStatusId",
@@ -10739,9 +10817,10 @@
       </Text>
     </SqlQuery>
 
-    <!--============================================================-->
-    <!--===СТАТУСЫ==================================================-->
-    <!--============================================================-->
+
+<!--============================================================-->
+<!--===СТАТУСЫ==================================================-->
+<!--============================================================-->
     <SqlQuery Name="StatusSelectSqlQuery">
       <Text>
         SELECT
@@ -10756,6 +10835,44 @@
           S.archive AS "Archive"
         FROM
           collect.status S
+          LEFT JOIN collect.color C USING(color_id)
+        ORDER BY S.order_number, S.status_id, S.title;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status2SelectSqlQuery">
+      <Text>
+        SELECT
+          S.status_id AS "StatusId",
+          S.order_number AS "OrderNumber",
+          S.title AS "Title",
+          COALESCE(C.html_code, '#FFFFFF') AS "ColorHtmlCode",
+          S.is_start_status AS "IsStartStatus",
+          S.is_finish_status AS "IsFinishStatus",
+          S.is_sold_status AS "IsSoldStatus",
+          S.is_bankrupt_status AS "IsBankruptStatus",
+          S.archive AS "Archive"
+        FROM
+          collect.status2 S
+          LEFT JOIN collect.color C USING(color_id)
+        ORDER BY S.order_number, S.status_id, S.title;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3SelectSqlQuery">
+      <Text>
+        SELECT
+          S.status_id AS "StatusId",
+          S.order_number AS "OrderNumber",
+          S.title AS "Title",
+          COALESCE(C.html_code, '#FFFFFF') AS "ColorHtmlCode",
+          S.is_start_status AS "IsStartStatus",
+          S.is_finish_status AS "IsFinishStatus",
+          S.is_sold_status AS "IsSoldStatus",
+          S.is_bankrupt_status AS "IsBankruptStatus",
+          S.archive AS "Archive"
+        FROM
+          collect.status3 S
           LEFT JOIN collect.color C USING(color_id)
         ORDER BY S.order_number, S.status_id, S.title;
       </Text>
@@ -10778,6 +10895,40 @@
       </Text>
     </SqlQuery>
 
+    <SqlQuery Name="Status2ByIdSelectSqlQuery">
+      <Text>
+        SELECT
+          title AS "Title",
+          is_start_status AS "IsStartStatus",
+          is_finish_status AS "IsFinishStatus",
+          is_bankrupt_status AS "IsBankruptStatus",
+          is_sold_status AS "IsSoldStatus",
+          color_id AS "ColorId",
+          close_reason_id AS "CloseReasonId"
+        FROM
+          collect.status2
+        WHERE
+          status_id = {StatusId};
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3ByIdSelectSqlQuery">
+      <Text>
+        SELECT
+          title AS "Title",
+          is_start_status AS "IsStartStatus",
+          is_finish_status AS "IsFinishStatus",
+          is_bankrupt_status AS "IsBankruptStatus",
+          is_sold_status AS "IsSoldStatus",
+          color_id AS "ColorId",
+          close_reason_id AS "CloseReasonId"
+        FROM
+          collect.status3
+        WHERE
+          status_id = {StatusId};
+      </Text>
+    </SqlQuery>
+
     <SqlQuery Name="StatusInsertSqlQuery">
       <Text>
         UPDATE
@@ -10787,7 +10938,7 @@
         WHERE
           {IsStartStatus} AND
           is_start_status;
-          
+
         UPDATE
           collect.status
         SET
@@ -10821,6 +10972,92 @@
       </Text>
     </SqlQuery>
 
+    <SqlQuery Name="Status2InsertSqlQuery">
+      <Text>
+        UPDATE
+          collect.status2
+        SET
+          is_start_status = false
+        WHERE
+          {IsStartStatus} AND
+          is_start_status;
+
+        UPDATE
+          collect.status2
+        SET
+          is_bankrupt_status = false
+        WHERE
+          {IsBankruptStatus} AND
+          is_bankrupt_status;
+
+        INSERT INTO collect.status2(
+          title,
+          color_id,
+          is_start_status,
+          is_finish_status,
+          order_number,
+          is_sold_status,
+          is_bankrupt_status,
+          close_reason_id
+          )
+        SELECT
+          {Title},
+          {ColorId},
+          {IsStartStatus},
+          {IsFinishStatus},
+          COALESCE(MAX(order_number), 0) + 1,
+          {IsSoldStatus},
+          {IsBankruptStatus},
+          {CloseReasonId}
+        FROM
+          collect.status2
+        RETURNING status_id;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3InsertSqlQuery">
+      <Text>
+        UPDATE
+          collect.status3
+        SET
+          is_start_status = false
+        WHERE
+          {IsStartStatus} AND
+          is_start_status;
+
+        UPDATE
+          collect.status3
+        SET
+          is_bankrupt_status = false
+        WHERE
+          {IsBankruptStatus} AND
+          is_bankrupt_status;
+
+        INSERT INTO collect.status3(
+          title,
+          color_id,
+          is_start_status,
+          is_finish_status,
+          order_number,
+          is_sold_status,
+          is_bankrupt_status,
+          close_reason_id
+          )
+        SELECT
+          {Title},
+          {ColorId},
+          {IsStartStatus},
+          {IsFinishStatus},
+          COALESCE(MAX(order_number), 0) + 1,
+          {IsSoldStatus},
+          {IsBankruptStatus},
+          {CloseReasonId}
+        FROM
+          collect.status3
+        RETURNING status_id;
+      </Text>
+    </SqlQuery>
+
     <SqlQuery Name="StatusUpdateSqlQuery">
       <Text>
         UPDATE
@@ -10830,7 +11067,7 @@
         WHERE
           {IsStartStatus} AND
           is_start_status;
-          
+
         UPDATE
           collect.status
         SET
@@ -10862,6 +11099,88 @@
       </Text>
     </SqlQuery>
 
+    <SqlQuery Name="Status2UpdateSqlQuery">
+      <Text>
+        UPDATE
+          collect.status2
+        SET
+          is_start_status = false
+        WHERE
+          {IsStartStatus} AND
+          is_start_status;
+
+        UPDATE
+          collect.status2
+        SET
+          is_bankrupt_status = false
+        WHERE
+          {IsBankruptStatus} AND
+          is_bankrupt_status;
+
+        UPDATE
+          collect.status2
+        SET
+          title = {Title},
+          color_id = {ColorId},
+          is_start_status = {IsStartStatus},
+          is_finish_status = {IsFinishStatus},
+          is_sold_status = {IsSoldStatus},
+          is_bankrupt_status = {IsBankruptStatus},
+          close_reason_id = {CloseReasonId}
+        WHERE
+          status_id = {StatusId};
+
+        UPDATE
+          collect.status2
+        SET
+          is_start_status = true
+        WHERE
+          NOT EXISTS (SELECT 1 FROM collect.status2 WHERE NOT archive AND is_start_status) AND
+          status_id = COALESCE((SELECT MIN(status_id) FROM collect.status2 WHERE status_id != {StatusId}), {StatusId});
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3UpdateSqlQuery">
+      <Text>
+        UPDATE
+          collect.status3
+        SET
+          is_start_status = false
+        WHERE
+          {IsStartStatus} AND
+          is_start_status;
+
+        UPDATE
+          collect.status3
+        SET
+          is_bankrupt_status = false
+        WHERE
+          {IsBankruptStatus} AND
+          is_bankrupt_status;
+
+        UPDATE
+          collect.status3
+        SET
+          title = {Title},
+          color_id = {ColorId},
+          is_start_status = {IsStartStatus},
+          is_finish_status = {IsFinishStatus},
+          is_sold_status = {IsSoldStatus},
+          is_bankrupt_status = {IsBankruptStatus},
+          close_reason_id = {CloseReasonId}
+        WHERE
+          status_id = {StatusId};
+
+        UPDATE
+          collect.status3
+        SET
+          is_start_status = true
+        WHERE
+          NOT EXISTS (SELECT 1 FROM collect.status3 WHERE NOT archive AND is_start_status) AND
+          status_id = COALESCE((SELECT MIN(status_id) FROM collect.status3 WHERE status_id != {StatusId}), {StatusId});
+      </Text>
+    </SqlQuery>
+
     <SqlQuery Name="StatusArchiveSqlQuery">
       <Text>
         UPDATE
@@ -10876,9 +11195,49 @@
       </Text>
     </SqlQuery>
 
+    <SqlQuery Name="Status2ArchiveSqlQuery">
+      <Text>
+        UPDATE
+          collect.status2
+        SET
+          archive = {Archive},
+          order_number = CASE WHEN {Archive} THEN NULL ELSE COALESCE((SELECT MAX(order_number) FROM collect.status2), 0) + 1 END
+        WHERE
+          status_id = {StatusId};
+
+        SELECT collect.status2_order_number_recount();
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3ArchiveSqlQuery">
+      <Text>
+        UPDATE
+          collect.status3
+        SET
+          archive = {Archive},
+          order_number = CASE WHEN {Archive} THEN NULL ELSE COALESCE((SELECT MAX(order_number) FROM collect.status3), 0) + 1 END
+        WHERE
+          status_id = {StatusId};
+
+        SELECT collect.status3_order_number_recount();
+      </Text>
+    </SqlQuery>
+
     <SqlQuery Name="StatusDeleteSqlQuery">
       <Text>
         SELECT collect.status_try_delete({StatusId});
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status2DeleteSqlQuery">
+      <Text>
+        SELECT collect.status2_try_delete({StatusId});
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3DeleteSqlQuery">
+      <Text>
+        SELECT collect.status3_try_delete({StatusId});
       </Text>
     </SqlQuery>
 
@@ -10905,6 +11264,62 @@
             order_number + 1 AS new_order_number
           FROM
             collect.status
+          WHERE
+            status_id = {StatusId}) T;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status2OrderNumberIncreaseSqlQuery">
+      <Text>
+        SELECT
+          collect.status2_order_number_recount()
+        FROM
+          collect.status2
+        WHERE
+          status_id = {StatusId} AND
+          order_number IS NULL;
+
+        UPDATE
+          collect.status2 S
+        SET
+          order_number = CASE
+            WHEN order_number = new_order_number THEN T.old_order_number
+            WHEN status_id = {StatusId} THEN T.new_order_number
+            ELSE order_number END
+        FROM (
+          SELECT
+            order_number AS old_order_number,
+            order_number + 1 AS new_order_number
+          FROM
+            collect.status2
+          WHERE
+            status_id = {StatusId}) T;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3OrderNumberIncreaseSqlQuery">
+      <Text>
+        SELECT
+          collect.status3_order_number_recount()
+        FROM
+          collect.status3
+        WHERE
+          status_id = {StatusId} AND
+          order_number IS NULL;
+
+        UPDATE
+          collect.status3 S
+        SET
+          order_number = CASE
+            WHEN order_number = new_order_number THEN T.old_order_number
+            WHEN status_id = {StatusId} THEN T.new_order_number
+            ELSE order_number END
+        FROM (
+          SELECT
+            order_number AS old_order_number,
+            order_number + 1 AS new_order_number
+          FROM
+            collect.status3
           WHERE
             status_id = {StatusId}) T;
       </Text>
@@ -10938,6 +11353,62 @@
       </Text>
     </SqlQuery>
 
+    <SqlQuery Name="Status2OrderNumberDecreaseSqlQuery">
+      <Text>
+        SELECT
+          collect.status2_order_number_recount()
+        FROM
+          collect.status2
+        WHERE
+          status_id = {StatusId} AND
+          order_number IS NULL;
+
+        UPDATE
+          collect.status2 S
+        SET
+          order_number = CASE
+            WHEN order_number = new_order_number THEN T.old_order_number
+            WHEN status_id = {StatusId} THEN T.new_order_number
+            ELSE order_number END
+        FROM (
+          SELECT
+            order_number AS old_order_number,
+            order_number - 1 AS new_order_number
+          FROM
+            collect.status2
+          WHERE
+            status_id = {StatusId}) T;
+      </Text>
+    </SqlQuery>
+
+    <SqlQuery Name="Status3OrderNumberDecreaseSqlQuery">
+      <Text>
+        SELECT
+          collect.status3_order_number_recount()
+        FROM
+          collect.status3
+        WHERE
+          status_id = {StatusId} AND
+          order_number IS NULL;
+
+        UPDATE
+          collect.status3 S
+        SET
+          order_number = CASE
+            WHEN order_number = new_order_number THEN T.old_order_number
+            WHEN status_id = {StatusId} THEN T.new_order_number
+            ELSE order_number END
+        FROM (
+          SELECT
+            order_number AS old_order_number,
+            order_number - 1 AS new_order_number
+          FROM
+            collect.status3
+          WHERE
+            status_id = {StatusId}) T;
+      </Text>
+    </SqlQuery>
+
     <!-- причины закрытия дел для бки -->
     <SqlQuery Name="CloseReasonSelectSqlQuery">
       <Text>
@@ -10949,6 +11420,7 @@
         ORDER BY bki_num ASC;
       </Text>
     </SqlQuery>
+
 
     <!--============================================================-->
     <!--===ЦВЕТА====================================================-->
@@ -18969,6 +19441,7 @@
         <SqlQuery Name="CourtDocumentSelectSqlQuery" />
         <SqlQuery Name="RoleSelectSqlQuery" />
         <SqlQuery Name="StatusSelectSqlQuery" />
+        <SqlQuery Name="Status2SelectSqlQuery" />
 
         <SqlQuery Name="LoanClientSelectSqlQuery" />
 
@@ -19124,7 +19597,7 @@
         <SqlQuery Name="TaskTypeSelectSqlQuery" />
         <SqlQuery Name="ClientSimpleSelectSqlQuery" />
         <SqlQuery Name="LoanClientSimpleSelectSqlQuery" />
-        <SqlQuery Name="TaskStatusSelectSqlQuery" />
+        <SqlQuery Name="TaskSetatusSelectSqlQuery" />
         <SqlQuery Name="TaskLoanByTaskIdSelectSqlQuery" />
         <SqlQuery Name="LoanAllowedForUserSelectSqlQuery" />
         <SqlQuery Name="ClientAllowedForUserSelectSqlQuery" />
@@ -19536,7 +20009,7 @@
         <SqlQuery Name="TempOspSaveSqlQuery" />
       </SqlQueries>
     </Permission>
-
+<!-- Здесь -->
     <Permission Name="StatusSqlQueryPermission" Type="SqlQueryPermission">
       <SqlQueries>
         <SqlQuery Name="ColorSelectSqlQuery" />
@@ -19544,6 +20017,10 @@
 
         <SqlQuery Name="StatusSelectSqlQuery" />
         <SqlQuery Name="StatusByIdSelectSqlQuery" />
+        <SqlQuery Name="Status2SelectSqlQuery" />
+        <SqlQuery Name="Status2ByIdSelectSqlQuery" />
+        <SqlQuery Name="Status3SelectSqlQuery" />
+        <SqlQuery Name="Status3ByIdSelectSqlQuery" />
 
         <SqlQuery Name="StatusInsertSqlQuery" />
         <SqlQuery Name="StatusUpdateSqlQuery" />
@@ -19551,6 +20028,19 @@
         <SqlQuery Name="StatusOrderNumberIncreaseSqlQuery" />
         <SqlQuery Name="StatusOrderNumberDecreaseSqlQuery" />
         <SqlQuery Name="StatusDeleteSqlQuery" />
+
+        <SqlQuery Name="Status2InsertSqlQuery" />
+        <SqlQuery Name="Status2UpdateSqlQuery" />
+        <SqlQuery Name="Status2ArchiveSqlQuery" />
+        <SqlQuery Name="Status2OrderNumberIncreaseSqlQuery" />
+        <SqlQuery Name="Status2OrderNumberDecreaseSqlQuery" />
+        <SqlQuery Name="Status2DeleteSqlQuery" />
+        <SqlQuery Name="Status3InsertSqlQuery" />
+        <SqlQuery Name="Status3UpdateSqlQuery" />
+        <SqlQuery Name="Status3ArchiveSqlQuery" />
+        <SqlQuery Name="Status3OrderNumberIncreaseSqlQuery" />
+        <SqlQuery Name="Status3OrderNumberDecreaseSqlQuery" />
+        <SqlQuery Name="Status3DeleteSqlQuery" />
       </SqlQueries>
     </Permission>
 

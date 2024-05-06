@@ -324,16 +324,6 @@
               <Object Name="LoanClientStatusCheckedComboBox" />
             </Value>
           </Parameter>
-          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
-            <Value>
-              <Object Name="LoanClientStatus2CheckedComboBox" />
-            </Value>
-          </Parameter>
-          <Parameter NativeName="LoanClientStatus3Id" SendAsArray="True" RefreshQuery="False">
-            <Value>
-              <Object Name="LoanClientStatus3CheckedComboBox" />
-            </Value>
-          </Parameter>
           <Parameter NativeName="SuccessionCourtId" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="SuccessionCourtCheckedComboBox" />
@@ -539,8 +529,6 @@
           <Field Name="LoanDebtRestTotal" />
           <Field Name="LoanClientUserTitle" />
           <Field Name="LoanClientStatusTitle" />
-          <Field Name="LoanClient2StatusTitle" />
-          <Field Name="LoanClient3StatusTitle" />
           <Field Name="InnerOrgTitle" />
           <Field Name="ClientRegistrationAddress" />
           <Field Name="ClientActualAddress" />
@@ -710,16 +698,6 @@
           <Parameter NativeName="LoanClientStatusId" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="LoanClientStatusCheckedComboBox" />
-            </Value>
-          </Parameter>
-          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
-            <Value>
-              <Object Name="LoanClientStatus2CheckedComboBox" />
-            </Value>
-          </Parameter>
-          <Parameter NativeName="LoanClientStatus3Id" SendAsArray="True" RefreshQuery="False">
-            <Value>
-              <Object Name="LoanClientStatus3CheckedComboBox" />
             </Value>
           </Parameter>
           <Parameter NativeName="SuccessionCourtId" SendAsArray="True" RefreshQuery="False">
@@ -1533,22 +1511,9 @@
     <DataConnection Name="SelectedStatus2SecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
       <SourceDataConnection Name="Status2PrimaryGetDataConnection" />
       <Filter>
-        <Field NativeName="Status2Id" />
-        <Value>
-          <Object Name="LoanClientStatus2ContextMenu">
-            <Property Name="ClickedMenuItemValue" />
-          </Object>
-        </Value>
-        <DataType Type="IntegerDataType" />
-      </Filter>
-    </DataConnection>
-
-    <DataConnection Name="SelectedStatus3SecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
-      <SourceDataConnection Name="Status3PrimaryGetDataConnection" />
-      <Filter>
         <Field NativeName="StatusId" />
         <Value>
-          <Object Name="LoanClientStatus3ContextMenu">
+          <Object Name="LoanClientStatus2ContextMenu">
             <Property Name="ClickedMenuItemValue" />
           </Object>
         </Value>
@@ -1795,7 +1760,7 @@
         </Parameter>
         <Parameter NativeName="StatusId">
           <Value>
-            <Object Name="LoanClientStatus2ContextMenu">
+            <Object Name="LoanClientStatusContextMenu">
               <Property Name="ClickedMenuItemValue" />
             </Object>
           </Value>
@@ -1831,61 +1796,6 @@
       </Parameters>
       <SqlQueries>
         <SqlQuery Name="LoanClientStatus2UpdateSqlQuery" Type="Update" />
-      </SqlQueries>
-    </DataConnection>
-
-    <DataConnection Name="LoanClientStatus3UpdateSetDataConnection" Type="SetDataConnection" Assembly="DataConnections">
-      <Workflow Name="Collect" />
-      <Parameters>
-        <Parameter NativeName="LoanClientId" SendAsArray="True">
-          <Value>
-            <Object Name="LoanClientDatabaseTable">
-              <Property Name="SelectedRowsCellValuesByColumnName">
-                <Parameters>
-                  <Parameter Name="ColumnName">LoanClientId</Parameter>
-                </Parameters>
-              </Property>
-            </Object>
-          </Value>
-        </Parameter>
-        <Parameter NativeName="StatusId">
-          <Value>
-            <Object Name="LoanClientStatus3ContextMenu">
-              <Property Name="ClickedMenuItemValue" />
-            </Object>
-          </Value>
-        </Parameter>
-        <Parameter NativeName="CloseDate">
-          <Value>
-            <Switch>
-              <Case>
-                <When>
-                  <Condition Name="SelectedStatusIsFinishStatusEqualCondition" />
-                </When>
-                <Then>
-                  <Command Name="LoanClientStatusEditFormShowCommand" Parameter="Date" />
-                </Then>
-              </Case>
-            </Switch>
-          </Value>
-        </Parameter>
-        <Parameter NativeName="SaleDate">
-          <Value>
-            <Switch>
-              <Case>
-                <When>
-                  <Condition Name="SelectedStatusIsSoldStatusEqualCondition" />
-                </When>
-                <Then>
-                  <Command Name="LoanClientStatusEditFormShowCommand" Parameter="Date" />
-                </Then>
-              </Case>
-            </Switch>
-          </Value>
-        </Parameter>
-      </Parameters>
-      <SqlQueries>
-        <SqlQuery Name="LoanClientStatus3UpdateSqlQuery" Type="Update" />
       </SqlQueries>
     </DataConnection>
 
@@ -2323,29 +2233,23 @@
     </Condition>
 
     <!-- Вкладки -->
-    <Condition Name="ShowFilters0Condition" Type="EqualCondition" Assembly="Conditions">
+    <Condition Name="ShowFiltersCondition" Type="EqualCondition" Assembly="Conditions">
       <Items>
         <Item>
           <Object Name="ShowFiltersVariable" />
         </Item>
-        <Item>0</Item>
+        <Item>True</Item>
       </Items>
+      <DataType Type="BooleanDataType">
     </Condition>
-    <Condition Name="ShowFilters1Condition" Type="EqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <Object Name="ShowFiltersVariable" />
-        </Item>
-        <Item>1</Item>
-      </Items>
-    </Condition>
-    <Condition Name="ShowFilters2Condition" Type="EqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <Object Name="ShowFiltersVariable" />
-        </Item>
-        <Item>2</Item>
-      </Items>
+
+    <Condition Name="ShowFiltersLoanCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <And>
+          <Condition Name="CurrentTabEqualLoanCondition" />
+          <Condition Name="ShowFiltersCondition" />
+        </And>
+      </ConditionExpression>
     </Condition>
 
     <Condition Name="CurrentTabEqualLoanCondition" Type="EqualCondition" Assembly="Conditions">
@@ -2985,37 +2889,6 @@
         </Item>
         <Item>
           <Object Name="LoanClientStatusCheckedComboBox">
-            <Property Name="ItemsCount" />
-          </Object>
-        </Item>
-      </Items>
-      <DataType Type="IntegerDataType" />
-    </Condition>
-    <Condition Name="LoanClientStatus2CheckedComboBoxIsNotNullCondition" Type="NotEqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <Object Name="LoanClientStatus2CheckedComboBox">
-            <Property Name="SelectedItemsCount" />
-          </Object>
-        </Item>
-        <Item>
-          <Object Name="LoanClientStatus2CheckedComboBox">
-            <Property Name="ItemsCount" />
-          </Object>
-        </Item>
-      </Items>
-      <DataType Type="IntegerDataType" />
-    </Condition>
-
-    <Condition Name="LoanClientStatus3CheckedComboBoxIsNotNullCondition" Type="NotEqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <Object Name="LoanClientStatus3CheckedComboBox">
-            <Property Name="SelectedItemsCount" />
-          </Object>
-        </Item>
-        <Item>
-          <Object Name="LoanClientStatus3CheckedComboBox">
             <Property Name="ItemsCount" />
           </Object>
         </Item>
@@ -3723,26 +3596,6 @@
       </Items>
     </Condition>
 
-    <Condition Name="LoanClientStatus2ContextMenuChangedCondition" Type="ChangedCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <Object Name="LoanClientStatus2ContextMenu">
-            <Property Name="ClickedMenuItemValue" />
-          </Object>
-        </Item>
-      </Items>
-    </Condition>
-
-    <Condition Name="LoanClientStatus3ContextMenuChangedCondition" Type="ChangedCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <Object Name="LoanClientStatus3ContextMenu">
-            <Property Name="ClickedMenuItemValue" />
-          </Object>
-        </Item>
-      </Items>
-    </Condition>
-
     <Condition Name="LoanFilterTabVariableEqualLoanCondition" Type="EqualCondition" Assembly="Conditions">
       <Items>
         <Item>
@@ -3840,8 +3693,6 @@
           <Condition Name="LoanClientDebtRestTotalToNumericBoxIsNotNullCondition" />
           <Condition Name="LoanClientUserCheckedComboBoxIsNotNullCondition" />
           <Condition Name="LoanClientStatusCheckedComboBoxIsNotNullCondition" />
-          <Condition Name="LoanClientStatus2CheckedComboBoxIsNotNullCondition" />
-          <Condition Name="LoanClientStatus3CheckedComboBoxIsNotNullCondition" />
         </Or>
       </ConditionExpression>
     </Condition>
@@ -4478,63 +4329,11 @@
       </Items>
       <DataType Type="BooleanDataType" />
     </Condition>
-    <Condition Name="SelectedStatus2IsFinishStatusEqualCondition" Type="EqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <DataConnection SourceDataConnection="SelectedStatus2SecondaryGetDataConnection">
-            <Fields>
-              <Field Name="IsFinishStatus" />
-            </Fields>
-          </DataConnection>
-        </Item>
-        <Item>True</Item>
-      </Items>
-      <DataType Type="BooleanDataType" />
-    </Condition>
-    <Condition Name="SelectedStatus3IsFinishStatusEqualCondition" Type="EqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <DataConnection SourceDataConnection="SelectedStatus3SecondaryGetDataConnection">
-            <Fields>
-              <Field Name="IsFinishStatus" />
-            </Fields>
-          </DataConnection>
-        </Item>
-        <Item>True</Item>
-      </Items>
-      <DataType Type="BooleanDataType" />
-    </Condition>
 
     <Condition Name="SelectedStatusIsSoldStatusEqualCondition" Type="EqualCondition" Assembly="Conditions">
       <Items>
         <Item>
           <DataConnection SourceDataConnection="SelectedStatusSecondaryGetDataConnection">
-            <Fields>
-              <Field Name="IsSoldStatus" />
-            </Fields>
-          </DataConnection>
-        </Item>
-        <Item>True</Item>
-      </Items>
-      <DataType Type="BooleanDataType" />
-    </Condition>
-    <Condition Name="SelectedStatus2IsSoldStatusEqualCondition" Type="EqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <DataConnection SourceDataConnection="SelectedStatus2SecondaryGetDataConnection">
-            <Fields>
-              <Field Name="IsSoldStatus" />
-            </Fields>
-          </DataConnection>
-        </Item>
-        <Item>True</Item>
-      </Items>
-      <DataType Type="BooleanDataType" />
-    </Condition>
-    <Condition Name="SelectedStatus3IsSoldStatusEqualCondition" Type="EqualCondition" Assembly="Conditions">
-      <Items>
-        <Item>
-          <DataConnection SourceDataConnection="SelectedStatus3SecondaryGetDataConnection">
             <Fields>
               <Field Name="IsSoldStatus" />
             </Fields>
@@ -4827,12 +4626,12 @@
       <Xml Type="Path">CollectStatusList.xml</Xml>
       <Show Type="None" />
     </Command>
-    
+
     <Command Name="Status2ListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
       <Xml Type="Path">CollectStatus2List.xml</Xml>
       <Show Type="None" />
     </Command>
-    
+
     <Command Name="Status3ListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
       <Xml Type="Path">CollectStatus3List.xml</Xml>
       <Show Type="None" />
@@ -5991,7 +5790,6 @@
         <DataConnection Name="CessionPrimaryGetDataConnection" Packet="True" PacketGroup="0" />
         <DataConnection Name="StatusPrimaryGetDataConnection" Packet="True" PacketGroup="0" />
         <DataConnection Name="Status2PrimaryGetDataConnection" Packet="True" PacketGroup="0" />
-        <DataConnection Name="Status3PrimaryGetDataConnection" Packet="True" PacketGroup="0" />
         <DataConnection Name="CourtPrimaryGetDataConnection" Packet="True" PacketGroup="0" />
         <DataConnection Name="OspPrimaryGetDataConnection" Packet="True" PacketGroup="0" />
         <DataConnection Name="TaskTypePrimaryGetDataConnection" Packet="True" PacketGroup="0" />
@@ -6059,12 +5857,6 @@
     <Command Name="Status2PrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
       <DataConnections>
         <DataConnection Name="Status2PrimaryGetDataConnection" />
-      </DataConnections>
-    </Command>
-
-    <Command Name="Status3PrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
-      <DataConnections>
-        <DataConnection Name="Status3PrimaryGetDataConnection" />
       </DataConnections>
     </Command>
 
@@ -6621,16 +6413,6 @@
         <DataConnection Name="LoanClientStatusUpdateSetDataConnection" />
       </DataConnections>
     </Command>
-    <Command Name="LoanClientStatus2UpdateCommand" Type="SaveCommand" Assembly="Commands">
-      <DataConnections>
-        <DataConnection Name="LoanClientStatus2UpdateSetDataConnection" />
-      </DataConnections>
-    </Command>
-    <Command Name="LoanClientStatus3UpdateCommand" Type="SaveCommand" Assembly="Commands">
-      <DataConnections>
-        <DataConnection Name="LoanClientStatus3UpdateSetDataConnection" />
-      </DataConnections>
-    </Command>
 
     <Command Name="LoanClientUserUpdateCommand" Type="SaveCommand" Assembly="Commands">
       <DataConnections>
@@ -6641,7 +6423,7 @@
     <Command Name="LoanDeleteMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
       <Caption>Удаление</Caption>
       <Text>Дела будут безвозратно удалены (для всех фигурантов).
-
+      
 Вы действительно хотите удалить выбранные дела?</Text>
       <Icon Type="Question" />
       <Buttons Type="YesNo" />
@@ -6711,52 +6493,6 @@
 
     <Command Name="LoanClientStatus2ContextMenuShowCommand" Type="ContextMenuShowCommand" Assembly="Commands">
       <ContextMenu Name="LoanClientStatus2ContextMenu" />
-      <Top>
-        <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="ContentPanel">
-                <Property Name="Top" />
-              </Object>
-            </Item>
-            <Item>
-              <Object Name="LoanControlPanel">
-                <Property Name="Top" />
-              </Object>
-            </Item>
-            <Item>
-              <Object Name="LoanClientStatusButton">
-                <Property Name="Top" />
-              </Object>
-            </Item>
-          </Plus>
-        </Formula>
-      </Top>
-      <Left>
-        <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="ContentPanel">
-                <Property Name="Left" />
-              </Object>
-            </Item>
-            <Item>
-              <Object Name="LoanControlPanel">
-                <Property Name="Left" />
-              </Object>
-            </Item>
-            <Item>
-              <Object Name="LoanClientStatusButton">
-                <Property Name="Right" />
-              </Object>
-            </Item>
-          </Plus>
-        </Formula>
-      </Left>
-    </Command>
-
-    <Command Name="LoanClientStatus3ContextMenuShowCommand" Type="ContextMenuShowCommand" Assembly="Commands">
-      <ContextMenu Name="LoanClientStatus3ContextMenu" />
       <Top>
         <Formula>
           <Plus DataType="IntegerDataType">
@@ -7072,24 +6808,6 @@
             <Property Name="ColumnTitle">
               <Parameters>
                 <Parameter Name="ColumnName">LoanClientStatusTitle</Parameter>
-              </Parameters>
-            </Property>
-          </Object>
-        </Parameter>
-        <Parameter Name="LoanClientStatus2TitleTitle">
-          <Object Name="LoanClientDatabaseTable">
-            <Property Name="ColumnTitle">
-              <Parameters>
-                <Parameter Name="ColumnName">LoanClientStatus2Title</Parameter>
-              </Parameters>
-            </Property>
-          </Object>
-        </Parameter>
-        <Parameter Name="LoanClientStatus3TitleTitle">
-          <Object Name="LoanClientDatabaseTable">
-            <Property Name="ColumnTitle">
-              <Parameters>
-                <Parameter Name="ColumnName">LoanClientStatus3Title</Parameter>
               </Parameters>
             </Property>
           </Object>
@@ -7800,6 +7518,7 @@
       <Show Type="None" />
     </Command>
 
+    <!-- haha -->
     <Command Name="ShowFiltersSetCommand" Type="ValueSetCommand" Assembly="Commands">
       <Object Name="ShowFiltersVariable">
         <Input Name="Value" />
@@ -7808,40 +7527,8 @@
 
     <Command Name="ShowFiltersToggleCommand" Type="ValueSetCommand" Assembly="Commands">
       <Object Name="ShowFiltersVariable">
-        <Formula>
-          <Minus DataType="IntegerDataType">
-            <Item>
-              <Formula>
-                <Plus DataType="IntegerDataType">
-                  <Item><Object Name="ShowFiltersVariable" /></Item>
-                  <Item>1</Item>
-                </Plus>
-              </Formula>
-            </Item>
-            <Item>
-              <Formula>
-                <Multiply DataType="IntegerDataType">
-                  <Item>
-                    <Formula>
-                      <Divide DataType="IntegerDataType">
-                        <Item>
-                          <Formula>
-                            <Plus DataType="IntegerDataType">
-                              <Item><Object Name="ShowFiltersVariable" /></Item>
-                              <Item>1</Item>
-                            </Plus>
-                          </Formula>
-                        </Item>
-                        <Item>3</Item>
-                      </Divide>
-                    </Formula>
-                  </Item>
-                  <Item>3</Item>
-                </Multiply>
-              </Formula>
-            </Item>
-          </Minus>
-        </Formula>
+        <If>
+        <Not><Condition Name="ShowFiltersCondition" /></Not>
       </Object>
     </Command>
   </Commands>
@@ -8334,56 +8021,6 @@
 
     <Execution>
       <ConditionExpression>
-        <Condition Name="LoanClientStatus2ContextMenuChangedCondition" />
-      </ConditionExpression>
-      <Commands>
-        <Command Name="SelectedLoanClientIdVariableValueSetCommand" />
-        <If>
-          <When>
-            <Or>
-              <Condition Name="SelectedStatus2IsFinishStatusEqualCondition" />
-              <Condition Name="SelectedStatus2IsSoldStatusEqualCondition" />
-            </Or>
-          </When>
-          <Then>
-            <Command Name="LoanClientStatusEditFormShowCommand" />
-          </Then>
-          <Else>
-            <Command Name="LoanClientStatus2UpdateCommand" />
-            <Command Name="LoanClientPrimaryGetDataConnectionRefreshCommand" />
-            <Command Name="LoanClientDatabaseTableSelectRowsCommand" />
-          </Else>
-        </If>
-      </Commands>
-    </Execution>
-
-    <Execution>
-      <ConditionExpression>
-        <Condition Name="LoanClientStatus3ContextMenuChangedCondition" />
-      </ConditionExpression>
-      <Commands>
-        <Command Name="SelectedLoanClientIdVariableValueSetCommand" />
-        <If>
-          <When>
-            <Or>
-              <Condition Name="SelectedStatus3IsFinishStatusEqualCondition" />
-              <Condition Name="SelectedStatus3IsSoldStatusEqualCondition" />
-            </Or>
-          </When>
-          <Then>
-            <Command Name="LoanClientStatusEditFormShowCommand" />
-          </Then>
-          <Else>
-            <Command Name="LoanClientStatus3UpdateCommand" />
-            <Command Name="LoanClientPrimaryGetDataConnectionRefreshCommand" />
-            <Command Name="LoanClientDatabaseTableSelectRowsCommand" />
-          </Else>
-        </If>
-      </Commands>
-    </Execution>
-
-    <Execution>
-      <ConditionExpression>
         <Command Name="LoanClientStatusEditFormShowCommand" Parameter="Updated" />
       </ConditionExpression>
       <Commands>
@@ -8573,8 +8210,6 @@
       </ConditionExpression>
       <Commands>
         <Command Name="StatusPrimaryGetDataConnectionRefreshCommand" />
-        <Command Name="Status2PrimaryGetDataConnectionRefreshCommand" />
-        <Command Name="Status3PrimaryGetDataConnectionRefreshCommand" />
       </Commands>
     </Execution>
 
@@ -8890,52 +8525,6 @@
         <Array>
           <Source>
             <DataConnection SourceDataConnection="StatusSecondaryGetDataConnection">
-              <Fields>
-                <Field Name="Title" />
-                <Field Name="StatusId" />
-              </Fields>
-            </DataConnection>
-          </Source>
-          <Select>
-            <Items>
-              <Item Type="Index">0</Item>
-              <Item Type="Index">1</Item>
-              <Item Type="Index">0</Item>
-              <Item Type="Value">True</Item>
-            </Items>
-          </Select>
-        </Array>
-      </MenuItems>
-    </ContextMenu>
-
-    <ContextMenu Name="LoanClientStatus2ContextMenu" Type="ListContextMenu">
-      <MenuItems>
-        <Array>
-          <Source>
-            <DataConnection SourceDataConnection="Status2SecondaryGetDataConnection">
-              <Fields>
-                <Field Name="Title" />
-                <Field Name="StatusId" />
-              </Fields>
-            </DataConnection>
-          </Source>
-          <Select>
-            <Items>
-              <Item Type="Index">0</Item>
-              <Item Type="Index">1</Item>
-              <Item Type="Index">0</Item>
-              <Item Type="Value">True</Item>
-            </Items>
-          </Select>
-        </Array>
-      </MenuItems>
-    </ContextMenu>
-
-    <ContextMenu Name="LoanClientStatus3ContextMenu" Type="ListContextMenu">
-      <MenuItems>
-        <Array>
-          <Source>
-            <DataConnection SourceDataConnection="Status3SecondaryGetDataConnection">
               <Fields>
                 <Field Name="Title" />
                 <Field Name="StatusId" />
@@ -9431,6 +9020,8 @@
         </MenuItem>
         <MenuItem Name="Separator1" Type="Separator" />
 
+
+
         <MenuItem Name="StatusListMenuItem" Type="MenuItem">
           <Title>Статусы...</Title>
           <Commands>
@@ -9438,19 +9029,22 @@
           </Commands>
         </MenuItem>
 
+
         <MenuItem Name="Status2ListMenuItem" Type="MenuItem">
-          <Title>Статусы ИД...</Title>
+          <Title>Статусы 2...</Title>
           <Commands>
             <Command Name="Status2ListFormShowCommand" />
           </Commands>
         </MenuItem>
 
         <MenuItem Name="Status3ListMenuItem" Type="MenuItem">
-          <Title>Статусы замены...</Title>
+          <Title>Статусы 3...</Title>
           <Commands>
             <Command Name="Status3ListFormShowCommand" />
           </Commands>
         </MenuItem>
+
+
 
         <MenuItem Name="Separator2" Type="Separator" />
         <MenuItem Name="SettingsMenuItem" Type="MenuItem">
@@ -9568,6 +9162,10 @@
 
     <MyObject Name="CurrentTabVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
       <Value>loan</Value>
+    </MyObject>
+
+    <MyObject Name="ShowFiltersVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>0</Value>
     </MyObject>
 
     <MyObject Name="SelectedLoanClientIdVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
@@ -10514,6 +10112,7 @@
       <TabIndex>1</TabIndex>
       <BackColor>BackThemeColor</BackColor>
 
+      <!-- ФИЛЬТРЫ ЗДЕСЬ -->
       <!--панели фильтров-->
       <MyObject Name="LoanFilterPanel" Type="Panel" Assembly="BaseControls" ChangeForm="False">
         <Right>
@@ -13290,6 +12889,7 @@
             </ValueList>
             <Value />
           </MyObject>
+
           <MyObject Name="LoanClientStatus2CheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls" ChangeForm="False">
             <Top>
               <Object Name="LoanClientStatusLabel">
@@ -13310,34 +12910,6 @@
             <NullValue Show="True" Title="[Все]" />
             <ValueList>
               <DataConnection SourceDataConnection="Status2SecondaryGetDataConnection">
-                <Fields>
-                  <Field Name="StatusId" />
-                  <Field Name="Title" />
-                </Fields>
-              </DataConnection>
-            </ValueList>
-            <Value />
-          </MyObject>
-          <MyObject Name="LoanClientStatus3CheckedComboBox" Type="CheckedComboBox" Assembly="BaseControls" ChangeForm="False">
-            <Top>
-              <Object Name="LoanClientStatusLabel">
-                <Property Name="Bottom" />
-              </Object>
-            </Top>
-            <Left>
-              <Object Name="LoanClientStatusLabel">
-                <Property Name="Left" />
-              </Object>
-            </Left>
-            <Width>
-              <Object Name="LoanClientStatusLabel">
-                <Property Name="Width" />
-              </Object>
-            </Width>
-            <TabIndex>20</TabIndex>
-            <NullValue Show="True" Title="[Все]" />
-            <ValueList>
-              <DataConnection SourceDataConnection="Status3SecondaryGetDataConnection">
                 <Fields>
                   <Field Name="StatusId" />
                   <Field Name="Title" />
@@ -18724,162 +18296,6 @@
       </MyObject>
 
       <!-- панели для дел -->
-
-
-      <MyObject Name="LoanStatus2Panel" Type="StatusPanel" Assembly="Collect">
-        <Top>
-          <Formula>
-            <Minus DataType="IntegerDataType">
-              <Item>
-                <Object Name="ContentPanel">
-                  <Property Name="Height" />
-                </Object>
-              </Item>
-              <Item>
-                <Object Name="LoanStatusPanel">
-                  <Property Name="Height" />
-                </Object>
-              </Item>
-            </Minus>
-          </Formula>
-        </Top>
-        <Left>
-          <Object Name="LoanContentPanel">
-            <Property Name="Left" />
-          </Object>
-        </Left>
-        <Width>
-          <Formula>
-            <Minus DataType="IntegerDataType">
-              <Item>
-                <Object Name="ContentPanel">
-                  <Property Name="Width" />
-                </Object>
-              </Item>
-              <Item>
-                <Object Name="LoanStatusControlPanel">
-                  <Property Name="Width" />
-                </Object>
-              </Item>
-              <Item>10</Item>
-            </Minus>
-          </Formula>
-        </Width>
-        <Height>50</Height>
-        <TabIndex>7</TabIndex>
-        <ButtonWidth>
-          <DataConnection SourceDataConnection="SettingsPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="StatusButtonWidth" />
-            </Fields>
-          </DataConnection>
-        </ButtonWidth>
-        <ButtonHeight>
-          <Object Name="ArchiveStatusButton">
-            <Property Name="Height" />
-          </Object>
-        </ButtonHeight>
-        <ButtonFontStyle>LittleFont</ButtonFontStyle>
-        <ButtonBorderColor>ThemeColorBackButtonBorder</ButtonBorderColor>
-        <SelectedButtonFontStyle>LittleBoldFont</SelectedButtonFontStyle>
-        <UpButtonImage>Images\13x13\menu_up.png</UpButtonImage>
-        <DownButtonImage>Images\13x13\menu_down.png</DownButtonImage>
-        <StatusList>
-          <DataConnection SourceDataConnection="Status2SecondaryGetDataConnection">
-            <Fields>
-              <Field Name="StatusId" />
-              <Field Name="Title" />
-              <Field Name="ColorHtmlCode" />
-            </Fields>
-          </DataConnection>
-        </StatusList>
-        <StatusCheckedComboBox Name="LoanClientStatus2CheckedComboBox" />
-        <LoanDataConnection Name="LoanClientPrimaryGetDataConnection" />
-        <Visible>
-          <And>
-            <Condition Name="CurrentTabEqualLoanCondition" />
-            <Condition Name="ShowFilters1Condition" />
-          </And>
-        </Visible>
-      </MyObject>
-
-      <MyObject Name="LoanStatus3Panel" Type="StatusPanel" Assembly="Collect">
-        <Top>
-          <Formula>
-            <Minus DataType="IntegerDataType">
-              <Item>
-                <Object Name="ContentPanel">
-                  <Property Name="Height" />
-                </Object>
-              </Item>
-              <Item>
-                <Object Name="LoanStatusPanel">
-                  <Property Name="Height" />
-                </Object>
-              </Item>
-            </Minus>
-          </Formula>
-        </Top>
-        <Left>
-          <Object Name="LoanContentPanel">
-            <Property Name="Left" />
-          </Object>
-        </Left>
-        <Width>
-          <Formula>
-            <Minus DataType="IntegerDataType">
-              <Item>
-                <Object Name="ContentPanel">
-                  <Property Name="Width" />
-                </Object>
-              </Item>
-              <Item>
-                <Object Name="LoanStatusControlPanel">
-                  <Property Name="Width" />
-                </Object>
-              </Item>
-              <Item>10</Item>
-            </Minus>
-          </Formula>
-        </Width>
-        <Height>50</Height>
-        <TabIndex>7</TabIndex>
-        <ButtonWidth>
-          <DataConnection SourceDataConnection="SettingsPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="StatusButtonWidth" />
-            </Fields>
-          </DataConnection>
-        </ButtonWidth>
-        <ButtonHeight>
-          <Object Name="ArchiveStatusButton">
-            <Property Name="Height" />
-          </Object>
-        </ButtonHeight>
-        <ButtonFontStyle>LittleFont</ButtonFontStyle>
-        <ButtonBorderColor>ThemeColorBackButtonBorder</ButtonBorderColor>
-        <SelectedButtonFontStyle>LittleBoldFont</SelectedButtonFontStyle>
-        <UpButtonImage>Images\13x13\menu_up.png</UpButtonImage>
-        <DownButtonImage>Images\13x13\menu_down.png</DownButtonImage>
-        <StatusList>
-          <DataConnection SourceDataConnection="Status3SecondaryGetDataConnection">
-            <Fields>
-              <Field Name="StatusId" />
-              <Field Name="Title" />
-              <Field Name="ColorHtmlCode" />
-            </Fields>
-          </DataConnection>
-        </StatusList>
-        <StatusCheckedComboBox Name="LoanClientStatus3CheckedComboBox" />
-        <LoanDataConnection Name="LoanClientPrimaryGetDataConnection" />
-        <Visible>
-          <And>
-            <Condition Name="CurrentTabEqualLoanCondition" />
-            <Condition Name="ShowFilters2Condition" />
-          </And>
-        </Visible>
-      </MyObject>
-
       <MyObject Name="LoanContentPanel" Type="Panel" Assembly="BaseControls">
         <Top>0</Top>
         <Left>0</Left>
@@ -19020,7 +18436,7 @@
             <Column Name="LoanClientStatus2Id" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Visible>False</Visible>
             </Column>
-            <Column Name="LoanClientStatus3Id" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Column Name="LoanClientStatusId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Visible>False</Visible>
             </Column>
             <Column Name="InnerOrgId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
@@ -19179,7 +18595,8 @@
               </Substitution>
             </Column>
             <Column Name="LoanClientStatus2Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-	    <Title>Статус ИД</Title><Width>150</Width>
+              <Title>Статус 2</Title>
+              <Width>150</Width>
               <WrapMode Value="True" />
               <Substitution SourceColumn="LoanClientStatus2Id">
                 <DataConnection SourceDataConnection="Status2PrimaryGetDataConnection">
@@ -19191,7 +18608,7 @@
               </Substitution>
             </Column>
             <Column Name="LoanClientStatus3Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Статус замены</Title>
+              <Title>Статус 3</Title>
               <Width>150</Width>
               <WrapMode Value="True" />
               <Substitution SourceColumn="LoanClientStatus3Id">
@@ -19337,7 +18754,7 @@
             </Column>
             <Column Name="CollectionApplicationSum" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Взыскание
-
+              
 Сумма заявления</Title>
               <DataType Type="DecimalDataType" Format="N2" />
               <Alignment Value="MiddleRight" />
@@ -20672,12 +20089,12 @@
             <Command Name="AppTaxCalcFormShowCommand" />
           </Commands>
           <Visible>
-            <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
-              <Fields>
-                <Field Name="ModuleApplicationTaxPermission" />
-              </Fields>
-            </DataConnection>
-          </Visible>
+              <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+                <Fields>
+                  <Field Name="ModuleApplicationTaxPermission" />
+                </Fields>
+              </DataConnection>
+            </Visible>
         </MyObject>
 
         <MyObject Name="TsFilterButton" Type="Button" Assembly="BaseControls">
@@ -20686,6 +20103,56 @@
               <Plus DataType="IntegerDataType">
                 <Item>
                   <Object Name="AppTaxCalcButton">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="LoanAddButton">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="LoanAddButton">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="LoanAddButton">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TextAlign>MiddleLeft</TextAlign>
+          <FontStyle>SecondaryFont</FontStyle>
+          <Image>Images\24x24\jurisdiction.png</Image>
+          <ImageAlign>MiddleLeft</ImageAlign>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Text>        <Object Name="CurrentTabVariable" /></Text>
+          <Hint>Не влезай убъет</Hint>
+          <Enabled>
+            <Condition Name="LoanClientSelectedCondition" />
+          </Enabled>
+          <DisabledMode>True</DisabledMode>
+          <DisabledText>Выберите дела для расчета госпошлины.</DisabledText>
+          <Commands>
+            <Command Name="ShowFiltersToggleCommand">
+          </Commands>
+          <Visible>True</Visible>
+        </MyObject>
+
+        <MyObject Name="LoanClientStatus2Button" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="TsFilterButton">
                     <Property Name="Bottom" />
                   </Object>
                 </Item>
@@ -20708,65 +20175,17 @@
               <Property Name="Width" />
             </Object>
           </Width>
-          <TextAlign>MiddleLeft</TextAlign>
-          <FontStyle>SecondaryFont</FontStyle>
-          <Image>Images\24x24\loopstatus.png</Image>
-          <ImageAlign>MiddleLeft</ImageAlign>
-          <FlatStyle>Flat</FlatStyle>
-          <FlatBorderSize>1</FlatBorderSize>
-          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
-          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
-          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
-          <Text>        Следующий статус</Text>
-          <Hint>Следующий статус</Hint>
-          <Enabled>True</Enabled>
-          <Commands>
-            <Command Name="Status2PrimaryGetDataConnectionRefreshCommand" />
-            <Command Name="Status3PrimaryGetDataConnectionRefreshCommand" />
-            <Command Name="ShowFiltersToggleCommand" />
-          </Commands>
-          <Visible>True</Visible>
-        </MyObject>
-
-        <MyObject Name="LoanClientStatus2Button" Type="Button" Assembly="BaseControls">
-          <Top>
-            <Formula>
-              <Plus DataType="IntegerDataType">
-                <Item>
-                  <Object Name="TsFilterButton">
-                    <Property Name="Bottom" />
-                  </Object>
-                </Item>
-                <Item>5</Item>
-              </Plus>
-            </Formula>
-          </Top>
-          <Left>
-            <Object Name="LoanAddButton">
-              <Property Name="Left" />
-            </Object>
-          </Left>
-          <Height>
-            <Object Name="LoanAddButton">
-              <Property Name="Height" />
-            </Object>
-          </Height>
-          <Width>
-            <Object Name="LoanAddButton">
-              <Property Name="Width" />
-            </Object>
-          </Width>
           <TabIndex>6</TabIndex>
           <TextAlign>MiddleLeft</TextAlign>
           <FontStyle>SecondaryFont</FontStyle>
-          <Image>Images\24x24\status2.png</Image>
+          <Image>Images\24x24\status.png</Image>
           <ImageAlign>MiddleLeft</ImageAlign>
           <FlatStyle>Flat</FlatStyle>
           <FlatBorderSize>1</FlatBorderSize>
           <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
           <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
           <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
-          <Text>        Изменить статус ИД</Text>
+          <Text>        Изменить статус 2</Text>
           <Hint>
             <Switch>
               <Case>
@@ -20775,7 +20194,7 @@
                 </When>
                 <Then />
               </Case>
-              <Case>Изменить статус ИД</Case>
+              <Case>Изменить статус 2</Case>
             </Switch>
           </Hint>
           <Commands>
@@ -20788,65 +20207,6 @@
           <DisabledText>Выберите дела для смены статуса.</DisabledText>
         </MyObject>
 
-        <MyObject Name="LoanClientStatus3Button" Type="Button" Assembly="BaseControls">
-          <Top>
-            <Formula>
-              <Plus DataType="IntegerDataType">
-                <Item>
-                  <Object Name="LoanClientStatus2Button">
-                    <Property Name="Bottom" />
-                  </Object>
-                </Item>
-                <Item>5</Item>
-              </Plus>
-            </Formula>
-          </Top>
-          <Left>
-            <Object Name="LoanAddButton">
-              <Property Name="Left" />
-            </Object>
-          </Left>
-          <Height>
-            <Object Name="LoanAddButton">
-              <Property Name="Height" />
-            </Object>
-          </Height>
-          <Width>
-            <Object Name="LoanAddButton">
-              <Property Name="Width" />
-            </Object>
-          </Width>
-          <TabIndex>6</TabIndex>
-          <TextAlign>MiddleLeft</TextAlign>
-          <FontStyle>SecondaryFont</FontStyle>
-          <Image>Images\24x24\status3.png</Image>
-          <ImageAlign>MiddleLeft</ImageAlign>
-          <FlatStyle>Flat</FlatStyle>
-          <FlatBorderSize>1</FlatBorderSize>
-          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
-          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
-          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
-          <Text>        Изменить статус замены</Text>
-          <Hint>
-            <Switch>
-              <Case>
-                <When>
-                  <Object Name="LoanControlPanelResizeVariable" />
-                </When>
-                <Then />
-              </Case>
-              <Case>Изменить статус замены</Case>
-            </Switch>
-          </Hint>
-          <Commands>
-            <Command Name="LoanClientStatus3ContextMenuShowCommand" />
-          </Commands>
-          <Enabled>
-            <Condition Name="LoanClientSelectedCondition" />
-          </Enabled>
-          <DisabledMode>True</DisabledMode>
-          <DisabledText>Выберите дела для смены статуса.</DisabledText>
-        </MyObject>
         <MyObject Name="DebexButton" Type="Button" Assembly="BaseControls">
           <Top>
             <Formula>
@@ -20964,6 +20324,7 @@
           </Visible>
         </MyObject>
 
+<!-- КНОПКА ФИЛЬТРЫ ЗДЕСЬ -->
         <MyObject Name="LoanFilterButton" Type="Button" Assembly="BaseControls">
           <Top>
             <Formula>
@@ -21071,6 +20432,82 @@
         </MyObject>
       </MyObject>
 
+<!-- СПИСОК ФИЛЬТРЫ ЗДЕСЬ -->
+      <MyObject Name="LoanStatus2Panel" Type="StatusPanel" Assembly="Collect">
+        <Top>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="LoanStatusPanel">
+                  <Property Name="Height" />
+                </Object>
+              </Item>
+            </Minus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="LoanContentPanel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="LoanStatusControlPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>50</Height>
+        <TabIndex>7</TabIndex>
+        <ButtonWidth>
+          <DataConnection SourceDataConnection="SettingsPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="StatusButtonWidth" />
+            </Fields>
+          </DataConnection>
+        </ButtonWidth>
+        <ButtonHeight>
+          <Object Name="ArchiveStatusButton">
+            <Property Name="Height" />
+          </Object>
+        </ButtonHeight>
+        <ButtonFontStyle>LittleFont</ButtonFontStyle>
+        <ButtonBorderColor>ThemeColorBackButtonBorder</ButtonBorderColor>
+        <SelectedButtonFontStyle>LittleBoldFont</SelectedButtonFontStyle>
+        <UpButtonImage>Images\13x13\menu_up.png</UpButtonImage>
+        <DownButtonImage>Images\13x13\menu_down.png</DownButtonImage>
+        <StatusList>
+          <DataConnection SourceDataConnection="Status2SecondaryGetDataConnection">
+            <Fields>
+              <Field Name="StatusId" />
+              <Field Name="Title" />
+              <Field Name="ColorHtmlCode" />
+            </Fields>
+          </DataConnection>
+        </StatusList>
+        <StatusCheckedComboBox Name="LoanClientStatus2CheckedComboBox" />
+        <LoanDataConnection Name="LoanClientPrimaryGetDataConnection" />
+        <Visible>
+          <Not><Condition Name="ShowFiltersLoanCondition" /></Not>
+        </Visible>
+      </MyObject>
+
+
       <MyObject Name="LoanStatusPanel" Type="StatusPanel" Assembly="Collect">
         <Top>
           <Formula>
@@ -21141,10 +20578,7 @@
         <StatusCheckedComboBox Name="LoanClientStatusCheckedComboBox" />
         <LoanDataConnection Name="LoanClientPrimaryGetDataConnection" />
         <Visible>
-          <And>
-            <Condition Name="CurrentTabEqualLoanCondition" />
-            <Condition Name="ShowFilters0Condition" />
-          </And>
+          <Condition Name="ShowFiltersLoanCondition" />
         </Visible>
       </MyObject>
 
@@ -25588,10 +25022,6 @@
           </DisabledText>
         </MyObject>
       </MyObject>
-    </MyObject>
-
-    <MyObject Name="ShowFiltersVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
-      <Value>0</Value>
     </MyObject>
   </MyObjects>
 </Form>
