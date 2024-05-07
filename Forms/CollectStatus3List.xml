@@ -2,7 +2,7 @@
 <Form Name="CollectStatusListForm" Width="750" Height="450" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
   <Parameters>
     <Parameter Name="StatusId" />
-    <Parameter Name="Title">Список статусов ИД</Parameter>
+    <Parameter Name="Title">Список статусов замены</Parameter>
     <Parameter Name="SelectionMode">False</Parameter>
     <Parameter Name="SelectedStatusId" />
     <Parameter Name="Selected">False</Parameter>
