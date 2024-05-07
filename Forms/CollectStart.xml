@@ -5466,6 +5466,18 @@
       </Object>
     </Command>
 
+    <Command Name="LoanClientStatus2CheckedComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="LoanClientStatus2CheckedComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="LoanClientStatus3CheckedComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="LoanClientStatus3CheckedComboBox">
+        <Input />
+      </Object>
+    </Command>
+
     <Command Name="SuccessionCourtCheckedComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
       <Object Name="SuccessionCourtCheckedComboBox">
         <Input />
@@ -5858,6 +5870,8 @@
         <Command Name="LoanClientDebtRestTotalToNumericBoxValueSetCommand" />
         <Command Name="LoanClientUserCheckedComboBoxValueSetCommand" />
         <Command Name="LoanClientStatusCheckedComboBoxValueSetCommand" />
+        <Command Name="LoanClientStatus2CheckedComboBoxValueSetCommand" />
+        <Command Name="LoanClientStatus3CheckedComboBoxValueSetCommand" />
         <Command Name="SuccessionCourtCheckedComboBoxValueSetCommand" />
         <Command Name="SuccessionCourtDocumentCheckedComboBoxValueSetCommand" />
         <Command Name="SuccessionDocumentNumberTextBoxValueSetCommand" />
