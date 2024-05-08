@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Form Name="CollectStartForm" Title="Коллекторское агентство" Width="1260" Height="700" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" FormState="Maximized" FormBorderStyle="FixedSingle" ValidationType="Flat" FlatColor="Red" FlatWidth="2" Opacity="0">
+<Form Name="CollectStartForm" Title="Коллекторское агентство" Width="1260" Height="700" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" MaximizeBox="True" FormState="Maximized" FormBorderStyle="Sizable" ValidationType="Flat" FlatColor="Red" FlatWidth="2" Opacity="0">
   <Parameters>
     <Parameter Name="FirstLogin">True</Parameter>
   </Parameters>
@@ -4770,6 +4770,11 @@
 
     <Command Name="AboutFormShowCommand" Type="FormShowCommand" Assembly="Commands">
       <Xml Type="Path">CollectAbout.xml</Xml>
+      <Show Type="None" />
+    </Command>
+
+    <Command Name="WhatsNewShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">WhatsNew.xml</Xml>
       <Show Type="None" />
     </Command>
 
@@ -9551,6 +9556,13 @@
           </Commands>
         </MenuItem>
       </Items>
+    </MenuItem>
+
+    <MenuItem Name="HelpMenuItem" Type="MenuItem">
+      <Title>Что нового</Title>
+      <Commands>
+        <Command Name="WhatsNewShowCommand" />
+      </Commands>
     </MenuItem>
   </MainMenu>
 

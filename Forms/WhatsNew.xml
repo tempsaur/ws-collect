@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<Form Name="CollectAboutForm" Title="Что нового" Width="420" Height="320" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" BackColor="White" MinimizeBox="False" MaximizeBox="False">
+  <Parameters>
+    <Parameter Name="Title">Что там нового появилось</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadLightThemeColor" Red="115" Green="150" Blue="166" Alpha="255" />
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+  </Commands>
+
+  <Executions>
+    <!-- <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="GetEngineAssemblyVersionLongCommand" />
+        <Command Name="GetEngineAssemblyDateTimeCommand" />
+      </Commands>
+    </Execution> -->
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseCommand" />
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>HeadThemeColor</BackColor>
+
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>8</Top>
+        <Left>10</Left>
+        <Height>30</Height>
+        <Width>200</Width>
+        <Text>Что нового</Text>
+        <FontStyle>HeadTitleFont</FontStyle>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="Thing1" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="HeadLabel">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>25</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>10</Left>
+      <!-- <Height>20</Height> -->
+      <Width>400</Width>
+      <Text>Это окошко</Text>
+    </MyObject>
+
+    <MyObject Name="Thing2" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="Thing1">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>10</Left>
+      <!-- <Height>20</Height> -->
+      <Width>400</Width>
+      <Text>Главное окно теперь можно расширять и сужать</Text>
+    </MyObject>
+  </MyObjects>
+</Form>
