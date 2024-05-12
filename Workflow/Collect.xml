@@ -7685,6 +7685,7 @@
           LCC.document_get_date AS "CollectionDocumentGetDate",
           LCC.application_type_id AS "CollectionApplicationTypeId",
           LCC.application_sum AS "CollectionApplicationSum",
+          CC.title AS "CollectionApplicationCourtTitle"
           LCC.application_tax AS "CollectionApplicationTax",
           LCE.send_date AS "ExecutiveSendDate",
           LCE.start_date AS "ExecutiveStartDate",
@@ -7712,6 +7713,7 @@
           LEFT JOIN collect.cession C USING(cession_id)
           LEFT JOIN collect.loan_client_succession LCS USING(loan_client_id)
           LEFT JOIN collect.loan_client_collection LCC ON LCC.loan_client_id = LC.loan_client_id AND LCC.is_main
+          LEFT JOIN collect.court CC ON LCC.court_id = CC.court_id
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
         ORDER BY F."RowNumber";
@@ -10096,7 +10098,7 @@
       </Text>
     </SqlQuery>
 
-    <SqlQuery Name="TaskSetatusSelectSqlQuery">
+    <SqlQuery Name="TaskStatusSelectSqlQuery">
       <Text>
         SELECT
           task_status_id AS "TaskStatusId",
@@ -19446,6 +19448,8 @@
         <SqlQuery Name="LoanClientSelectSqlQuery" />
 
         <SqlQuery Name="LoanClientStatusUpdateSqlQuery" />
+        <SqlQuery Name="LoanClientStatus2UpdateSqlQuery" />
+        <SqlQuery Name="LoanClientStatus3UpdateSqlQuery" />
         <SqlQuery Name="LoanArchiveSqlQuery" />
         <SqlQuery Name="LoanDeleteSqlQuery" />
       </SqlQueries>
@@ -19597,7 +19601,7 @@
         <SqlQuery Name="TaskTypeSelectSqlQuery" />
         <SqlQuery Name="ClientSimpleSelectSqlQuery" />
         <SqlQuery Name="LoanClientSimpleSelectSqlQuery" />
-        <SqlQuery Name="TaskSetatusSelectSqlQuery" />
+        <SqlQuery Name="TaskStatusSelectSqlQuery" />
         <SqlQuery Name="TaskLoanByTaskIdSelectSqlQuery" />
         <SqlQuery Name="LoanAllowedForUserSelectSqlQuery" />
         <SqlQuery Name="ClientAllowedForUserSelectSqlQuery" />

@@ -158,6 +158,7 @@
           <Field Name="CollectionDocumentGetDate" />
           <Field Name="CollectionApplicationTypeId" />
           <Field Name="CollectionApplicationSum" />
+          <Field Name="CollectionApplicationCourtTitle" />
           <Field Name="CollectionApplicationTax" />
           <Field Name="ExecutiveSendDate" />
           <Field Name="ExecutiveStartDate" />
@@ -19205,7 +19206,7 @@
               </Substitution>
             </Column>
             <Column Name="LoanClientStatus2Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-	    <Title>Статус ИД</Title><Width>150</Width>
+              <Title>Статус ИД</Title><Width>150</Width>
               <WrapMode Value="True" />
               <Substitution SourceColumn="LoanClientStatus2Id">
                 <DataConnection SourceDataConnection="Status2PrimaryGetDataConnection">
@@ -19368,6 +19369,13 @@
               <DataType Type="DecimalDataType" Format="N2" />
               <Alignment Value="MiddleRight" />
               <Width>170</Width>
+              <WrapMode Value="True" />
+            </Column>
+            <Column Name="CollectionApplicationCourtTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Взыскание
+
+Наименование суда</Title>
+              <Width>200</Width>
               <WrapMode Value="True" />
             </Column>
             <Column Name="CollectionApplicationTax" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">

@@ -1,0 +1,3797 @@
+<?xml version="1.0"?>
+<Form Name="CollectCollectionEditForm" Width="1185" Height="605" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+  <Parameters>
+    <Parameter Name="Edit">False</Parameter>
+    <Parameter Name="ClientId" />
+    <Parameter Name="ID" />
+    <Parameter Name="LoanClientFormID" />
+    <Parameter Name="CourtDocumentId" />
+    <Parameter Name="CourtDocumentNumber" />
+    <Parameter Name="CourtDocumentDate" />
+    <Parameter Name="CourtId" />
+    <Parameter Name="SendDate" />
+    <Parameter Name="CaseNumber" />
+    <Parameter Name="Judge" />
+    <Parameter Name="ContactDate" />
+    <Parameter Name="CourtDate" />
+    <Parameter Name="ResultDate" />
+    <Parameter Name="CourtResultId" />
+    <Parameter Name="Sum" />
+    <Parameter Name="IsMain" />
+    <Parameter Name="IsRecieved" />
+    <Parameter Name="LegalDate" />
+    <Parameter Name="DocumentGetDate" />
+    <Parameter Name="CancelDate" />
+    <Parameter Name="AppealSendDate" />
+    <Parameter Name="AppealDate" />
+    <Parameter Name="AppealResult" />
+    <Parameter Name="CassationSendDate" />
+    <Parameter Name="CassationDate" />
+    <Parameter Name="CassationResult" />
+    <Parameter Name="JurisdictionArray" />
+    <Parameter Name="ApplicationTypeId" />
+    <Parameter Name="ApplicationSum" />
+    <Parameter Name="ApplicationTax" />
+    <Parameter Name="ApplicationTaxPaymentExportDate" />
+    <Parameter Name="ApplicationTaxPaymentExportNumber" />
+    <Parameter Name="PreviousCollectionsArray" />
+    <Parameter Name="PreviousCollectionID" />
+    <Parameter Name="SelectedCollectionInPreviousCollection">False</Parameter>
+    <Parameter Name="Title">
+      <Switch>
+        <Case>
+          <When>
+            <Parameter Name="Edit" />
+          </When>
+          <Then>Редактирование судебных данных</Then>
+        </Case>
+        <Case>Добавление судебных данных</Case>
+      </Switch>
+    </Parameter>
+    <Parameter Name="Updated">False</Parameter>
+  </Parameters>
+
+  <Appearance>
+    <Colors>
+      <Color Name="Black" Red="0" Green="0" Blue="0" Alpha="255" />
+      <Color Name="White" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="Red" Red="255" Green="0" Blue="0" Alpha="255" />
+      <Color Name="Gray200" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="Gray100" Red="100" Green="100" Blue="100" Alpha="255" />
+      <Color Name="ArchiveColor" Red="175" Green="175" Blue="175" Alpha="255" />
+
+      <Color Name="HeadThemeColor" Red="176" Green="196" Blue="222" Alpha="255" />
+      <Color Name="HeadTextColor" Red="30" Green="30" Blue="30" Alpha="255" />
+
+      <Color Name="HeadSeparatorThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+      <Color Name="FootSeparatorThemeColor" Red="200" Green="200" Blue="200" Alpha="255" />
+      <Color Name="BackThemeColor" Red="255" Green="255" Blue="255" Alpha="255" />
+
+      <!-- Стили кнопок -->
+      <Color Name="ThemeColorBackButtonBorder" Red="205" Green="205" Blue="205" Alpha="255" />
+      <Color Name="FlatMouseDownBackColor" Red="201" Green="219" Blue="241" Alpha="255" />
+      <Color Name="FlatMouseOverBackColor" Red="228" Green="237" Blue="248" Alpha="255" />
+    </Colors>
+
+    <FontStyles>
+      <FontStyle Name="TitleFont" Font="Segoe UI" Size="9" />
+      <FontStyle Name="TitleItalicFont" Font="Segoe UI" Size="9" Italic="True" />
+      <FontStyle Name="ButtonFont" Font="Segoe UI" Size="10" />
+      <FontStyle Name="HeadTitleFont" Font="Segoe UI" Size="15" />
+    </FontStyles>
+  </Appearance>
+
+  <DataConnections>
+    <DataConnection Name="PermissionPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="PermissionSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ListCourtPermission" />
+          <Field Name="ModuleApplicationTaxPermission" />
+          <Field Name="UserIsAdministrator" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtByClientIdSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CourtId" />
+          <Field Name="Title" />
+          <Field Name="Address" />
+          <Field Name="Archive" />
+          <Field Name="ClientId" />
+        </Fields>
+        <Parameters>
+          <Parameter NativeName="ClientIds" SendAsArray="True">
+            <Value>
+              <Parameter Name="ClientId" />
+            </Value>
+          </Parameter>
+        </Parameters>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtSecondaryForCollectionGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="CourtPrimaryGetDataConnection" />
+      <Filter Type="Nested">
+        <And>
+          <Filter Type="In">
+            <Field NativeName="CourtId" />
+            <Value>
+              <DataConnection SourceDataConnection="JurisdictionArrayGetDataConnection">
+                <Fields>
+                  <Field Name="CourtId" />
+                </Fields>
+              </DataConnection>
+            </Value>
+            <DataType Type="IntegerDataType" />
+            <Enabled>
+              <Condition Name="CollectionCourtFilterEqualJurisdictionCondition" />
+            </Enabled>
+          </Filter>
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="CourtId" />
+              <Value>
+                <Parameter Name="CourtId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </And>
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="CourtDocumentPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtDocumentSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CourtDocumentId" />
+          <Field Name="Title" />
+          <Field Name="CourtDocumentType" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="CourtDocumentCollectionSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="CourtDocumentPrimaryGetDataConnection" />
+      <Filter Type="Nested">
+        <Or>
+          <Filter>
+            <Field NativeName="CourtDocumentType" />
+            <Value>collection</Value>
+            <DataType Type="StringDataType" />
+          </Filter>
+          <Filter>
+            <Field NativeName="CourtDocumentType" />
+            <Value>all</Value>
+            <DataType Type="StringDataType" />
+          </Filter>
+        </Or>
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="CourtResultPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="CourtResultSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="CourtResultId" />
+          <Field Name="Title" />
+        </Fields>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="JurisdictionArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Parameter Name="JurisdictionArray" />
+      </Source>
+      <Fields>
+        <Field Name="CourtId" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypePrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ApplicationTypeSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ApplicationTypeId" />
+          <Field Name="Title" />
+          <Field Name="Archive" />
+        </Fields>
+        <Filter Type="Nested">
+          <Or>
+            <Filter>
+              <Field NativeName="Archive" />
+              <Value>False</Value>
+              <DataType Type="BooleanDataType" />
+            </Filter>
+            <Filter>
+              <Field NativeName="ApplicationTypeId" />
+              <Value>
+                <Parameter Name="ApplicationTypeId" />
+              </Value>
+              <DataType Type="IntegerDataType" />
+            </Filter>
+          </Or>
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypeTaxPrimaryGetDataConnection" Type="PrimaryGetDataConnection" Assembly="DataConnections">
+      <SqlQuery Name="ApplicationTypeTaxSelectSqlQuery" Type="Select">
+        <Workflow Name="Collect" />
+        <Fields>
+          <Field Name="ApplicationTypeTaxId" />
+          <Field Name="ApplicationTypeId" />
+          <Field Name="SumMin" />
+          <Field Name="SumMax" />
+          <Field Name="MinTax" />
+          <Field Name="Percent" />
+          <Field Name="SumSubtract" />
+        </Fields>
+        <Filter>
+          <Field NativeName="ApplicationTypeId" />
+          <Value>
+            <Object Name="ApplicationTypeComboBox" />
+          </Value>
+          <DataType Type="IntegerDataType" />
+        </Filter>
+      </SqlQuery>
+    </DataConnection>
+
+    <DataConnection Name="ApplicationTypeTaxSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="ApplicationTypeTaxPrimaryGetDataConnection" />
+      <Filter Type="Nested">
+        <And>
+          <Filter Type="NotGreater">
+            <Field NativeName="SumMin" />
+            <Value>
+              <Parameter Name="ApplicationSum" />
+            </Value>
+            <DataType Type="DecimalDataType" />
+          </Filter>
+          <Filter Type="NotLess">
+            <Field NativeName="SumMax" />
+            <Value>
+              <Parameter Name="ApplicationSum" />
+            </Value>
+            <DataType Type="DecimalDataType" />
+          </Filter>
+        </And>
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="PreviousCollectionsArrayGetDataConnection" Type="ArrayGetDataConnection" Assembly="DataConnections">
+      <Source>
+        <Parameter Name="PreviousCollectionsArray" />
+      </Source>
+      <Fields>
+        <Field Name="ID" />
+        <Field Name="CaseNumber" />
+        <Field Name="ApplicationTax" />
+      </Fields>
+    </DataConnection>
+
+    <DataConnection Name="PreviousCollectionsSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="PreviousCollectionsArrayGetDataConnection" />
+      <Filter Type="NotEqual">
+        <Field NativeName="ID" />
+        <Value>
+          <Parameter Name="ID" />
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+
+    <DataConnection Name="PreviousCollectionSecondaryGetDataConnection" Type="SecondaryGetDataConnection" Assembly="DataConnections">
+      <SourceDataConnection Name="PreviousCollectionsSecondaryGetDataConnection" />
+      <Filter>
+        <Field NativeName="ID" />
+        <Value>
+          <Object Name="PreviousCollectionComboBox" />
+        </Value>
+        <DataType Type="IntegerDataType" />
+      </Filter>
+    </DataConnection>
+  </DataConnections>
+
+  <Conditions>
+    <Condition Name="FormLoadedCondition" Type="FormLoadedCondition" Assembly="Conditions" />
+
+    <Condition Name="FormClosingCondition" Type="FormClosingCondition" Assembly="Conditions" />
+
+    <Condition Name="FormEscapeKeyDownCondition" Type="KeyDownCondition" Assembly="Conditions">
+      <Key Value="Escape" />
+    </Condition>
+
+    <Condition Name="FormChangedTrueEqualCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Form>
+            <Property Name="FormChanged" />
+          </Form>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="MandatoryFieldsAllowedNestedCondition" Type="NestedCondition" Assembly="Conditions">
+      <ConditionExpression>
+        <Not>
+          <Form>
+            <Property Name="CheckingFired" />
+          </Form>
+        </Not>
+      </ConditionExpression>
+    </Condition>
+
+    <Condition Name="UserIsAdministratorCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="UserIsAdministrator" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ListCourtPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ListCourtPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="CollectionCourtFilterEqualJurisdictionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="CollectionCourtFilterCheckBox" />
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ModuleApplicationTaxPermissionCondition" Type="EqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Item>
+        <Item>True</Item>
+      </Items>
+      <DataType Type="BooleanDataType" />
+    </Condition>
+
+    <Condition Name="ApplicationTypeIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApplicationTypeComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ApplicationTypeRealChangedNotEqualCondition" Type="NotEqualCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApplicationTypeComboBox" />
+        </Item>
+        <Item>
+          <Object Name="ApplicationTypeVariable" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="PreviousCollectionComboBoxIsNotNullCondition" Type="IsNotNullCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="PreviousCollectionComboBox" />
+        </Item>
+      </Items>
+    </Condition>
+
+    <Condition Name="ApplicationTaxGreaterPreviousCollectionApplicationTaxCondition" Type="GreaterCondition" Assembly="Conditions">
+      <Items>
+        <Item>
+          <Object Name="ApplicationTaxVariable" />
+        </Item>
+        <Item>
+          <DataConnection SourceDataConnection="PreviousCollectionSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ApplicationTax" />
+            </Fields>
+          </DataConnection>
+        </Item>
+      </Items>
+      <DataType Type="DecimalDataType" />
+    </Condition>
+  </Conditions>
+
+  <Commands>
+    <Command Name="FormHeightValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Form>
+        <Property Name="Height">
+          <Switch>
+            <Case>
+              <When>
+                <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+                  <Fields>
+                    <Field Name="ModuleApplicationTaxPermission" />
+                  </Fields>
+                </DataConnection>
+              </When>
+              <Then>605</Then>
+            </Case>
+            <Case>565</Case>
+          </Switch>
+        </Property>
+      </Form>
+    </Command>
+
+    <Command Name="FormCloseCommand" Type="FormCloseCommand" Assembly="Commands" />
+
+    <Command Name="FormCloseSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands>
+        <If>
+          <When>
+            <Condition Name="FormChangedTrueEqualCondition" />
+          </When>
+          <Then>
+            <If>
+              <When>
+                <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+              </When>
+              <Then>
+                <Command Name="SaveOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="SaveOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="SaveSequentialCommand" />
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                  <ElseIf>
+                    <When>
+                      <Command Name="SaveOnCloseMessageBoxCommand" Parameter="No" />
+                    </When>
+                    <Then>
+                      <Command Name="FormCloseCommand" />
+                    </Then>
+                  </ElseIf>
+                </If>
+              </Then>
+              <Else>
+                <Command Name="CloseOnCloseMessageBoxCommand" />
+                <If>
+                  <When>
+                    <Command Name="CloseOnCloseMessageBoxCommand" Parameter="Yes" />
+                  </When>
+                  <Then>
+                    <Command Name="FormCloseCommand" />
+                  </Then>
+                </If>
+              </Else>
+            </If>
+          </Then>
+          <Else>
+            <Command Name="FormCloseCommand" />
+          </Else>
+        </If>
+      </Commands>
+    </Command>
+
+    <Command Name="SaveOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Сохранение</Caption>
+      <Text>Форма содержит несохраненные изменения.\rСохранить их перед закрытием?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNoCancel" />
+    </Command>
+
+    <Command Name="CloseOnCloseMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Закрытие</Caption>
+      <Text>При закрытии все несохраненные изменения будут утеряны.\rВы уверены, что хотите закрыть форму?</Text>
+      <Icon Type="Question" />
+      <Buttons Type="YesNo" />
+    </Command>
+
+    <Command Name="PreviousCollectionHelpMessageBoxCommand" Type="MessageBoxCommand" Assembly="Commands">
+      <Caption>Расчет госпошлины</Caption>
+      <Text>При выборе суда госпошлина будет считаться, как разница между рассчитанной суммой и оплаченной госпошлиной выбранного суда.</Text>
+      <Icon Type="Information" />
+      <Buttons Type="Ok" />
+    </Command>
+
+    <Command Name="UpdatedTrueValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Updated">True</Parameter>
+    </Command>
+
+    <Command Name="CourtListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectCourtList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="CourtId">
+          <Object Name="CollectionCourtComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="CollectionCourtComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="CollectionCourtComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="CourtPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="CourtPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="CourtDocumentIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtDocumentId">
+        <Object Name="CollectionCourtDocumentComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CourtDocumentNumberValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtDocumentNumber">
+        <Object Name="CollectionCourtDocumentNumberTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CourtIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtId">
+        <Object Name="CollectionCourtComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CourtDocumentDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtDocumentDate">
+        <Object Name="CollectionCourtDocumentDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SendDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="SendDate">
+        <Object Name="CollectionSendDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CaseNumberValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CaseNumber">
+        <Object Name="CollectionCaseNumberTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="JudgeValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Judge">
+        <Object Name="CollectionJudgeTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="ContactDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ContactDate">
+        <Object Name="CollectionContactDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CourtDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtDate">
+        <Object Name="CollectionCourtDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="ResultDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ResultDate">
+        <Object Name="CollectionResultDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CourtResultIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CourtResultId">
+        <Object Name="CollectionCourtResultComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SumValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="Sum">
+        <Object Name="CollectionSumNumericBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="IsMainValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="IsMain">
+        <Object Name="CollectionIsMainCheckBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="IsRecievedValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="IsRecieved">
+        <Object Name="CollectionIsRecievedCheckBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="LegalDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="LegalDate">
+        <Object Name="CollectionLegalDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="DocumentGetDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="DocumentGetDate">
+        <Object Name="CollectionDocumentGetDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CancelDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CancelDate">
+        <Object Name="CollectionCancelDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AppealSendDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AppealSendDate">
+        <Object Name="CollectionAppealSendDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AppealDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AppealDate">
+        <Object Name="CollectionAppealDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="AppealResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="AppealResult">
+        <Object Name="CollectionAppealResultTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CassationSendDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CassationSendDate">
+        <Object Name="CollectionCassationSendDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CassationDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CassationDate">
+        <Object Name="CollectionCassationDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
+    <Command Name="CassationResultValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="CassationResult">
+        <Object Name="CollectionCassationResultTextBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="ApplicationTypeIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ApplicationTypeId">
+        <Object Name="ApplicationTypeComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="ApplicationTaxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ApplicationTax">
+        <Switch>
+          <Case>
+            <When>
+              <Condition Name="PreviousCollectionComboBoxIsNotNullCondition" />
+            </When>
+            <Then>
+              <Switch>
+                <Case>
+                  <When>
+                    <Condition Name="ApplicationTaxGreaterPreviousCollectionApplicationTaxCondition" />
+                  </When>
+                  <Then>
+                    <Formula>
+                      <Minus DataType="DecimalDataType">
+                        <Item>
+                          <Object Name="ApplicationTaxVariable" />
+                        </Item>
+                        <Item>
+                          <DataConnection SourceDataConnection="PreviousCollectionSecondaryGetDataConnection">
+                            <Fields>
+                              <Field Name="ApplicationTax" />
+                            </Fields>
+                          </DataConnection>
+                        </Item>
+                      </Minus>
+                    </Formula>
+                  </Then>
+                </Case>
+                <Case>0</Case>
+              </Switch>
+            </Then>
+          </Case>
+          <Case>
+            <Object Name="ApplicationTaxVariable" />
+          </Case>
+        </Switch>
+      </Parameter>
+    </Command>
+
+    <Command Name="ApplicationTaxResetValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="ApplicationTax" />
+    </Command>
+
+    <Command Name="ApplicationTypeVariableValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApplicationTypeVariable">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="ApplicationTypeListFormShowCommand" Type="FormShowCommand" Assembly="Commands">
+      <Xml Type="Path">CollectApplicationTypeList.xml</Xml>
+      <Show Type="None" />
+      <Parameters>
+        <Parameter Name="ApplicationTypeId">
+          <Object Name="ApplicationTypeComboBox" />
+        </Parameter>
+        <Parameter Name="SelectionMode">True</Parameter>
+      </Parameters>
+    </Command>
+
+    <Command Name="ApplicationTypeComboBoxValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Object Name="ApplicationTypeComboBox">
+        <Input />
+      </Object>
+    </Command>
+
+    <Command Name="ApplicationTypePrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ApplicationTypePrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="ApplicationTypeTaxPrimaryGetDataConnectionRefreshCommand" Type="DataConnectionRefreshCommand" Assembly="Commands">
+      <DataConnections>
+        <DataConnection Name="ApplicationTypeTaxPrimaryGetDataConnection" />
+      </DataConnections>
+    </Command>
+
+    <Command Name="PreviousCollectionIDValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="PreviousCollectionID">
+        <Object Name="PreviousCollectionComboBox" />
+      </Parameter>
+    </Command>
+
+    <Command Name="SaveSequentialCommand" Type="SequentialCommand" Assembly="Commands">
+      <Commands Lock="True">
+        <Command Name="CourtDocumentIdValueSetCommand" />
+        <Command Name="CourtDocumentNumberValueSetCommand" />
+        <Command Name="CourtIdValueSetCommand" />
+        <Command Name="CourtDocumentDateValueSetCommand" />
+        <Command Name="SendDateValueSetCommand" />
+        <Command Name="CaseNumberValueSetCommand" />
+        <Command Name="JudgeValueSetCommand" />
+        <Command Name="ContactDateValueSetCommand" />
+        <Command Name="CourtDateValueSetCommand" />
+        <Command Name="ResultDateValueSetCommand" />
+        <Command Name="CourtResultIdValueSetCommand" />
+        <Command Name="SumValueSetCommand" />
+        <Command Name="IsMainValueSetCommand" />
+        <Command Name="IsRecievedValueSetCommand" />
+        <Command Name="LegalDateValueSetCommand" />
+        <Command Name="DocumentGetDateValueSetCommand" />
+        <Command Name="CancelDateValueSetCommand" />
+        <Command Name="AppealSendDateValueSetCommand" />
+        <Command Name="AppealDateValueSetCommand" />
+        <Command Name="AppealResultValueSetCommand" />
+        <Command Name="CassationSendDateValueSetCommand" />
+        <Command Name="CassationDateValueSetCommand" />
+        <Command Name="CassationResultValueSetCommand" />
+        <Command Name="ApplicationTypeIdValueSetCommand" />
+        <Command Name="PreviousCollectionIDValueSetCommand" />
+        <Command Name="UpdatedTrueValueSetCommand" />
+      </Commands>
+    </Command>
+  </Commands>
+
+  <Executions>
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormLoadedCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormHeightValueSetCommand" />
+        <Command Name="ApplicationTypeVariableValueSetCommand">
+          <Parameter Name="ApplicationTypeId" />
+        </Command>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormClosingCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="FormEscapeKeyDownCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="FormCloseSequentialCommand" />
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="CourtListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="CourtListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="CourtPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="CourtListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="CollectionCourtComboBoxValueSetCommand">
+              <Command Name="CourtListFormShowCommand" Parameter="SelectedCourtId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Command Name="ApplicationTypeListFormShowCommand" Parameter="FormClosed" />
+      </ConditionExpression>
+      <Commands>
+        <If>
+          <When>
+            <Command Name="ApplicationTypeListFormShowCommand" Parameter="Updated" />
+          </When>
+          <Then>
+            <Command Name="ApplicationTypePrimaryGetDataConnectionRefreshCommand" />
+            <Command Name="ApplicationTypeTaxPrimaryGetDataConnectionRefreshCommand" />
+          </Then>
+        </If>
+        <If>
+          <When>
+            <Command Name="ApplicationTypeListFormShowCommand" Parameter="Selected" />
+          </When>
+          <Then>
+            <Command Name="ApplicationTypeComboBoxValueSetCommand">
+              <Command Name="ApplicationTypeListFormShowCommand" Parameter="SelectedApplicationTypeId" />
+            </Command>
+          </Then>
+        </If>
+      </Commands>
+    </Execution>
+
+    <Execution>
+      <ConditionExpression>
+        <Condition Name="ApplicationTypeRealChangedNotEqualCondition" />
+      </ConditionExpression>
+      <Commands>
+        <Command Name="ApplicationTaxResetValueSetCommand" />
+        <Command Name="ApplicationTypeVariableValueSetCommand">
+          <Object Name="ApplicationTypeComboBox" />
+        </Command>
+      </Commands>
+    </Execution>
+  </Executions>
+
+  <MyObjects>
+    <MyObject Name="ApplicationTypeVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value />
+    </MyObject>
+
+    <MyObject Name="ApplicationTaxVariable" Type="Variable" Assembly="SimpleControls" ChangeForm="False">
+      <Value>
+        <Formula>
+          <Plus DataType="DecimalDataType">
+            <Item>
+              <DataConnection SourceDataConnection="ApplicationTypeTaxSecondaryGetDataConnection">
+                <Fields>
+                  <Field Name="MinTax" />
+                </Fields>
+              </DataConnection>
+            </Item>
+            <Item>
+              <Formula>
+                <Divide DataType="DecimalDataType">
+                  <Item>
+                    <Formula>
+                      <Multiply DataType="DecimalDataType">
+                        <Item>
+                          <Formula>
+                            <Minus DataType="DecimalDataType">
+                              <Item>
+                                <Parameter Name="ApplicationSum" />
+                              </Item>
+                              <Item>
+                                <DataConnection SourceDataConnection="ApplicationTypeTaxSecondaryGetDataConnection">
+                                  <Fields>
+                                    <Field Name="SumSubtract" />
+                                  </Fields>
+                                </DataConnection>
+                              </Item>
+                            </Minus>
+                          </Formula>
+                        </Item>
+                        <Item>
+                          <DataConnection SourceDataConnection="ApplicationTypeTaxSecondaryGetDataConnection">
+                            <Fields>
+                              <Field Name="Percent" />
+                            </Fields>
+                          </DataConnection>
+                        </Item>
+                      </Multiply>
+                    </Formula>
+                  </Item>
+                  <Item>100</Item>
+                </Divide>
+              </Formula>
+            </Item>
+          </Plus>
+        </Formula>
+      </Value>
+    </MyObject>
+
+    <MyObject Name="HeadPanel" Type="Panel" Assembly="BaseControls">
+      <Top>0</Top>
+      <Left>0</Left>
+      <Height>50</Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>3</TabIndex>
+      <BackColor>HeadThemeColor</BackColor>
+
+      <MyObject Name="HeadLabel" Type="Label" Assembly="BaseControls">
+        <Top>0</Top>
+        <Left>10</Left>
+        <Height>
+          <Object Name="HeadPanel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Width" />
+                </Form>
+              </Item>
+              <Item>15</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <FontStyle>HeadTitleFont</FontStyle>
+        <TextAlign>MiddleLeft</TextAlign>
+        <ForeColor>HeadTextColor</ForeColor>
+        <Text>
+          <Parameter Name="Title" />
+        </Text>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="ContentPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="HeadPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Height" />
+              </Form>
+            </Item>
+            <Item>
+              <Object Name="HeadPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootSeparatePanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+            <Item>
+              <Object Name="FootPanel">
+                <Property Name="Height" />
+              </Object>
+            </Item>
+          </Minus>
+        </Formula>
+      </Height>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <TabIndex>1</TabIndex>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="ApplicationTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>5</Top>
+        <Left>10</Left>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Formula>
+                        <Minus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ContentPanel">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>
+                            <Object Name="ApplicationTypeLabel">
+                              <Property Name="Left" />
+                            </Object>
+                          </Item>
+                        </Minus>
+                      </Formula>
+                    </Item>
+                    <Item>60</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>3</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <Height>20</Height>
+        <FontStyle>TitleItalicFont</FontStyle>
+        <ForeColor>Gray100</ForeColor>
+        <TextAlign>MiddleLeft</TextAlign>
+        <Text>Тип заявления</Text>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ApplicationTypeSelectButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ApplicationTypeSelectButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>0</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>1</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="ApplicationTypePrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ApplicationTypeId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="ApplicationTypeId" />
+        </Value>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+        <Enabled>
+          <Not>
+            <Parameter Name="SelectedCollectionInPreviousCollection" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="ApplicationTypeSelectButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ApplicationTypeComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="ApplicationTypeComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ApplicationTypeComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>2</TabIndex>
+        <Image>Images\11x11\list.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="ApplicationTypeListFormShowCommand" />
+        </Commands>
+        <Visible>
+          <And>
+            <Condition Name="ModuleApplicationTaxPermissionCondition" />
+            <Condition Name="UserIsAdministratorCondition" />
+            <Not>
+              <Parameter Name="SelectedCollectionInPreviousCollection" />
+            </Not>
+          </And>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDocumentLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="ApplicationTypeComboBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Object Name="ApplicationTypeComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="ApplicationTypeLabel">
+                <Property Name="Top" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Наименование документа</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDocumentComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCourtDocumentLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCourtDocumentLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCourtDocumentLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>3</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="CourtDocumentCollectionSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="CourtDocumentId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="CourtDocumentId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDocumentNumberLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtDocumentComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Номер документа</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDocumentNumberTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCourtDocumentNumberLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCourtDocumentNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCourtDocumentNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>4</TabIndex>
+        <Text>
+          <Parameter Name="CourtDocumentNumber" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDocumentDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtDocumentNumberTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата документа</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDocumentDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCourtDocumentDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCourtDocumentDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCourtDocumentDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="CourtDocumentDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtDocumentDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtFilterCheckBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>8</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>6</TabIndex>
+        <Text>Суд</Text>
+
+        <MyObject Name="CollectionCourtLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCourtGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="CollectionCourtDocumentLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CollectionCourtDocumentLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CollectionCourtDocumentLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CollectionCourtDocumentLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Наименование</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionCourtComboBox" Type="ComboBox" Assembly="BaseControls">
+          <Change User="True" Source="True" ValueSet="True" />
+          <Top>
+            <Object Name="CollectionCourtLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionCourtLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCourtLabel">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Switch>
+                    <Case>
+                      <When>
+                        <Object Name="CollectionCourtSelectButton">
+                          <Property Name="Visible" />
+                        </Object>
+                      </When>
+                      <Then>
+                        <Formula>
+                          <Plus DataType="IntegerDataType">
+                            <Item>
+                              <Object Name="CollectionCourtSelectButton">
+                                <Property Name="Width" />
+                              </Object>
+                            </Item>
+                            <Item>5</Item>
+                          </Plus>
+                        </Formula>
+                      </Then>
+                    </Case>
+                    <Case>0</Case>
+                  </Switch>
+                </Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" Title="[Не выбрано]" />
+          <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+          <ValueList>
+            <DataConnection SourceDataConnection="CourtSecondaryForCollectionGetDataConnection">
+              <Fields>
+                <Field Name="CourtId" />
+                <Field Name="Title" />
+              </Fields>
+            </DataConnection>
+          </ValueList>
+          <Value>
+            <Parameter Name="CourtId" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="CollectionCourtSelectButton" Type="Button" Assembly="BaseControls">
+          <Top>
+            <Object Name="CollectionCourtComboBox">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCourtComboBox">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Height>
+            <Object Name="CollectionCourtComboBox">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CollectionCourtComboBox">
+              <Property Name="Height" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <Image>Images\11x11\list.png</Image>
+          <FlatStyle>Flat</FlatStyle>
+          <FlatBorderSize>1</FlatBorderSize>
+          <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+          <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+          <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+          <Commands>
+            <Command Name="CourtListFormShowCommand" />
+          </Commands>
+          <Visible>
+            <Condition Name="ListCourtPermissionCondition" />
+          </Visible>
+        </MyObject>
+
+        <MyObject Name="CollectionCourtFilterCheckBox" Type="CheckBox" Assembly="BaseControls" ChangeForm="False">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCourtComboBox">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CollectionCourtLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Object Name="CollectionCourtLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <Width>
+            <Object Name="CollectionCourtLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Text>Подсудность</Text>
+          <Value />
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="CollectionCaseNumberLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtGroupBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Номер гражданского дела</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCaseNumberTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCaseNumberLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCaseNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCaseNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>7</TabIndex>
+        <Text>
+          <Parameter Name="CaseNumber" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="CollectionJudgeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCaseNumberTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Судья</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionJudgeTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionJudgeLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionJudgeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionJudgeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>8</TabIndex>
+        <Text>
+          <Parameter Name="Judge" />
+        </Text>
+      </MyObject>
+
+      <MyObject Name="ApplicationSumLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTypeLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>30</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма заявления</Text>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationSumTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>9</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Condition Name="ApplicationTypeIsNotNullCondition" />
+              </When>
+              <Then>
+                <DataTypeFormat Type="DecimalDataType" Format="N2">
+                  <Parameter Name="ApplicationSum" />
+                </DataTypeFormat>
+              </Then>
+            </Case>
+            <Case />
+          </Switch>
+        </Text>
+        <ReadOnly>True</ReadOnly>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CollectionSendDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="ApplicationSumTextBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Object Name="ApplicationSumTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="ApplicationSumLabel">
+                <Property Name="Top" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата передачи в суд</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionSendDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionSendDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionSendDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionSendDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>10</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="SendDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionContactDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionSendDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата контакта в суде</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionContactDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionContactDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionContactDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionContactDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>11</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="ContactDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionContactDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата и время заседания</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCourtDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCourtDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCourtDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>12</TabIndex>
+        <NullValue Show="True" />
+        <Format>d MMMM yyyy HH:mm</Format>
+        <Value>
+          <Parameter Name="CourtDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionResultDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата вынесения решения</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionResultDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionResultDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionResultDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionResultDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>13</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="ResultDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtResultLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionResultDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Результат</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCourtResultComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCourtResultLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCourtResultLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCourtResultLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>14</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="CourtResultPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CourtResultId" />
+              <Field Name="Title" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="CourtResultId" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionSumLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCourtResultComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма по суду</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionSumNumericBox" Type="NumericBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionSumLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionSumLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionSumLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>15</TabIndex>
+        <DecimalPlaces>2</DecimalPlaces>
+        <Increment>10000</Increment>
+        <Minimum>0</Minimum>
+        <ThousandsSeparator>True</ThousandsSeparator>
+        <Value>
+          <Parameter Name="Sum" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="ApplicationSumLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationSumLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>30</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="ApplicationTaxLabel">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Сумма госпошлины по заявлению</Text>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxTextBox" Type="TextBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="True" />
+        <Top>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTaxLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Switch>
+                  <Case>
+                    <When>
+                      <Object Name="ApplicationTaxCalculateButton">
+                        <Property Name="Visible" />
+                      </Object>
+                    </When>
+                    <Then>
+                      <Formula>
+                        <Plus DataType="IntegerDataType">
+                          <Item>
+                            <Object Name="ApplicationTaxCalculateButton">
+                              <Property Name="Width" />
+                            </Object>
+                          </Item>
+                          <Item>5</Item>
+                        </Plus>
+                      </Formula>
+                    </Then>
+                  </Case>
+                  <Case>5</Case>
+                </Switch>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>16</TabIndex>
+        <Text>
+          <DataTypeFormat Type="DecimalDataType" Format="N2">
+            <Parameter Name="ApplicationTax" />
+          </DataTypeFormat>
+        </Text>
+        <ReadOnly>True</ReadOnly>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxCalculateButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="ApplicationTaxTextBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTaxTextBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="ApplicationTaxTextBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="ApplicationTaxCalculateButton">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>17</TabIndex>
+        <Image>Images\16x16\calculator.png</Image>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Hint>Рассчитать госпошлину</Hint>
+        <Commands>
+          <Command Name="ApplicationTaxValueSetCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="ApplicationTypeIsNotNullCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Необходимо указать тип заявления</DisabledText>
+        <Visible>
+          <And>
+            <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="ModuleApplicationTaxPermission" />
+              </Fields>
+            </DataConnection>
+            <Not>
+              <Parameter Name="SelectedCollectionInPreviousCollection" />
+            </Not>
+          </And>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="PreviousCollectionLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTaxTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Предыдущий суд</Text>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="PreviousCollectionComboBox" Type="ComboBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="PreviousCollectionLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="PreviousCollectionLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PreviousCollectionLabel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="PreviousCollectionHelpButton">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>5</Item>
+                  </Plus>
+                </Formula>
+              </Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>18</TabIndex>
+        <NullValue Show="True" Title="[Не выбрано]" />
+        <AutoCompleteMode>SmartSuggest</AutoCompleteMode>
+        <ValueList>
+          <DataConnection SourceDataConnection="PreviousCollectionsSecondaryGetDataConnection">
+            <Fields>
+              <Field Name="ID" />
+              <Field Name="CaseNumber" />
+            </Fields>
+          </DataConnection>
+        </ValueList>
+        <Value>
+          <Parameter Name="PreviousCollectionID" />
+        </Value>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+        <Enabled>
+          <Not>
+            <Parameter Name="SelectedCollectionInPreviousCollection" />
+          </Not>
+        </Enabled>
+      </MyObject>
+
+      <MyObject Name="PreviousCollectionHelpButton" Type="Button" Assembly="BaseControls">
+        <Top>
+          <Object Name="PreviousCollectionComboBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PreviousCollectionComboBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>3</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Object Name="PreviousCollectionComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <Width>
+          <Object Name="PreviousCollectionComboBox">
+            <Property Name="Height" />
+          </Object>
+        </Width>
+        <TabIndex>19</TabIndex>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>0</FlatBorderSize>
+        <Text>?</Text>
+        <Commands>
+          <Command Name="PreviousCollectionHelpMessageBoxCommand" />
+        </Commands>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxPaymentExportNumberLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="PreviousCollectionComboBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Divide DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ApplicationTaxLabel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>2</Item>
+                  </Divide>
+                </Formula>
+              </Item>
+              <Item>5</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Номер выгрузки госпошлины</Text>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxPaymentExportNumberTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>20</TabIndex>
+        <Text>
+          <DataTypeFormat Type="IntegerDataType" Format="N0">
+            <Parameter Name="ApplicationTaxPaymentExportNumber" />
+          </DataTypeFormat>
+        </Text>
+        <ReadOnly>True</ReadOnly>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxPaymentExportDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ApplicationTaxPaymentExportNumberLabel">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата выгрузки госпошлины</Text>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="ApplicationTaxPaymentExportDateTextBox" Type="TextBox" Assembly="BaseControls" ChangeForm="False">
+        <Top>
+          <Object Name="ApplicationTaxPaymentExportDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxPaymentExportDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxPaymentExportDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>21</TabIndex>
+        <Text>
+          <DataTypeFormat Type="DateDataType" Format="dd MMMM yyyy">
+            <Parameter Name="ApplicationTaxPaymentExportDate" />
+          </DataTypeFormat>
+        </Text>
+        <ReadOnly>True</ReadOnly>
+        <Visible>
+          <DataConnection SourceDataConnection="PermissionPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="ModuleApplicationTaxPermission" />
+            </Fields>
+          </DataConnection>
+        </Visible>
+      </MyObject>
+
+      <MyObject Name="CollectionIsMainCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Switch>
+            <Case>
+              <When>
+                <Object Name="ApplicationTaxPaymentExportDateTextBox">
+                  <Property Name="Visible" />
+                </Object>
+              </When>
+              <Then>
+                <Formula>
+                  <Plus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ApplicationTaxPaymentExportDateTextBox">
+                        <Property Name="Bottom" />
+                      </Object>
+                    </Item>
+                    <Item>19</Item>
+                  </Plus>
+                </Formula>
+              </Then>
+            </Case>
+            <Case>
+              <Object Name="ApplicationTaxLabel">
+                <Property Name="Bottom" />
+              </Object>
+            </Case>
+          </Switch>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxPaymentExportNumberLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>22</TabIndex>
+        <ForeColor>Black</ForeColor>
+        <Text>Основной суд</Text>
+        <Value>
+          <Parameter Name="IsMain" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionIsRecievedCheckBox" Type="CheckBox" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionIsMainCheckBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxPaymentExportDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxPaymentExportDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>23</TabIndex>
+        <ForeColor>Black</ForeColor>
+        <Text>Решение суда получено</Text>
+        <Value>
+          <Parameter Name="IsRecieved" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionLegalDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionIsRecievedCheckBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата вступления в законную силу</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionLegalDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionLegalDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionLegalDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionLegalDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>24</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="LegalDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionDocumentGetDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionLegalDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата получения документа</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionDocumentGetDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionDocumentGetDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionDocumentGetDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionDocumentGetDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>25</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="DocumentGetDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionCancelDateLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionDocumentGetDateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="ApplicationTaxLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Дата отмены судебного решения</Text>
+      </MyObject>
+
+      <MyObject Name="CollectionCancelDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="CollectionCancelDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="CollectionCancelDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="CollectionCancelDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>26</TabIndex>
+        <NullValue Show="True" />
+        <Value>
+          <Parameter Name="CancelDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="CollectionAppealGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionJudgeTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>15</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="CollectionCourtDocumentLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionAppealResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Divide DataType="IntegerDataType">
+              <Item>
+                <Formula>
+                  <Minus DataType="IntegerDataType">
+                    <Item>
+                      <Object Name="ContentPanel">
+                        <Property Name="Width" />
+                      </Object>
+                    </Item>
+                    <Item>
+                      <Object Name="CollectionAppealGroupBox">
+                        <Property Name="Left" />
+                      </Object>
+                    </Item>
+                    <Item>15</Item>
+                  </Minus>
+                </Formula>
+              </Item>
+              <Item>2</Item>
+            </Divide>
+          </Formula>
+        </Width>
+        <TabIndex>27</TabIndex>
+        <Text>Апелляционная жалоба</Text>
+
+        <MyObject Name="CollectionAppealSendDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="CollectionAppealGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>40</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Дата направления жалобы в суд</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionAppealSendDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Value>
+            <Parameter Name="AppealSendDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="CollectionAppealDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionAppealSendDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата рассмотрения жалобы в суде</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionAppealDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CollectionAppealDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionAppealDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CollectionAppealDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Value>
+            <Parameter Name="AppealDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="CollectionAppealResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionAppealSendDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionAppealGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CollectionAppealResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CollectionAppealSendDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат рассмотрения жалобы</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionAppealResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CollectionAppealResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionAppealResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionAppealDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CollectionAppealResultTextBox">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Object Name="CollectionAppealResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="AppealResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+
+      <MyObject Name="CollectionCassationGroupBox" Type="GroupBox" Assembly="BaseControls">
+        <Top>
+          <Object Name="CollectionAppealGroupBox">
+            <Property Name="Top" />
+          </Object>
+        </Top>
+        <Left>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionAppealGroupBox">
+                  <Property Name="Right" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Left>
+        <Height>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="CollectionCassationResultTextBox">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Plus>
+          </Formula>
+        </Height>
+        <Width>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="ContentPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>
+                <Object Name="CollectionCassationGroupBox">
+                  <Property Name="Left" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Width>
+        <TabIndex>28</TabIndex>
+        <Text>Кассационная жалоба</Text>
+
+        <MyObject Name="CollectionCassationSendDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>15</Top>
+          <Left>10</Left>
+          <Width>
+            <Formula>
+              <Divide DataType="IntegerDataType">
+                <Item>
+                  <Formula>
+                    <Minus DataType="IntegerDataType">
+                      <Item>
+                        <Object Name="CollectionCassationGroupBox">
+                          <Property Name="Width" />
+                        </Object>
+                      </Item>
+                      <Item>40</Item>
+                    </Minus>
+                  </Formula>
+                </Item>
+                <Item>2</Item>
+              </Divide>
+            </Formula>
+          </Width>
+          <Height>20</Height>
+          <FontStyle>TitleItalicFont</FontStyle>
+          <ForeColor>Gray100</ForeColor>
+          <TextAlign>MiddleLeft</TextAlign>
+          <Text>Дата направления жалобы в суд</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionCassationSendDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>1</TabIndex>
+          <NullValue Show="True" />
+          <Value>
+            <Parameter Name="CassationSendDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="CollectionCassationDateLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCassationSendDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>5</Item>
+              </Plus>
+            </Formula>
+          </Top>
+          <Left>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <Height>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Дата рассмотрения жалобы в суде</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionCassationDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CollectionCassationDateLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionCassationDateLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Width>
+            <Object Name="CollectionCassationDateLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>2</TabIndex>
+          <NullValue Show="True" />
+          <Value>
+            <Parameter Name="CassationDate" />
+          </Value>
+        </MyObject>
+
+        <MyObject Name="CollectionCassationResultLabel" Type="Label" Assembly="BaseControls">
+          <Top>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Top" />
+            </Object>
+          </Top>
+          <Left>
+            <Formula>
+              <Plus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCassationSendDateLabel">
+                    <Property Name="Right" />
+                  </Object>
+                </Item>
+                <Item>20</Item>
+              </Plus>
+            </Formula>
+          </Left>
+          <Width>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCassationGroupBox">
+                    <Property Name="Width" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CollectionCassationResultLabel">
+                    <Property Name="Left" />
+                  </Object>
+                </Item>
+                <Item>10</Item>
+              </Minus>
+            </Formula>
+          </Width>
+          <Height>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="Height" />
+            </Object>
+          </Height>
+          <FontStyle>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="FontStyle" />
+            </Object>
+          </FontStyle>
+          <ForeColor>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="ForeColor" />
+            </Object>
+          </ForeColor>
+          <TextAlign>
+            <Object Name="CollectionCassationSendDateLabel">
+              <Property Name="TextAlign" />
+            </Object>
+          </TextAlign>
+          <Text>Результат рассмотрения жалобы</Text>
+        </MyObject>
+
+        <MyObject Name="CollectionCassationResultTextBox" Type="TextBox" Assembly="BaseControls">
+          <Change User="True" Source="False" ValueSet="False" />
+          <Top>
+            <Object Name="CollectionCassationResultLabel">
+              <Property Name="Bottom" />
+            </Object>
+          </Top>
+          <Left>
+            <Object Name="CollectionCassationResultLabel">
+              <Property Name="Left" />
+            </Object>
+          </Left>
+          <Height>
+            <Formula>
+              <Minus DataType="IntegerDataType">
+                <Item>
+                  <Object Name="CollectionCassationDateDateTimePicker">
+                    <Property Name="Bottom" />
+                  </Object>
+                </Item>
+                <Item>
+                  <Object Name="CollectionCassationResultTextBox">
+                    <Property Name="Top" />
+                  </Object>
+                </Item>
+              </Minus>
+            </Formula>
+          </Height>
+          <Width>
+            <Object Name="CollectionCassationResultLabel">
+              <Property Name="Width" />
+            </Object>
+          </Width>
+          <TabIndex>3</TabIndex>
+          <Multiline>True</Multiline>
+          <Text>
+            <Parameter Name="CassationResult" />
+          </Text>
+        </MyObject>
+      </MyObject>
+    </MyObject>
+
+    <MyObject Name="FootSeparatePanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="ContentPanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>5</Left>
+      <Height>1</Height>
+      <Width>
+        <Formula>
+          <Minus DataType="IntegerDataType">
+            <Item>
+              <Form>
+                <Property Name="Width" />
+              </Form>
+            </Item>
+            <Item>10</Item>
+          </Minus>
+        </Formula>
+      </Width>
+      <BackColor>ThemeColorBackButtonBorder</BackColor>
+    </MyObject>
+
+    <MyObject Name="FootPanel" Type="Panel" Assembly="BaseControls">
+      <Top>
+        <Object Name="FootSeparatePanel">
+          <Property Name="Bottom" />
+        </Object>
+      </Top>
+      <Left>0</Left>
+      <Height>40</Height>
+      <TabIndex>2</TabIndex>
+      <Width>
+        <Form>
+          <Property Name="Width" />
+        </Form>
+      </Width>
+      <BackColor>BackThemeColor</BackColor>
+
+      <MyObject Name="SaveButton" Type="Button" Assembly="BaseControls">
+        <Top>5</Top>
+        <Right>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Object Name="FootPanel">
+                  <Property Name="Width" />
+                </Object>
+              </Item>
+              <Item>10</Item>
+            </Minus>
+          </Formula>
+        </Right>
+        <Height>30</Height>
+        <Width>200</Width>
+        <TabIndex>1</TabIndex>
+        <Text>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Сохранить</Then>
+            </Case>
+            <Case>Добавить</Case>
+          </Switch>
+        </Text>
+        <FontStyle>ButtonFont</FontStyle>
+        <Image>
+          <Switch>
+            <Case>
+              <When>
+                <Parameter Name="Edit" />
+              </When>
+              <Then>Images\18x18\save.png</Then>
+            </Case>
+            <Case>Images\18x18\add.png</Case>
+          </Switch>
+        </Image>
+        <ImageAlign>MiddleLeft</ImageAlign>
+        <FlatStyle>Flat</FlatStyle>
+        <FlatBorderSize>1</FlatBorderSize>
+        <FlatBorderColor>ThemeColorBackButtonBorder</FlatBorderColor>
+        <FlatMouseDownBackColor>FlatMouseDownBackColor</FlatMouseDownBackColor>
+        <FlatMouseOverBackColor>FlatMouseOverBackColor</FlatMouseOverBackColor>
+        <Commands>
+          <Command Name="SaveSequentialCommand" />
+          <Command Name="FormCloseCommand" />
+        </Commands>
+        <Enabled>
+          <Condition Name="MandatoryFieldsAllowedNestedCondition" />
+        </Enabled>
+        <DisabledMode>True</DisabledMode>
+        <DisabledText>Не все обязательные поля заполнены.</DisabledText>
+      </MyObject>
+    </MyObject>
+  </MyObjects>
+</Form>
