@@ -172,8 +172,6 @@
           <Field Name="RowNumber" />
           <Field Name="TotalRows" />
           <Field Name="TotalPages" />
-
-          <Field Name="TsComment" />
         </Fields>
         <Parameters>
           <Parameter NativeName="CurrentPage" RefreshQuery="False">
@@ -19208,7 +19206,7 @@
               </Substitution>
             </Column>
             <Column Name="LoanClientStatus2Title" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Статус ИД</Title><Width>150</Width>
+	    <Title>Статус ИД</Title><Width>150</Width>
               <WrapMode Value="True" />
               <Substitution SourceColumn="LoanClientStatus2Id">
                 <DataConnection SourceDataConnection="Status2PrimaryGetDataConnection">
@@ -19484,11 +19482,6 @@
             <Column Name="ClientInn" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>ИНН должника</Title>
               <Width>150</Width>
-            </Column>
-            <Column Name="TsComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Запрос ЕГПУ</Title>
-              <Width>100</Width>
-              <WrapMode Value="True" />
             </Column>
           </Columns>
         </MyObject>

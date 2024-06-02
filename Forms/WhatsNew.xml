@@ -39,16 +39,6 @@
   </Commands>
 
   <Executions>
-    <!-- <Execution>
-      <ConditionExpression>
-        <Condition Name="FormLoadedCondition" />
-      </ConditionExpression>
-      <Commands>
-        <Command Name="GetEngineAssemblyVersionLongCommand" />
-        <Command Name="GetEngineAssemblyDateTimeCommand" />
-      </Commands>
-    </Execution> -->
-
     <Execution>
       <ConditionExpression>
         <Condition Name="FormClosingCondition" />
@@ -106,9 +96,8 @@
         </Formula>
       </Top>
       <Left>10</Left>
-      <!-- <Height>20</Height> -->
       <Width>400</Width>
-      <Text>Это окошко</Text>
+      <Text>В основной таблице колонка запросы ЕГПУ</Text>
     </MyObject>
 
     <MyObject Name="Thing2" Type="Label" Assembly="BaseControls">
@@ -125,9 +114,44 @@
         </Formula>
       </Top>
       <Left>10</Left>
-      <!-- <Height>20</Height> -->
+      <Width>400</Width>
+      <Text>Это окошко</Text>
+    </MyObject>
+
+    <MyObject Name="Thing3" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="Thing2">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>10</Left>
       <Width>400</Width>
       <Text>Главное окно теперь можно расширять и сужать</Text>
+    </MyObject>
+
+    <MyObject Name="Thing4" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="Thing3">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>10</Left>
+      <Width>400</Width>
+      <Text>Название судов</Text>
     </MyObject>
   </MyObjects>
 </Form>
