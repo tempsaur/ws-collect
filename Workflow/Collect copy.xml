@@ -7769,8 +7769,6 @@
               {LoanClientDebtRestTotalTo}::numeric,
               {LoanClientUserId}::smallint[],
               {LoanClientStatusId}::bigint[],
-              {LoanClientStatus2Id}::bigint[],
-              {LoanClientStatus3Id}::bigint[],
               {SuccessionCourtId}::bigint[],
               {SuccessionCourtDocumentId}::integer[],
               {SuccessionDocumentNumber}::character varying,
@@ -8010,8 +8008,6 @@
           GREATEST(COALESCE(L.debt_base, 0) + COALESCE(L.debt_percent, 0) + COALESCE(L.debt_penalty, 0) + COALESCE(L.debt_tax, 0) - COALESCE(LP.total_payment_sum, 0), 0) AS "LoanDebtRestTotal",
           UI.user_full_name AS "LoanClientUserTitle",
           S.title AS "LoanClientStatusTitle",
-          S2.title AS "LoanClientStatus2Title",
-          S3.title AS "LoanClientStatus3Title",
           IO.short_title AS "InnerOrgTitle",
           CRA.registration_address AS "ClientRegistrationAddress",
           CAA.actual_address AS "ClientActualAddress",
@@ -8060,8 +8056,6 @@
           LEFT JOIN collect.inner_org IO USING(inner_org_id)
           LEFT JOIN collect.user_info UI USING(user_id)
           LEFT JOIN collect.status S USING(status_id)
-          LEFT JOIN collect.status2 S2 ON status2_id = S2.status_id
-          LEFT JOIN collect.status3 S3 ON status3_id = S3.status_id
           LEFT JOIN collect.role R USING(role_id)
           LEFT JOIN collect.loan_client_succession LCS USING(loan_client_id)
           LEFT JOIN collect.court LCS_C USING(court_id)
