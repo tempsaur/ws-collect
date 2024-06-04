@@ -542,8 +542,8 @@
           <Field Name="LoanDebtRestTotal" />
           <Field Name="LoanClientUserTitle" />
           <Field Name="LoanClientStatusTitle" />
-          <Field Name="LoanClient2StatusTitle" />
-          <Field Name="LoanClient3StatusTitle" />
+          <!-- <Field Name="LoanClient2StatusTitle" />
+          <Field Name="LoanClient3StatusTitle" /> -->
           <Field Name="InnerOrgTitle" />
           <Field Name="ClientRegistrationAddress" />
           <Field Name="ClientActualAddress" />
@@ -715,7 +715,7 @@
               <Object Name="LoanClientStatusCheckedComboBox" />
             </Value>
           </Parameter>
-          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
+          <!-- <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="LoanClientStatus2CheckedComboBox" />
             </Value>
@@ -724,7 +724,7 @@
             <Value>
               <Object Name="LoanClientStatus3CheckedComboBox" />
             </Value>
-          </Parameter>
+          </Parameter> -->
           <Parameter NativeName="SuccessionCourtId" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="SuccessionCourtCheckedComboBox" />
@@ -7098,24 +7098,8 @@
             </Property>
           </Object>
         </Parameter>
-        <Parameter Name="LoanClientStatus2TitleTitle">
-          <Object Name="LoanClientDatabaseTable">
-            <Property Name="ColumnTitle">
-              <Parameters>
-                <Parameter Name="ColumnName">LoanClientStatus2Title</Parameter>
-              </Parameters>
-            </Property>
-          </Object>
-        </Parameter>
-        <Parameter Name="LoanClientStatus3TitleTitle">
-          <Object Name="LoanClientDatabaseTable">
-            <Property Name="ColumnTitle">
-              <Parameters>
-                <Parameter Name="ColumnName">LoanClientStatus3Title</Parameter>
-              </Parameters>
-            </Property>
-          </Object>
-        </Parameter>
+        <Parameter Name="LoanClientStatus2TitleTitle">Статус ИД</Parameter>
+        <Parameter Name="LoanClientStatus3TitleTitle">Статус замены</Parameter>
         <Parameter Name="InnerOrgTitleTitle">
           <Object Name="LoanClientDatabaseTable">
             <Property Name="ColumnTitle">

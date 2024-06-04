@@ -542,8 +542,8 @@
           <Field Name="LoanDebtRestTotal" />
           <Field Name="LoanClientUserTitle" />
           <Field Name="LoanClientStatusTitle" />
-          <Field Name="LoanClient2StatusTitle" />
-          <Field Name="LoanClient3StatusTitle" />
+	  <!--<Field Name="LoanClient2StatusTitle" />
+	  <Field Name="LoanClient3StatusTitle" />-->
           <Field Name="InnerOrgTitle" />
           <Field Name="ClientRegistrationAddress" />
           <Field Name="ClientActualAddress" />
@@ -715,7 +715,7 @@
               <Object Name="LoanClientStatusCheckedComboBox" />
             </Value>
           </Parameter>
-          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
+	  <!--          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="LoanClientStatus2CheckedComboBox" />
             </Value>
@@ -724,7 +724,7 @@
             <Value>
               <Object Name="LoanClientStatus3CheckedComboBox" />
             </Value>
-          </Parameter>
+    </Parameter>-->
           <Parameter NativeName="SuccessionCourtId" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="SuccessionCourtCheckedComboBox" />
@@ -7315,20 +7315,6 @@
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
               <Field Name="LoanClientStatusTitle" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="LoanClientStatus2Title">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="LoanClientStatus2Title" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="LoanClientStatus3Title">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="LoanClientStatus3Title" />
             </Fields>
           </DataConnection>
         </Parameter>
