@@ -8031,6 +8031,7 @@
           LCC_AT.title AS "CollectionApplicationTypeTitle",
           LCC.application_sum AS "CollectionApplicationSum",
           LCC.application_tax AS "CollectionApplicationTax",
+          CC.title AS "CollectionApplicationCourtTitle",
           O.title AS "ExecutiveOspTitle",
           O.ufssp_title AS "ExecutiveUfsspTitle",
           LCE.send_date AS "ExecutiveSendDate",
@@ -8067,6 +8068,7 @@
           LEFT JOIN collect.court LCS_C USING(court_id)
           LEFT JOIN collect.court_document LCS_CD ON LCS.court_document_id = LCS_CD.court_document_id
           LEFT JOIN collect.loan_client_collection LCC ON LCC.loan_client_id = LC.loan_client_id AND LCC.is_main
+          LEFT JOIN collect.court CC ON LCC.court_id = CC.court_id
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.application_type LCC_AT ON LCC.application_type_id = LCC_AT.application_type_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
