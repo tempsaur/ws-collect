@@ -542,8 +542,8 @@
           <Field Name="LoanDebtRestTotal" />
           <Field Name="LoanClientUserTitle" />
           <Field Name="LoanClientStatusTitle" />
-          <Field Name="LoanClientStatus2Title" />
-          <Field Name="LoanClientStatus3Title" />
+          <Field Name="LoanClient2StatusTitle" />
+          <Field Name="LoanClient3StatusTitle" />
           <Field Name="InnerOrgTitle" />
           <Field Name="ClientRegistrationAddress" />
           <Field Name="ClientActualAddress" />
@@ -7098,24 +7098,8 @@
             </Property>
           </Object>
         </Parameter>
-        <Parameter Name="LoanClientStatus2TitleTitle">
-          <Object Name="LoanClientDatabaseTable">
-            <Property Name="ColumnTitle">
-              <Parameters>
-                <Parameter Name="ColumnName">LoanClientStatus2Title</Parameter>
-              </Parameters>
-            </Property>
-          </Object>
-        </Parameter>
-        <Parameter Name="LoanClientStatus3TitleTitle">
-          <Object Name="LoanClientDatabaseTable">
-            <Property Name="ColumnTitle">
-              <Parameters>
-                <Parameter Name="ColumnName">LoanClientStatus3Title</Parameter>
-              </Parameters>
-            </Property>
-          </Object>
-        </Parameter>
+        <!-- <Parameter Name="LoanClientStatus2TitleTitle">Название</Parameter>
+        <Parameter Name="LoanClientStatus3TitleTitle">Тоже название</Parameter> -->
         <Parameter Name="InnerOrgTitleTitle">
           <Object Name="LoanClientDatabaseTable">
             <Property Name="ColumnTitle">
@@ -7318,20 +7302,20 @@
             </Fields>
           </DataConnection>
         </Parameter>
-        <Parameter Name="LoanClientStatus2Title">
+        <!-- <Parameter Name="LoanClientStatus2Title">
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
-              <Field Name="LoanClientStatus2Title" />
+              <Field Name="LoanClientStatusTitle" />
             </Fields>
           </DataConnection>
         </Parameter>
         <Parameter Name="LoanClientStatus3Title">
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
-              <Field Name="LoanClientStatus3Title" />
+              <Field Name="LoanClientStatusTitle" />
             </Fields>
           </DataConnection>
-        </Parameter>
+        </Parameter> -->
         <Parameter Name="InnerOrgTitle">
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
