@@ -97,7 +97,7 @@
       </Top>
       <Left>10</Left>
       <Width>400</Width>
-      <Text>Выгрузка статусов ИД и замены</Text>
+      <Text>Выгрузка судов взыскания, статусов ИД и замены</Text>
     </MyObject>
 
     <MyObject Name="Thing2" Type="Label" Assembly="BaseControls">
