@@ -8032,6 +8032,7 @@
           LCC.application_sum AS "CollectionApplicationSum",
           LCC.application_tax AS "CollectionApplicationTax",
           CC.title AS "CollectionApplicationCourtTitle",
+          LCC.case_number AS "CollectionCaseNumber",
           O.title AS "ExecutiveOspTitle",
           O.ufssp_title AS "ExecutiveUfsspTitle",
           LCE.send_date AS "ExecutiveSendDate",
