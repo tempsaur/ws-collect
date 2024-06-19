@@ -7632,10 +7632,15 @@
             LEFT JOIN collect.pochtaru_order_view LCO ON LCO.loan_client_id = LC2.loan_client_id AND LCO.state = 'ADDED'
           GROUP BY
             F.loan_client_id
-        ), ts_loan_client_comment AS (
-          SELECT loan_client_id as ts_loan_client_id, MAX(loan_comment_id) as loan_comment_id
-          FROM collect.loan_comment
-          GROUP BY loan_client_id
+        ), ts_loan_client_last_egpu AS (
+          SELECT T1.loan_client_id as loan_client_id, T1.comment
+          FROM collect.loan_comment T1
+          INNER JOIN (
+            SELECT loan_client_id, MAX(loan_comment_id) as max_comment_id
+            FROM collect.loan_comment
+            WHERE task_type_id = 7
+            GROUP BY loan_client_id
+          ) T2 ON T1.loan_client_id = T2.loan_client_id AND T1.loan_comment_id = T2.max_comment_id
         )
         SELECT
           F."RowNumber",
@@ -7650,7 +7655,7 @@
           LC.status_id AS "LoanClientStatusId",
           LC.status2_id as "LoanClientStatus2Id",
           LC.status3_id as "LoanClientStatus3Id",
-          LCM.loan_comment_id as "CommentId",
+          LCM.comment as "TsComment",
           C.inner_org_id AS "InnerOrgId",
           LCS.court_id AS "SuccessionCourtId",
           LCS.court_document_id AS "SuccessionCourtDocumentId",
@@ -7721,7 +7726,7 @@
           LEFT JOIN collect.court CC ON LCC.court_id = CC.court_id
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
-          LEFT JOIN ts_loan_client_comment LCM ON LCC.loan_client_id = LCM.ts_loan_client_id
+          LEFT JOIN ts_loan_client_last_egpu LCM ON LCC.loan_client_id = LCM.loan_client_id
         ORDER BY F."RowNumber";
       </Text>
     </SqlQuery>
@@ -7764,6 +7769,8 @@
               {LoanClientDebtRestTotalTo}::numeric,
               {LoanClientUserId}::smallint[],
               {LoanClientStatusId}::bigint[],
+              {LoanClientStatus2Id}::bigint[],
+              {LoanClientStatus3Id}::bigint[],
               {SuccessionCourtId}::bigint[],
               {SuccessionCourtDocumentId}::integer[],
               {SuccessionDocumentNumber}::character varying,
@@ -8003,6 +8010,8 @@
           GREATEST(COALESCE(L.debt_base, 0) + COALESCE(L.debt_percent, 0) + COALESCE(L.debt_penalty, 0) + COALESCE(L.debt_tax, 0) - COALESCE(LP.total_payment_sum, 0), 0) AS "LoanDebtRestTotal",
           UI.user_full_name AS "LoanClientUserTitle",
           S.title AS "LoanClientStatusTitle",
+          S2.title AS "LoanClientStatus2Title",
+          S3.title AS "LoanClientStatus3Title",
           IO.short_title AS "InnerOrgTitle",
           CRA.registration_address AS "ClientRegistrationAddress",
           CAA.actual_address AS "ClientActualAddress",
@@ -8022,6 +8031,7 @@
           LCC_AT.title AS "CollectionApplicationTypeTitle",
           LCC.application_sum AS "CollectionApplicationSum",
           LCC.application_tax AS "CollectionApplicationTax",
+          CC.title AS "CollectionApplicationCourtTitle",
           O.title AS "ExecutiveOspTitle",
           O.ufssp_title AS "ExecutiveUfsspTitle",
           LCE.send_date AS "ExecutiveSendDate",
@@ -8051,11 +8061,14 @@
           LEFT JOIN collect.inner_org IO USING(inner_org_id)
           LEFT JOIN collect.user_info UI USING(user_id)
           LEFT JOIN collect.status S USING(status_id)
+          LEFT JOIN collect.status2 S2 ON status2_id = S2.status_id
+          LEFT JOIN collect.status3 S3 ON status3_id = S3.status_id
           LEFT JOIN collect.role R USING(role_id)
           LEFT JOIN collect.loan_client_succession LCS USING(loan_client_id)
           LEFT JOIN collect.court LCS_C USING(court_id)
           LEFT JOIN collect.court_document LCS_CD ON LCS.court_document_id = LCS_CD.court_document_id
           LEFT JOIN collect.loan_client_collection LCC ON LCC.loan_client_id = LC.loan_client_id AND LCC.is_main
+          LEFT JOIN collect.court CC ON LCC.court_id = CC.court_id
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.application_type LCC_AT ON LCC.application_type_id = LCC_AT.application_type_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)

@@ -564,6 +564,7 @@
           <Field Name="CollectionApplicationSum" />
           <Field Name="CollectionApplicationTax" />
           <Field Name="CollectionApplicationCourtTitle" />
+          <Field Name="CollectionCaseNumber" />
           <Field Name="ExecutiveOspTitle" />
           <Field Name="ExecutiveUfsspTitle" />
           <Field Name="ExecutiveSendDate" />
@@ -7187,6 +7188,7 @@
         <Parameter Name="CollectionApplicationSumTitle">Сумма заявления</Parameter>
         <Parameter Name="CollectionApplicationTaxTitle">Сумма госпошлины по заявлению</Parameter>
         <Parameter Name="CollectionApplicationCourtTitleTitle">Наименование суда</Parameter>
+        <Parameter Name="CollectionCaseNumberTitle">Номер дела</Parameter>
         <Parameter Name="ExecutiveTitle">Исполнительное производство</Parameter>
         <Parameter Name="ExecutiveOspTitleTitle">Наименование ОСП</Parameter>
         <Parameter Name="ExecutiveUfsspTitleTitle">Наименование УФССП</Parameter>
@@ -7480,6 +7482,13 @@
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
               <Field Name="CollectionApplicationCourtTitle" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="CollectionCaseNumber">
+          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="CollectionCaseNumber" />
             </Fields>
           </DataConnection>
         </Parameter>
