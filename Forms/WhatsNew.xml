@@ -98,7 +98,7 @@
         </Top>
         <Left>10</Left>
         <Width>400</Width>
-        <Text>Комментарии и взаимодействи привязаны к человеку</Text>
+        <Text>Контрольный срок для учета взаимодействия</Text>
 </MyObject>
 
 
@@ -117,7 +117,7 @@
         </Top>
         <Left>10</Left>
         <Width>400</Width>
-        <Text>Экспорт: Номер судебного дела</Text>
+        <Text>Комментарии и взаимодействи привязаны к человеку</Text>
 </MyObject>
 
 
@@ -136,7 +136,7 @@
         </Top>
         <Left>10</Left>
         <Width>400</Width>
-        <Text>Экспорт: Суд взыскания, статусы</Text>
+        <Text>Экспорт: Номер судебного дела</Text>
 </MyObject>
 
 
@@ -155,7 +155,7 @@
         </Top>
         <Left>10</Left>
         <Width>400</Width>
-        <Text>Таблица: Последний запрос ЕГПУ</Text>
+        <Text>Экспорт: Суд взыскания, статусы</Text>
 </MyObject>
 
 
@@ -174,7 +174,7 @@
         </Top>
         <Left>10</Left>
         <Width>400</Width>
-        <Text>Это окошко</Text>
+        <Text>Таблица: Последний запрос ЕГПУ</Text>
 </MyObject>
 
 
@@ -193,7 +193,7 @@
         </Top>
         <Left>10</Left>
         <Width>400</Width>
-        <Text>Сужение расширение главного окна</Text>
+        <Text>Это окошко</Text>
 </MyObject>
 
 
@@ -203,6 +203,25 @@
                 <Plus DataType="IntegerDataType">
                 <Item>
                         <Object Name="Thing6">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
+        </Formula>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Сужение расширение главного окна</Text>
+</MyObject>
+
+
+<MyObject Name="Thing8" Type="Label" Assembly="BaseControls">
+        <Top>
+        <Formula>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing7">
                         <Property Name="Bottom" />
                         </Object>
                 </Item>
