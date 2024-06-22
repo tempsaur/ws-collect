@@ -542,8 +542,8 @@
           <Field Name="LoanDebtRestTotal" />
           <Field Name="LoanClientUserTitle" />
           <Field Name="LoanClientStatusTitle" />
-          <Field Name="LoanClientStatus2Title" />
-          <Field Name="LoanClientStatus3Title" />
+	  <!--<Field Name="LoanClient2StatusTitle" />
+	  <Field Name="LoanClient3StatusTitle" />-->
           <Field Name="InnerOrgTitle" />
           <Field Name="ClientRegistrationAddress" />
           <Field Name="ClientActualAddress" />
@@ -563,8 +563,6 @@
           <Field Name="CollectionApplicationTypeTitle" />
           <Field Name="CollectionApplicationSum" />
           <Field Name="CollectionApplicationTax" />
-          <Field Name="CollectionApplicationCourtTitle" />
-          <Field Name="CollectionCaseNumber" />
           <Field Name="ExecutiveOspTitle" />
           <Field Name="ExecutiveUfsspTitle" />
           <Field Name="ExecutiveSendDate" />
@@ -717,7 +715,7 @@
               <Object Name="LoanClientStatusCheckedComboBox" />
             </Value>
           </Parameter>
-          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
+	  <!--          <Parameter NativeName="LoanClientStatus2Id" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="LoanClientStatus2CheckedComboBox" />
             </Value>
@@ -726,7 +724,7 @@
             <Value>
               <Object Name="LoanClientStatus3CheckedComboBox" />
             </Value>
-          </Parameter>
+    </Parameter>-->
           <Parameter NativeName="SuccessionCourtId" SendAsArray="True" RefreshQuery="False">
             <Value>
               <Object Name="SuccessionCourtCheckedComboBox" />
@@ -7187,8 +7185,6 @@
         <Parameter Name="CollectionApplicationTypeTitleTitle">Тип заявления</Parameter>
         <Parameter Name="CollectionApplicationSumTitle">Сумма заявления</Parameter>
         <Parameter Name="CollectionApplicationTaxTitle">Сумма госпошлины по заявлению</Parameter>
-        <Parameter Name="CollectionApplicationCourtTitleTitle">Наименование суда</Parameter>
-        <Parameter Name="CollectionCaseNumberTitle">Номер дела</Parameter>
         <Parameter Name="ExecutiveTitle">Исполнительное производство</Parameter>
         <Parameter Name="ExecutiveOspTitleTitle">Наименование ОСП</Parameter>
         <Parameter Name="ExecutiveUfsspTitleTitle">Наименование УФССП</Parameter>
@@ -7319,20 +7315,6 @@
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
               <Field Name="LoanClientStatusTitle" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="LoanClientStatus2Title">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="LoanClientStatus2Title" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="LoanClientStatus3Title">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="LoanClientStatus3Title" />
             </Fields>
           </DataConnection>
         </Parameter>
@@ -7475,20 +7457,6 @@
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
               <Field Name="CollectionApplicationTax" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="CollectionApplicationCourtTitle">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="CollectionApplicationCourtTitle" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="CollectionCaseNumber">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="CollectionCaseNumber" />
             </Fields>
           </DataConnection>
         </Parameter>

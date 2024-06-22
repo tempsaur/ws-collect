@@ -97,7 +97,7 @@
       </Top>
       <Left>10</Left>
       <Width>400</Width>
-      <Text>В основной таблице колонка запросы ЕГПУ</Text>
+      <Text>Экспорт номера судебного дела</Text>
     </MyObject>
 
     <MyObject Name="Thing2" Type="Label" Assembly="BaseControls">
@@ -115,7 +115,7 @@
       </Top>
       <Left>10</Left>
       <Width>400</Width>
-      <Text>Это окошко</Text>
+      <Text>Выгрузка судов взыскания, статусов ИД и замены</Text>
     </MyObject>
 
     <MyObject Name="Thing3" Type="Label" Assembly="BaseControls">
@@ -133,7 +133,7 @@
       </Top>
       <Left>10</Left>
       <Width>400</Width>
-      <Text>Главное окно теперь можно расширять и сужать</Text>
+      <Text>В основной таблице колонка запросы ЕГПУ</Text>
     </MyObject>
 
     <MyObject Name="Thing4" Type="Label" Assembly="BaseControls">
@@ -142,6 +142,42 @@
           <Plus DataType="IntegerDataType">
             <Item>
               <Object Name="Thing3">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>10</Left>
+      <Width>400</Width>
+      <Text>Это окошко</Text>
+    </MyObject>
+
+    <MyObject Name="Thing5" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="Thing4">
+                <Property Name="Bottom" />
+              </Object>
+            </Item>
+            <Item>2</Item>
+          </Plus>
+        </Formula>
+      </Top>
+      <Left>10</Left>
+      <Width>400</Width>
+      <Text>Главное окно теперь можно расширять и сужать</Text>
+    </MyObject>
+
+    <MyObject Name="Thing6" Type="Label" Assembly="BaseControls">
+      <Top>
+        <Formula>
+          <Plus DataType="IntegerDataType">
+            <Item>
+              <Object Name="Thing5">
                 <Property Name="Bottom" />
               </Object>
             </Item>
