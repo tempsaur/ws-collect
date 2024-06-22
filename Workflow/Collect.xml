@@ -8667,6 +8667,7 @@
           JOIN collect.loan_client LC USING(loan_client_id)
         WHERE
           LC.loan_id = {LoanId}
+          OR LC.client_id = (SELECT client_id FROM collect.loan_client WHERE loan_id = {LoanId})
         ORDER BY LCI.date DESC, LCI.loan_client_interaction_id DESC;
       </Text>
     </SqlQuery>

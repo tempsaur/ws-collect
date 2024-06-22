@@ -82,112 +82,138 @@
       </MyObject>
     </MyObject>
 
-    <MyObject Name="Thing1" Type="Label" Assembly="BaseControls">
-      <Top>
+<!-- Вставка -->
+<MyObject Name="Thing1" Type="Label" Assembly="BaseControls">
+        <Top>
         <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="HeadLabel">
-                <Property Name="Bottom" />
-              </Object>
-            </Item>
-            <Item>25</Item>
-          </Plus>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="HeadLabel">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>25</Item>
+                </Plus>
         </Formula>
-      </Top>
-      <Left>10</Left>
-      <Width>400</Width>
-      <Text>Экспорт номера судебного дела</Text>
-    </MyObject>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Комментарии и взаимодействи привязаны к человеку</Text>
+</MyObject>
 
-    <MyObject Name="Thing2" Type="Label" Assembly="BaseControls">
-      <Top>
-        <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="Thing1">
-                <Property Name="Bottom" />
-              </Object>
-            </Item>
-            <Item>2</Item>
-          </Plus>
-        </Formula>
-      </Top>
-      <Left>10</Left>
-      <Width>400</Width>
-      <Text>Выгрузка судов взыскания, статусов ИД и замены</Text>
-    </MyObject>
 
-    <MyObject Name="Thing3" Type="Label" Assembly="BaseControls">
-      <Top>
+<MyObject Name="Thing2" Type="Label" Assembly="BaseControls">
+        <Top>
         <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="Thing2">
-                <Property Name="Bottom" />
-              </Object>
-            </Item>
-            <Item>2</Item>
-          </Plus>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing1">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
         </Formula>
-      </Top>
-      <Left>10</Left>
-      <Width>400</Width>
-      <Text>В основной таблице колонка запросы ЕГПУ</Text>
-    </MyObject>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Экспорт: Номер судебного дела</Text>
+</MyObject>
 
-    <MyObject Name="Thing4" Type="Label" Assembly="BaseControls">
-      <Top>
-        <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="Thing3">
-                <Property Name="Bottom" />
-              </Object>
-            </Item>
-            <Item>2</Item>
-          </Plus>
-        </Formula>
-      </Top>
-      <Left>10</Left>
-      <Width>400</Width>
-      <Text>Это окошко</Text>
-    </MyObject>
 
-    <MyObject Name="Thing5" Type="Label" Assembly="BaseControls">
-      <Top>
+<MyObject Name="Thing3" Type="Label" Assembly="BaseControls">
+        <Top>
         <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="Thing4">
-                <Property Name="Bottom" />
-              </Object>
-            </Item>
-            <Item>2</Item>
-          </Plus>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing2">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
         </Formula>
-      </Top>
-      <Left>10</Left>
-      <Width>400</Width>
-      <Text>Главное окно теперь можно расширять и сужать</Text>
-    </MyObject>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Экспорт: Суд взыскания, статусы</Text>
+</MyObject>
 
-    <MyObject Name="Thing6" Type="Label" Assembly="BaseControls">
-      <Top>
+
+<MyObject Name="Thing4" Type="Label" Assembly="BaseControls">
+        <Top>
         <Formula>
-          <Plus DataType="IntegerDataType">
-            <Item>
-              <Object Name="Thing5">
-                <Property Name="Bottom" />
-              </Object>
-            </Item>
-            <Item>2</Item>
-          </Plus>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing3">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
         </Formula>
-      </Top>
-      <Left>10</Left>
-      <Width>400</Width>
-      <Text>Название судов</Text>
-    </MyObject>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Таблица: Последний запрос ЕГПУ</Text>
+</MyObject>
+
+
+<MyObject Name="Thing5" Type="Label" Assembly="BaseControls">
+        <Top>
+        <Formula>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing4">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
+        </Formula>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Это окошко</Text>
+</MyObject>
+
+
+<MyObject Name="Thing6" Type="Label" Assembly="BaseControls">
+        <Top>
+        <Formula>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing5">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
+        </Formula>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Сужение расширение главного окна</Text>
+</MyObject>
+
+
+<MyObject Name="Thing7" Type="Label" Assembly="BaseControls">
+        <Top>
+        <Formula>
+                <Plus DataType="IntegerDataType">
+                <Item>
+                        <Object Name="Thing6">
+                        <Property Name="Bottom" />
+                        </Object>
+                </Item>
+                <Item>2</Item>
+                </Plus>
+        </Formula>
+        </Top>
+        <Left>10</Left>
+        <Width>400</Width>
+        <Text>Таблица: Название судов</Text>
+</MyObject>
+<!-- Вставка -->
   </MyObjects>
 </Form>
