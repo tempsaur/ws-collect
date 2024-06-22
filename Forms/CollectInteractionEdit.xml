@@ -7,6 +7,7 @@
     <Parameter Name="InteractionTypeId" />
     <Parameter Name="ContactPersonTypeId" />
     <Parameter Name="Date" />
+    <Parameter Name="TsNotificationDate" />
     <Parameter Name="UserId" />
     <Parameter Name="UserPhoneId" />
     <Parameter Name="Description" />
@@ -302,6 +303,12 @@
       </Parameter>
     </Command>
 
+    <Command Name="TsNotificationDateValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
+      <Parameter Name="TsNotificationDate">
+        <Object Name="TsNotificationDateDateTimePicker" />
+      </Parameter>
+    </Command>
+
     <Command Name="UserIdValueSetCommand" Type="ValueSetCommand" Assembly="Commands">
       <Parameter Name="UserId">
         <Object Name="UserComboBox" />
@@ -325,6 +332,7 @@
         <Command Name="InteractionTypeIdValueSetCommand" />
         <Command Name="ContactPersonTypeIdValueSetCommand" />
         <Command Name="DateValueSetCommand" />
+        <Command Name="TsNotificationDateValueSetCommand" />
         <Command Name="UserIdValueSetCommand" />
         <Command Name="UserPhoneIdValueSetCommand" />
         <Command Name="DescriptionValueSetCommand" />
@@ -593,12 +601,85 @@
         </Value>
       </MyObject>
 
-      <MyObject Name="ContactPersonTypeLabel" Type="Label" Assembly="BaseControls">
+      <!-- Добавленный контрольный срок -->
+
+      <MyObject Name="TsNotificationDateLabel" Type="Label" Assembly="BaseControls">
         <Top>
           <Formula>
             <Plus DataType="IntegerDataType">
               <Item>
                 <Object Name="DateDateTimePicker">
+                  <Property Name="Bottom" />
+                </Object>
+              </Item>
+              <Item>5</Item>
+            </Plus>
+          </Formula>
+        </Top>
+        <Left>
+          <Object Name="InteractionTypeLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="InteractionTypeLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <Height>
+          <Object Name="InteractionTypeLabel">
+            <Property Name="Height" />
+          </Object>
+        </Height>
+        <FontStyle>
+          <Object Name="InteractionTypeLabel">
+            <Property Name="FontStyle" />
+          </Object>
+        </FontStyle>
+        <ForeColor>
+          <Object Name="InteractionTypeLabel">
+            <Property Name="ForeColor" />
+          </Object>
+        </ForeColor>
+        <TextAlign>
+          <Object Name="InteractionTypeLabel">
+            <Property Name="TextAlign" />
+          </Object>
+        </TextAlign>
+        <Text>Контрольный срок</Text>
+      </MyObject>
+
+      <MyObject Name="TsNotificationDateDateTimePicker" Type="DateTimePicker" Assembly="BaseControls">
+        <Change User="True" Source="False" ValueSet="False" />
+        <Top>
+          <Object Name="TsNotificationDateLabel">
+            <Property Name="Bottom" />
+          </Object>
+        </Top>
+        <Left>
+          <Object Name="TsNotificationDateLabel">
+            <Property Name="Left" />
+          </Object>
+        </Left>
+        <Width>
+          <Object Name="TsNotificationDateLabel">
+            <Property Name="Width" />
+          </Object>
+        </Width>
+        <TabIndex>5</TabIndex>
+        <NullValue Show="True" />
+        <Format> d  MMMM  yyyy</Format>
+        <Value>
+          <Parameter Name="TsNotificationDate" />
+        </Value>
+      </MyObject>
+
+      <MyObject Name="ContactPersonTypeLabel" Type="Label" Assembly="BaseControls">
+        <Top>
+          <Formula>
+            <Plus DataType="IntegerDataType">
+              <Item>
+                <Object Name="TsNotificationDateDateTimePicker">
                   <Property Name="Bottom" />
                 </Object>
               </Item>

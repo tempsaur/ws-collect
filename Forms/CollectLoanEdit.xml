@@ -2390,6 +2390,7 @@
           <Field Name="InteractionTypeId" />
           <Field Name="ContactPersonTypeId" />
           <Field Name="Date" />
+          <Field Name="TsNotificationDate" />
           <Field Name="UserId" />
           <Field Name="UserPhoneId" />
           <Field Name="Description" />
@@ -2415,6 +2416,7 @@
         <Field Name="InteractionTypeId" />
         <Field Name="ContactPersonTypeId" />
         <Field Name="Date" />
+        <Field Name="TsNotificationDate" />
         <Field Name="UserId" />
         <Field Name="UserPhoneId" />
         <Field Name="Description" />
@@ -13072,6 +13074,7 @@
                 <Item>InteractionTypeId</Item>
                 <Item>ContactPersonTypeId</Item>
                 <Item>Date</Item>
+                <Item>TsNotificationDate</Item>
                 <Item>UserId</Item>
                 <Item>UserPhoneId</Item>
                 <Item>Description</Item>
@@ -13093,6 +13096,9 @@
                 </Item>
                 <Item>
                   <Command Name="InteractionAddFormShowCommand" Parameter="Date" />
+                </Item>
+                <Item>
+                  <Command Name="InteractionAddFormShowCommand" Parameter="TsNotificationDate" />
                 </Item>
                 <Item>
                   <Command Name="InteractionAddFormShowCommand" Parameter="UserId" />
@@ -13139,6 +13145,7 @@
                 <Item>InteractionTypeId</Item>
                 <Item>ContactPersonTypeId</Item>
                 <Item>Date</Item>
+                <Item>TsNotificationDate</Item>
                 <Item>UserId</Item>
                 <Item>UserPhoneId</Item>
                 <Item>Description</Item>
@@ -13154,6 +13161,9 @@
                 </Item>
                 <Item>
                   <Command Name="InteractionEditFormShowCommand" Parameter="Date" />
+                </Item>
+                <Item>
+                  <Command Name="InteractionEditFormShowCommand" Parameter="TsNotificationDate" />
                 </Item>
                 <Item>
                   <Command Name="InteractionEditFormShowCommand" Parameter="UserId" />
@@ -18078,6 +18088,7 @@
                     <Field Name="InteractionTypeId" />
                     <Field Name="ContactPersonTypeId" />
                     <Field Name="Date" />
+                    <Field Name="TsNotificationDate" />
                     <Field Name="UserId" />
                     <Field Name="UserPhoneId" />
                     <Field Name="Description" />
@@ -18091,10 +18102,11 @@
                 <Key Name="interaction_type_id" Index="2" />
                 <Key Name="contact_person_type_id" Index="3" />
                 <Key Name="date" Index="4" />
-                <Key Name="user_id" Index="5" />
-                <Key Name="user_phone_id" Index="6" />
-                <Key Name="description" Index="7" />
-                <Key Name="id" Index="8" />
+                <Key Name="ts_notification_date" Index="5" />
+                <Key Name="user_id" Index="6" />
+                <Key Name="user_phone_id" Index="7" />
+                <Key Name="description" Index="8" />
+                <Key Name="id" Index="9" />
               </ToDictionary>
             </Array>
           </Key>
@@ -42335,6 +42347,12 @@
                 <Width>140</Width>
                 <AutoSizeMode Value="None" />
                 <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
+              </Column>
+              <Column Name="TsNotificationDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+                <Title>Контрольный срок</Title>
+                <Width>140</Width>
+                <AutoSizeMode Value="None" />
+                <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
               </Column>
               <Column Name="InteractionType" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
                 <Title>Способ взаимодействия</Title>

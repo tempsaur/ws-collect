@@ -8659,6 +8659,7 @@
           LCI.interaction_type_id AS "InteractionTypeId",
           LCI.contact_person_type_id AS "ContactPersonTypeId",
           LCI.date AS "Date",
+          LCI.notification_date AS "TsNotificationDate",
           LCI.user_id AS "UserId",
           LCI.user_phone_id AS "UserPhoneId",
           LCI.description AS "Description"
@@ -9323,7 +9324,7 @@
 
     <SqlQuery Name="LoanSaveSqlQuery">
       <Text>
-        SELECT collect.loan_save({Model}::json, {UserId}::smallint);
+        SELECT collect.ts_loan_save({Model}::json, {UserId}::smallint);
       </Text>
     </SqlQuery>
 
