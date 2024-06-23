@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Form Name="CollectAboutForm" Title="Что нового" Width="420" Height="320" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" BackColor="White" MinimizeBox="False" MaximizeBox="False">
+<Form Name="CollectAboutForm" Title="Что нового" Width="420" Height="420" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" BackColor="White" MinimizeBox="False" MaximizeBox="False">
   <Parameters>
     <Parameter Name="Title">Что там нового появилось</Parameter>
   </Parameters>
@@ -99,7 +99,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: взыскание, контрольный срок взыскания</Text>
+	<Text>Таблица: последний комментарий</Text>
 </MyObject>
 
 
@@ -118,7 +118,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Контрольный срок для учета взаимодействия</Text>
+	<Text>Таблица: самый поздний контрольный срок</Text>
 </MyObject>
 
 
@@ -137,7 +137,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Комментарии и взаимодействи привязаны к человеку</Text>
+	<Text>Таблица: взыскание, контрольный срок взыскания</Text>
 </MyObject>
 
 
@@ -156,7 +156,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Экспорт: Номер судебного дела</Text>
+	<Text>Контрольный срок для учета взаимодействия</Text>
 </MyObject>
 
 
@@ -175,7 +175,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Экспорт: Суд взыскания, статусы</Text>
+	<Text>Комментарии и взаимодействи привязаны к человеку</Text>
 </MyObject>
 
 
@@ -194,7 +194,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: Последний запрос ЕГПУ</Text>
+	<Text>Экспорт: Номер судебного дела</Text>
 </MyObject>
 
 
@@ -213,7 +213,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Это окошко</Text>
+	<Text>Экспорт: Суд взыскания, статусы</Text>
 </MyObject>
 
 
@@ -232,7 +232,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Сужение расширение главного окна</Text>
+	<Text>Таблица: Последний запрос ЕГПУ</Text>
 </MyObject>
 
 
@@ -251,8 +251,48 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
+	<Text>Это окошко</Text>
+</MyObject>
+
+
+<MyObject Name="Thing10" Type="Label" Assembly="BaseControls">
+	<Top>
+	<Formula>
+		<Plus DataType="IntegerDataType">
+		<Item>
+			<Object Name="Thing9">
+			<Property Name="Bottom" />
+			</Object>
+		</Item>
+		<Item>2</Item>
+		</Plus>
+	</Formula>
+	</Top>
+	<Left>10</Left>
+	<Width>400</Width>
+	<Text>Сужение расширение главного окна</Text>
+</MyObject>
+
+
+<MyObject Name="Thing11" Type="Label" Assembly="BaseControls">
+	<Top>
+	<Formula>
+		<Plus DataType="IntegerDataType">
+		<Item>
+			<Object Name="Thing10">
+			<Property Name="Bottom" />
+			</Object>
+		</Item>
+		<Item>2</Item>
+		</Plus>
+	</Formula>
+	</Top>
+	<Left>10</Left>
+	<Width>400</Width>
 	<Text>Таблица: Название судов</Text>
 </MyObject>
+
+
 <!-- Вставка -->
   </MyObjects>
 </Form>

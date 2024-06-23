@@ -19116,7 +19116,7 @@
             <Column Name="CommentNotificationDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Юридический отдел
 Контрольный срок</Title>
-              <Width>120</Width>
+              <Width>130</Width>
               <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
             </Column>
             <Column Name="TsComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
