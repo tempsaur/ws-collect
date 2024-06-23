@@ -1,3 +1,5 @@
+import pyperclip
+
 first = 'HeadLabel'
 
 thing = '''
@@ -21,6 +23,7 @@ thing = '''
 '''
 
 stuffs = [
+    'Таблица: взыскание, контрольный срок взыскания',
     'Контрольный срок для учета взаимодействия',
     'Комментарии и взаимодействи привязаны к человеку',
     'Экспорт: Номер судебного дела',
@@ -31,8 +34,11 @@ stuffs = [
     'Таблица: Название судов',
 ]
 
+xml = ''
+
 for i, text in enumerate(stuffs):
 	bottom = f'Thing{i}' if i != 0 else first
 	padding = 2 if i != 0 else 25
 
-	print(thing.format(i + 1, bottom, padding, text))
+	xml += thing.format(i + 1, bottom, padding, text) + '\n'
+pyperclip.copy(xml)

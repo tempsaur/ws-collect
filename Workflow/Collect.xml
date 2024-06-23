@@ -7641,7 +7641,21 @@
             WHERE task_type_id = 7
             GROUP BY loan_client_id
           ) T2 ON T1.loan_client_id = T2.loan_client_id AND T1.loan_comment_id = T2.max_comment_id
+        ), client_interaction AS (
+          SELECT LC.client_id, LCI.*
+          FROM
+            collect.loan_client_interaction LCI
+            LEFT JOIN collect.loan_client LC USING (loan_client_id)
+        ), last_interaction AS (
+          SELECT T1.client_id, description, notification_date
+          FROM client_interaction T1
+          INNER JOIN (
+            SELECT client_id, MAX(loan_client_interaction_id) as max_id
+            FROM client_interaction
+            GROUP BY client_id
+          ) T2 ON T1.loan_client_interaction_id = T2.max_id
         )
+
         SELECT
           F."RowNumber",
           F."TotalRows",
@@ -7656,6 +7670,8 @@
           LC.status2_id as "LoanClientStatus2Id",
           LC.status3_id as "LoanClientStatus3Id",
           LCM.comment as "TsComment",
+          LLCI.description as "TsLastInteractionDescription",
+          LLCI.notification_date as "TsLastInteractionNotificationDate",
           C.inner_org_id AS "InnerOrgId",
           LCS.court_id AS "SuccessionCourtId",
           LCS.court_document_id AS "SuccessionCourtDocumentId",
@@ -7727,6 +7743,7 @@
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
           LEFT JOIN ts_loan_client_last_egpu LCM ON LCC.loan_client_id = LCM.loan_client_id
+          LEFT JOIN last_interaction LLCI USING (client_id)
         ORDER BY F."RowNumber";
       </Text>
     </SqlQuery>

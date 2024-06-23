@@ -174,6 +174,8 @@
           <Field Name="TotalPages" />
 
           <Field Name="TsComment" />
+          <Field Name="TsLastInteractionDescription" />
+          <Field Name="TsLastInteractionNotificationDate" />
         </Fields>
         <Parameters>
           <Parameter NativeName="CurrentPage" RefreshQuery="False">
@@ -19520,6 +19522,18 @@
             <Column Name="TsComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Запрос ЕГПУ</Title>
               <Width>100</Width>
+              <WrapMode Value="True" />
+            </Column>
+            <Column Name="TsLastInteractionDescription" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Взыскание
+Взаимодействие</Title>
+              <Width>200</Width>
+              <WrapMode Value="True" />
+            </Column>
+            <Column Name="TsLastInteractionNotificationDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Взыскание
+Контрольный срок</Title>
+              <Width>200</Width>
               <WrapMode Value="True" />
             </Column>
           </Columns>
