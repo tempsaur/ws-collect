@@ -7459,6 +7459,8 @@
           SELECT
             DISTINCT ON (LC.loan_client_id)
             LC.loan_client_id,
+            LC.comment,
+            LC.loan_comment_id,
             LC.notification_date
           FROM
             final F
@@ -7467,11 +7469,13 @@
             LC.notification_date IS NOT NULL AND
             LC.execution_date IS NULL AND
             LC.loan_client_id IS NOT NULL
-          ORDER BY LC.loan_client_id, LC.notification_date
+          ORDER BY LC.loan_client_id, LC.notification_date DESC, LC.loan_comment_id DESC
         ), comment_loan AS (
           SELECT
             DISTINCT ON (LCL.loan_client_id)
             LCL.loan_client_id,
+            LC.comment,
+            LC.loan_comment_id,
             LC.notification_date
           FROM
             final F
@@ -7481,11 +7485,13 @@
             LC.notification_date IS NOT NULL AND
             LC.execution_date IS NULL AND
             LC.loan_id IS NOT NULL
-          ORDER BY LCL.loan_client_id, LC.notification_date
+          ORDER BY LCL.loan_client_id, LC.notification_date DESC, LC.loan_comment_id DESC
         ), comment_total AS (
           SELECT
             loan_client_id,
-            notification_date
+            notification_date,
+            comment,
+            loan_comment_id
           FROM
             comment_loan_client
 
@@ -7493,17 +7499,20 @@
 
           SELECT
             loan_client_id,
-            notification_date
+            notification_date,
+            comment,
+            loan_comment_id
           FROM
             comment_loan
         ), comment_result AS (
           SELECT
             DISTINCT ON (loan_client_id)
             loan_client_id,
-            notification_date
+            notification_date,
+            comment
           FROM
             comment_total
-          ORDER BY loan_client_id, notification_date
+          ORDER BY loan_client_id, notification_date DESC, loan_comment_id DESC
         ), dates AS (
           SELECT
             date_trunc('month', collect.convert_date_now())::date AS cm_date,
@@ -7669,7 +7678,7 @@
           LC.status_id AS "LoanClientStatusId",
           LC.status2_id as "LoanClientStatus2Id",
           LC.status3_id as "LoanClientStatus3Id",
-          LCM.comment as "TsComment",
+          LCM.comment as "TsEgpuComment",
           LLCI.description as "TsLastInteractionDescription",
           LLCI.notification_date as "TsLastInteractionNotificationDate",
           C.inner_org_id AS "InnerOrgId",
@@ -7677,6 +7686,7 @@
           LCS.court_document_id AS "SuccessionCourtDocumentId",
           LCE.osp_id AS "ExecutiveOspId",
           CR.notification_date AS "CommentNotificationDate",
+          CR.comment AS "TsComment",
           collect.get_client_title(CP.first_name, CP.second_name, CP.third_name) AS "ClientTitle",
           CP.email AS "ClientEmail",
           CP.inn as "ClientInn",

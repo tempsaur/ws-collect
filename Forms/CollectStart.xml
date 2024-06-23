@@ -173,6 +173,7 @@
           <Field Name="TotalRows" />
           <Field Name="TotalPages" />
 
+          <Field Name="TsEgpuComment" />
           <Field Name="TsComment" />
           <Field Name="TsLastInteractionDescription" />
           <Field Name="TsLastInteractionNotificationDate" />
@@ -19113,9 +19114,16 @@
               </Substitution>
             </Column>
             <Column Name="CommentNotificationDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Контрольный срок</Title>
-              <Width>100</Width>
+              <Title>Юридический отдел
+Контрольный срок</Title>
+              <Width>120</Width>
               <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            </Column>
+            <Column Name="TsComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Юридический отдел
+Комментарий</Title>
+              <Width>200</Width>
+              <WrapMode Value="True" />
             </Column>
             <Column Name="ClaimantTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Цедент</Title>
@@ -19519,7 +19527,7 @@
               <Title>ИНН должника</Title>
               <Width>150</Width>
             </Column>
-            <Column Name="TsComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+            <Column Name="TsEgpuComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Запрос ЕГПУ</Title>
               <Width>100</Width>
               <WrapMode Value="True" />
