@@ -19543,6 +19543,7 @@
 Контрольный срок</Title>
               <Width>200</Width>
               <WrapMode Value="True" />
+              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
             </Column>
           </Columns>
         </MyObject>

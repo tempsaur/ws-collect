@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Form Name="CollectInteractionEditForm" Width="340" Height="402" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+<Form Name="CollectInteractionEditForm" Width="340" Height="442" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
   <Parameters>
     <Parameter Name="Edit">False</Parameter>
     <Parameter Name="ID" />
