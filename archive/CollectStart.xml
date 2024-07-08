@@ -177,6 +177,7 @@
           <Field Name="TsComment" />
           <Field Name="TsLastInteractionDescription" />
           <Field Name="TsLastInteractionNotificationDate" />
+          <Field Name="CollectionCaseNumber" />
         </Fields>
         <Parameters>
           <Parameter NativeName="CurrentPage" RefreshQuery="False">
@@ -19544,6 +19545,11 @@
               <Width>200</Width>
               <WrapMode Value="True" />
               <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            </Column>
+            <Column Name="CollectionCaseNumber" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Взыскание
+Номер дела</Title>
+              <Width>150</Width>
             </Column>
           </Columns>
         </MyObject>

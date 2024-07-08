@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Workflow>
   <Scheduler>
     <Task Name="AudioDownload">
@@ -7459,6 +7459,8 @@
           SELECT
             DISTINCT ON (LC.loan_client_id)
             LC.loan_client_id,
+            LC.comment,
+            LC.loan_comment_id,
             LC.notification_date
           FROM
             final F
@@ -7467,11 +7469,13 @@
             LC.notification_date IS NOT NULL AND
             LC.execution_date IS NULL AND
             LC.loan_client_id IS NOT NULL
-          ORDER BY LC.loan_client_id, LC.notification_date
+          ORDER BY LC.loan_client_id, LC.notification_date DESC, LC.loan_comment_id DESC
         ), comment_loan AS (
           SELECT
             DISTINCT ON (LCL.loan_client_id)
             LCL.loan_client_id,
+            LC.comment,
+            LC.loan_comment_id,
             LC.notification_date
           FROM
             final F
@@ -7481,11 +7485,13 @@
             LC.notification_date IS NOT NULL AND
             LC.execution_date IS NULL AND
             LC.loan_id IS NOT NULL
-          ORDER BY LCL.loan_client_id, LC.notification_date
+          ORDER BY LCL.loan_client_id, LC.notification_date DESC, LC.loan_comment_id DESC
         ), comment_total AS (
           SELECT
             loan_client_id,
-            notification_date
+            notification_date,
+            comment,
+            loan_comment_id
           FROM
             comment_loan_client
 
@@ -7493,17 +7499,20 @@
 
           SELECT
             loan_client_id,
-            notification_date
+            notification_date,
+            comment,
+            loan_comment_id
           FROM
             comment_loan
         ), comment_result AS (
           SELECT
             DISTINCT ON (loan_client_id)
             loan_client_id,
-            notification_date
+            notification_date,
+            comment
           FROM
             comment_total
-          ORDER BY loan_client_id, notification_date
+          ORDER BY loan_client_id, notification_date DESC, loan_comment_id DESC
         ), dates AS (
           SELECT
             date_trunc('month', collect.convert_date_now())::date AS cm_date,
@@ -7641,7 +7650,21 @@
             WHERE task_type_id = 7
             GROUP BY loan_client_id
           ) T2 ON T1.loan_client_id = T2.loan_client_id AND T1.loan_comment_id = T2.max_comment_id
+        ), client_interaction AS (
+          SELECT LC.client_id, LCI.*
+          FROM
+            collect.loan_client_interaction LCI
+            LEFT JOIN collect.loan_client LC USING (loan_client_id)
+        ), last_interaction AS (
+          SELECT T1.client_id, description, notification_date
+          FROM client_interaction T1
+          INNER JOIN (
+            SELECT client_id, MAX(loan_client_interaction_id) as max_id
+            FROM client_interaction
+            GROUP BY client_id
+          ) T2 ON T1.loan_client_interaction_id = T2.max_id
         )
+
         SELECT
           F."RowNumber",
           F."TotalRows",
@@ -7655,12 +7678,15 @@
           LC.status_id AS "LoanClientStatusId",
           LC.status2_id as "LoanClientStatus2Id",
           LC.status3_id as "LoanClientStatus3Id",
-          LCM.comment as "TsComment",
+          LCM.comment as "TsEgpuComment",
+          LLCI.description as "TsLastInteractionDescription",
+          LLCI.notification_date as "TsLastInteractionNotificationDate",
           C.inner_org_id AS "InnerOrgId",
           LCS.court_id AS "SuccessionCourtId",
           LCS.court_document_id AS "SuccessionCourtDocumentId",
           LCE.osp_id AS "ExecutiveOspId",
           CR.notification_date AS "CommentNotificationDate",
+          CR.comment AS "TsComment",
           collect.get_client_title(CP.first_name, CP.second_name, CP.third_name) AS "ClientTitle",
           CP.email AS "ClientEmail",
           CP.inn as "ClientInn",
@@ -7695,6 +7721,7 @@
           LCC.document_get_date AS "CollectionDocumentGetDate",
           LCC.application_type_id AS "CollectionApplicationTypeId",
           LCC.application_sum AS "CollectionApplicationSum",
+          LCC.case_number AS "CollectionCaseNumber",
           CC.title AS "CollectionApplicationCourtTitle",
           LCC.application_tax AS "CollectionApplicationTax",
           LCE.send_date AS "ExecutiveSendDate",
@@ -7727,6 +7754,7 @@
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
           LEFT JOIN ts_loan_client_last_egpu LCM ON LCC.loan_client_id = LCM.loan_client_id
+          LEFT JOIN last_interaction LLCI USING (client_id)
         ORDER BY F."RowNumber";
       </Text>
     </SqlQuery>
@@ -8659,6 +8687,7 @@
           LCI.interaction_type_id AS "InteractionTypeId",
           LCI.contact_person_type_id AS "ContactPersonTypeId",
           LCI.date AS "Date",
+          LCI.notification_date AS "TsNotificationDate",
           LCI.user_id AS "UserId",
           LCI.user_phone_id AS "UserPhoneId",
           LCI.description AS "Description"
@@ -8666,9 +8695,8 @@
           collect.loan_client_interaction LCI
           JOIN collect.loan_client LC USING(loan_client_id)
         WHERE
-	      LC.loan_id = {LoanId}
+          LC.loan_id = {LoanId}
           OR LC.client_id = (SELECT client_id FROM collect.loan_client WHERE loan_id = {LoanId})
-
         ORDER BY LCI.date DESC, LCI.loan_client_interaction_id DESC;
       </Text>
     </SqlQuery>
@@ -9192,9 +9220,8 @@
           LEFT JOIN collect.task_type TT USING(task_type_id)
         WHERE
           LC.loan_id = {LoanId} OR
-	  LCL.loan_id = {LoanId} OR
-	  LCL.client_id = (SELECT client_id FROM collect.loan_client WHERE loan_id = {LoanId})
-
+          LCL.loan_id = {LoanId} OR
+          LCL.client_id = (SELECT client_id FROM collect.loan_client WHERE loan_id={LoanId})
         ORDER BY LC.create_date DESC, LC.loan_comment_id DESC;
       </Text>
     </SqlQuery>
@@ -9325,7 +9352,7 @@
 
     <SqlQuery Name="LoanSaveSqlQuery">
       <Text>
-        SELECT collect.loan_save({Model}::json, {UserId}::smallint);
+        SELECT collect.ts_loan_save({Model}::json, {UserId}::smallint);
       </Text>
     </SqlQuery>
 
