@@ -7641,8 +7641,17 @@
             LEFT JOIN collect.pochtaru_order_view LCO ON LCO.loan_client_id = LC2.loan_client_id AND LCO.state = 'ADDED'
           GROUP BY
             F.loan_client_id
+        ), ts_loan_client_salary AS (
+          SELECT T1.loan_client_id as loan_client_id, T1.comment, T1.create_date
+          FROM collect.loan_comment T1
+          INNER JOIN (
+            SELECT loan_client_id, MAX(loan_comment_id) as max_comment_id
+            FROM collect.loan_comment
+            WHERE task_type_id = 10
+            GROUP BY loan_client_id
+          ) T2 ON T1.loan_client_id = T2.loan_client_id AND T1.loan_comment_id = T2.max_comment_id
         ), ts_loan_client_last_egpu AS (
-          SELECT T1.loan_client_id as loan_client_id, T1.comment
+          SELECT T1.loan_client_id as loan_client_id, T1.comment, T1.create_date
           FROM collect.loan_comment T1
           INNER JOIN (
             SELECT loan_client_id, MAX(loan_comment_id) as max_comment_id
@@ -7678,7 +7687,9 @@
           LC.status_id AS "LoanClientStatusId",
           LC.status2_id as "LoanClientStatus2Id",
           LC.status3_id as "LoanClientStatus3Id",
-          LCM.comment as "TsEgpuComment",
+          LCME.comment as "TsEgpuComment",
+          LCME.create_date as "TsEgpuCommentDate",
+          LCMS.create_date as "TsSalaryDate",
           LLCI.description as "TsLastInteractionDescription",
           LLCI.notification_date as "TsLastInteractionNotificationDate",
           C.inner_org_id AS "InnerOrgId",
@@ -7732,7 +7743,8 @@
           LCE.end_date AS "ExecutiveEndDate",
           LCE.resend_date AS "ExecutiveReSendDate",
           LC.repayment_date AS "LoanClientRepaymentDate",
-          CL.bankrupt_check_date AS "BankruptCheckDate"
+          CL.bankrupt_check_date AS "BankruptCheckDate",
+          LC.loan_client_id AS "TsLoanClientId"
         FROM
           final F
           LEFT JOIN collect.loan_client LC USING(loan_client_id)
@@ -7753,7 +7765,8 @@
           LEFT JOIN collect.court CC ON LCC.court_id = CC.court_id
           LEFT JOIN collect.court_document LCC_CD ON LCC.court_document_id = LCC_CD.court_document_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
-          LEFT JOIN ts_loan_client_last_egpu LCM ON LCC.loan_client_id = LCM.loan_client_id
+          LEFT JOIN ts_loan_client_last_egpu LCME ON LCC.loan_client_id = LCME.loan_client_id
+          LEFT JOIN ts_loan_client_salary LCMS ON LCC.loan_client_id = LCMS.loan_client_id
           LEFT JOIN last_interaction LLCI USING (client_id)
         ORDER BY F."RowNumber";
       </Text>
@@ -8070,7 +8083,8 @@
           LCE.request AS "ExecutiveRequest",
           LCE.end_date AS "ExecutiveEndDate",
           LCE.resend_date AS "ExecutiveReSendDate",
-          LC.repayment_date AS "LoanClientRepaymentDate"
+          LC.repayment_date AS "LoanClientRepaymentDate",
+          LC.loan_client_id AS "LoanClientId"
         FROM
           final F
           LEFT JOIN collect.loan_client LC USING(loan_client_id)

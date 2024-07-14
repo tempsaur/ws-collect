@@ -174,13 +174,10 @@
           <Field Name="TotalPages" />
 
           <Field Name="TsEgpuComment" />
-          <Field Name="TsEgpuCommentDate" />
-          <Field Name="TsSalaryDate" />
           <Field Name="TsComment" />
           <Field Name="TsLastInteractionDescription" />
           <Field Name="TsLastInteractionNotificationDate" />
           <Field Name="CollectionCaseNumber" />
-          <Field Name="TsLoanClientId" />
         </Fields>
         <Parameters>
           <Parameter NativeName="CurrentPage" RefreshQuery="False">
@@ -582,7 +579,6 @@
           <Field Name="ExecutiveEndDate" />
           <Field Name="ExecutiveReSendDate" />
           <Field Name="LoanClientRepaymentDate" />
-          <Field Name="LoanClientId" />
         </Fields>
         <Parameters>
           <Parameter NativeName="CessionId" SendAsArray="True" RefreshQuery="False">
@@ -7341,13 +7337,6 @@
           <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
             <Fields>
               <Field Name="LoanClientStatus3Title" />
-            </Fields>
-          </DataConnection>
-        </Parameter>
-        <Parameter Name="LoanClientId">
-          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
-            <Fields>
-              <Field Name="LoanClientId" />
             </Fields>
           </DataConnection>
         </Parameter>
@@ -19137,10 +19126,6 @@
               <Width>200</Width>
               <WrapMode Value="True" />
             </Column>
-            <Column Name="TsLoanClientId" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>ID</Title>
-              <Width>70</Width>
-            </Column>
             <Column Name="ClaimantTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Цедент</Title>
               <Width>150</Width>
@@ -19547,16 +19532,6 @@
               <Title>Запрос ЕГПУ</Title>
               <Width>100</Width>
               <WrapMode Value="True" />
-            </Column>
-            <Column Name="TsEgpuCommentDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Дата запроса ЕГПУ</Title>
-              <Width>150</Width>
-              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
-            </Column>
-            <Column Name="TsSalaryDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Поставлено на ЗП</Title>
-              <Width>100</Width>
-              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
             </Column>
             <Column Name="TsLastInteractionDescription" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Взыскание

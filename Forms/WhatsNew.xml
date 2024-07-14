@@ -99,7 +99,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: последний комментарий</Text>
+	<Text>Таблица: Дата запроса ЕГПУ, дата постановления на ЗП</Text>
 </MyObject>
 
 
@@ -118,7 +118,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: самый поздний контрольный срок</Text>
+	<Text>Табпорт: ID долга</Text>
 </MyObject>
 
 
@@ -137,7 +137,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: взыскание, контрольный срок взыскания</Text>
+	<Text>Таблица: последний комментарий</Text>
 </MyObject>
 
 
@@ -156,7 +156,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Контрольный срок для учета взаимодействия</Text>
+	<Text>Таблица: самый поздний контрольный срок</Text>
 </MyObject>
 
 
@@ -175,7 +175,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Комментарии и взаимодействи привязаны к человеку</Text>
+	<Text>Таблица: взыскание, контрольный срок взыскания</Text>
 </MyObject>
 
 
@@ -194,7 +194,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Экспорт: Номер судебного дела</Text>
+	<Text>Контрольный срок для учета взаимодействия</Text>
 </MyObject>
 
 
@@ -213,7 +213,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Экспорт: Суд взыскания, статусы</Text>
+	<Text>Комментарии и взаимодействи привязаны к человеку</Text>
 </MyObject>
 
 
@@ -232,7 +232,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: Последний запрос ЕГПУ</Text>
+	<Text>Экспорт: Номер судебного дела</Text>
 </MyObject>
 
 
@@ -251,7 +251,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Это окошко</Text>
+	<Text>Экспорт: Суд взыскания, статусы</Text>
 </MyObject>
 
 
@@ -270,7 +270,7 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Сужение расширение главного окна</Text>
+	<Text>Таблица: Последний запрос ЕГПУ</Text>
 </MyObject>
 
 
@@ -289,10 +289,47 @@
 	</Top>
 	<Left>10</Left>
 	<Width>400</Width>
-	<Text>Таблица: Название судов</Text>
+	<Text>Это окошко</Text>
 </MyObject>
 
 
-<!-- Вставка -->
+<MyObject Name="Thing12" Type="Label" Assembly="BaseControls">
+	<Top>
+	<Formula>
+		<Plus DataType="IntegerDataType">
+		<Item>
+			<Object Name="Thing11">
+			<Property Name="Bottom" />
+			</Object>
+		</Item>
+		<Item>2</Item>
+		</Plus>
+	</Formula>
+	</Top>
+	<Left>10</Left>
+	<Width>400</Width>
+	<Text>Сужение расширение главного окна</Text>
+</MyObject>
+
+
+<MyObject Name="Thing13" Type="Label" Assembly="BaseControls">
+	<Top>
+	<Formula>
+		<Plus DataType="IntegerDataType">
+		<Item>
+			<Object Name="Thing12">
+			<Property Name="Bottom" />
+			</Object>
+		</Item>
+		<Item>2</Item>
+		</Plus>
+	</Formula>
+	</Top>
+	<Left>10</Left>
+	<Width>400</Width>
+	<Text>Таблица: Название судов</Text>
+</MyObject>
+
+<!-- вставка -->
   </MyObjects>
 </Form>
