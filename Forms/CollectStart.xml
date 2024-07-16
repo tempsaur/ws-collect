@@ -19550,7 +19550,7 @@
             </Column>
             <Column Name="TsEgpuCommentDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
               <Title>Дата запроса ЕГПУ</Title>
-              <Width>150</Width>
+              <Width>120</Width>
               <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
             </Column>
             <Column Name="TsSalaryDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
