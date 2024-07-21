@@ -181,6 +181,9 @@
           <Field Name="TsLastInteractionNotificationDate" />
           <Field Name="CollectionCaseNumber" />
           <Field Name="TsLoanClientId" />
+          <Field Name="CreditDate" />
+          <Field Name="CourtDate" />
+          <!-- Таблица сюда -->
         </Fields>
         <Parameters>
           <Parameter NativeName="CurrentPage" RefreshQuery="False">
@@ -583,6 +586,8 @@
           <Field Name="ExecutiveReSendDate" />
           <Field Name="LoanClientRepaymentDate" />
           <Field Name="LoanClientId" />
+          <Field Name="CreditDate" />
+          <!-- Экспорт здесь -->
         </Fields>
         <Parameters>
           <Parameter NativeName="CessionId" SendAsArray="True" RefreshQuery="False">
@@ -7594,6 +7599,17 @@
             </Fields>
           </DataConnection>
         </Parameter>
+
+        <Parameter Name="CreditDate">
+          <DataTypeFormat Type="DateDataType" Format="dd.MM.yyyy">
+            <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
+              <Fields>
+                <Field Name="CreditDate" />
+              </Fields>
+            </DataConnection>
+          </DataTypeFormat>
+        </Parameter>
+        <!-- Экспорт здесь -->
       </Parameters>
     </Command>
 
@@ -19544,12 +19560,12 @@
               <Width>150</Width>
             </Column>
             <Column Name="TsEgpuComment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Запрос ЕГПУ</Title>
+              <Title>Запрос ЕПГУ</Title>
               <Width>100</Width>
               <WrapMode Value="True" />
             </Column>
             <Column Name="TsEgpuCommentDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
-              <Title>Дата запроса ЕГПУ</Title>
+              <Title>Дата запроса ЕПГУ</Title>
               <Width>150</Width>
               <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
             </Column>
@@ -19576,6 +19592,19 @@
 Номер дела</Title>
               <Width>150</Width>
             </Column>
+            <Column Name="CreditDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Дата КД</Title>
+              <Width>120</Width>
+              <WrapMode Value="True" />
+              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy" />
+            </Column>
+            <Column Name="CourtDate" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>Дата и время заседания</Title>
+              <Width>180</Width>
+              <WrapMode Value="True" />
+              <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
+            </Column>
+            <!-- Таблица здесь -->
           </Columns>
         </MyObject>
 

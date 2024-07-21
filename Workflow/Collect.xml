@@ -7744,7 +7744,9 @@
           LCE.resend_date AS "ExecutiveReSendDate",
           LC.repayment_date AS "LoanClientRepaymentDate",
           CL.bankrupt_check_date AS "BankruptCheckDate",
-          LC.loan_client_id AS "TsLoanClientId"
+          LC.loan_client_id AS "TsLoanClientId",
+          L.credit_date AS "CreditDate",
+          LCC.court_date AS "CourtDate"
         FROM
           final F
           LEFT JOIN collect.loan_client LC USING(loan_client_id)
@@ -8084,7 +8086,8 @@
           LCE.end_date AS "ExecutiveEndDate",
           LCE.resend_date AS "ExecutiveReSendDate",
           LC.repayment_date AS "LoanClientRepaymentDate",
-          LC.loan_client_id AS "LoanClientId"
+          LC.loan_client_id AS "LoanClientId",
+          L.credit_date AS CreditDate
         FROM
           final F
           LEFT JOIN collect.loan_client LC USING(loan_client_id)
