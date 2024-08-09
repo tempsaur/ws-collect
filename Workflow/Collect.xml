@@ -7771,6 +7771,7 @@
           LEFT JOIN ts_loan_client_last_egpu LCME ON LCC.loan_client_id = LCME.loan_client_id
           LEFT JOIN ts_loan_client_salary LCMS ON LCC.loan_client_id = LCMS.loan_client_id
           LEFT JOIN last_interaction LLCI USING (client_id)
+          <!-- CROSS JOIN collect.ts_attachment(loan_id) ATCH -->
         ORDER BY F."RowNumber";
       </Text>
     </SqlQuery>
