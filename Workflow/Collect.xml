@@ -7687,7 +7687,6 @@
           LC.status_id AS "LoanClientStatusId",
           LC.status2_id as "LoanClientStatus2Id",
           LC.status3_id as "LoanClientStatus3Id",
-          LCME.comment as "TsEgpuComment",
           LCME.create_date as "TsEgpuCommentDate",
           LCMS.create_date as "TsSalaryDate",
           LLCI.description as "TsLastInteractionDescription",
@@ -7744,9 +7743,11 @@
           LCE.resend_date AS "ExecutiveReSendDate",
           LC.repayment_date AS "LoanClientRepaymentDate",
           CL.bankrupt_check_date AS "BankruptCheckDate",
-          LC.loan_client_id AS "TsLoanClientId",
-          L.credit_date AS "CreditDate",
-          LCC.court_date AS "CourtDate"
+          LC.loan_client_id AS "TsLoanClientId"
+          , LCME.comment as "TsEgpuComment"
+          , L.credit_date AS "CreditDate"
+          , LCC.court_date AS "CourtDate"
+          , LCE.bailiff_title AS "BailiffTitle"
         FROM
           final F
           LEFT JOIN collect.loan_client LC USING(loan_client_id)
@@ -8026,6 +8027,15 @@
             collect.loan_client_payment LCP
             JOIN collect.loan_client LC USING (loan_client_id)
           GROUP BY LC.loan_id
+        ), ts_loan_client_last_egpu AS (
+          SELECT T1.loan_client_id as loan_client_id, T1.comment, T1.create_date
+          FROM collect.loan_comment T1
+          INNER JOIN (
+            SELECT loan_client_id, MAX(loan_comment_id) as max_comment_id
+            FROM collect.loan_comment
+            WHERE task_type_id = 7
+            GROUP BY loan_client_id
+          ) T2 ON T1.loan_client_id = T2.loan_client_id AND T1.loan_comment_id = T2.max_comment_id
         )
         SELECT
           F."RowNumber",
@@ -8085,9 +8095,11 @@
           LCE.request AS "ExecutiveRequest",
           LCE.end_date AS "ExecutiveEndDate",
           LCE.resend_date AS "ExecutiveReSendDate",
-          LC.repayment_date AS "LoanClientRepaymentDate",
-          LC.loan_client_id AS "LoanClientId",
-          L.credit_date AS CreditDate
+          LC.repayment_date AS "LoanClientRepaymentDate"
+          , LC.loan_client_id AS "LoanClientId"
+          , L.credit_date AS "CreditDate"
+          , LCE.bailiff_title AS "BailiffTitle"
+          , LCME.comment as "TsEgpuComment"
         FROM
           final F
           LEFT JOIN collect.loan_client LC USING(loan_client_id)
@@ -8119,6 +8131,7 @@
           LEFT JOIN collect.application_type LCC_AT ON LCC.application_type_id = LCC_AT.application_type_id
           LEFT JOIN collect.loan_client_executive LCE USING(loan_client_collection_id)
           LEFT JOIN collect.osp O USING(osp_id)
+          LEFT JOIN ts_loan_client_last_egpu LCME ON LCC.loan_client_id = LCME.loan_client_id
         ORDER BY F."RowNumber";
       </Text>
     </SqlQuery>
@@ -9230,11 +9243,13 @@
           LC.create_date AS "CreateDate",
           LC.notification_date AS "NotificationDate",
           LC.execution_date AS "ExecutionDate",
-          LC.comment AS "Comment"
+          LC.comment AS "Comment",
+          L.credit_number AS "CreditNumber"
         FROM
           collect.loan_comment LC
           LEFT JOIN collect.loan_client LCL USING(loan_client_id)
           LEFT JOIN collect.task_type TT USING(task_type_id)
+          LEFT JOIN collect.loan L ON L.loan_id = LCL.loan_id
         WHERE
           LC.loan_id = {LoanId} OR
           LCL.loan_id = {LoanId} OR

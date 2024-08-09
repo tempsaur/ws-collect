@@ -183,6 +183,7 @@
           <Field Name="TsLoanClientId" />
           <Field Name="CreditDate" />
           <Field Name="CourtDate" />
+          <Field Name="BailiffTitle" />
           <!-- Таблица сюда -->
         </Fields>
         <Parameters>
@@ -587,6 +588,8 @@
           <Field Name="LoanClientRepaymentDate" />
           <Field Name="LoanClientId" />
           <Field Name="CreditDate" />
+          <Field Name="BailiffTitle" />
+          <Field Name="TsEgpuComment" />
           <!-- Экспорт здесь -->
         </Fields>
         <Parameters>
@@ -7608,6 +7611,20 @@
               </Fields>
             </DataConnection>
           </DataTypeFormat>
+        </Parameter>
+        <Parameter Name="BailiffTitle">
+          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="BailiffTitle" />
+            </Fields>
+          </DataConnection>
+        </Parameter>
+        <Parameter Name="TsEgpuComment">
+          <DataConnection SourceDataConnection="LoanClientForExportPrimaryGetDataConnection">
+            <Fields>
+              <Field Name="TsEgpuComment" />
+            </Fields>
+          </DataConnection>
         </Parameter>
         <!-- Экспорт здесь -->
       </Parameters>
@@ -19603,6 +19620,11 @@
               <Width>180</Width>
               <WrapMode Value="True" />
               <DataType Type="DateTimeDataType" Format="dd.MM.yyyy HH:mm" />
+            </Column>
+            <Column Name="BailiffTitle" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
+              <Title>ФИО пристава</Title>
+              <Width>180</Width>
+              <WrapMode Value="True" />
             </Column>
             <!-- Таблица здесь -->
           </Columns>
