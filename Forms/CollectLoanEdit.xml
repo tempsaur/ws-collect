@@ -41869,7 +41869,7 @@
               </Column>
               <Column Name="Comment" Type="DatabaseTableColumnTextBox" Assembly="DatabaseTableColumnControls">
                 <Title>Комментарий</Title>
-                <MinimumWidth>150</MinimumWidth>
+                <MinimumWidth>200</MinimumWidth>
                 <AutoSizeMode Value="Fill" />
                 <WrapMode Value="True" />
               </Column>

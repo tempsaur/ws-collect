@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Form Name="CollectCommentEditForm" Width="650" Height="369" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2">
+<Form Name="CollectCommentEditForm" Width="850" Height="488" BackColor="White" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" StatusBar="True" ValidationType="Flat" FlatColor="Red" FlatWidth="2" FormBorderStyle="Sizable">
   <Parameters>
     <Parameter Name="Edit">False</Parameter>
     <Parameter Name="ID" />
@@ -443,7 +443,7 @@
                     </When>
                     <Then>417</Then>
                   </Case>
-                  <Case>369</Case>
+                  <Case>488</Case>
                 </Switch>
               </Item>
               <Item>
@@ -1075,14 +1075,14 @@
             <Divide DataType="IntegerDataType">
               <Item>
                 <Formula>
-                  <Minus DataType="IntegerDataType">
+                  <Plus DataType="IntegerDataType">
                     <Item>
                       <Object Name="ContentPanel">
                         <Property Name="Width" />
                       </Object>
                     </Item>
                     <Item>50</Item>
-                  </Minus>
+                  </Plus>
                 </Formula>
               </Item>
               <Item>2</Item>
@@ -1394,7 +1394,18 @@
             <Property Name="Left" />
           </Object>
         </Left>
-        <Height>51</Height>
+        <Height>
+          <Formula>
+            <Minus DataType="IntegerDataType">
+              <Item>
+                <Form>
+                  <Property Name="Height" />
+                </Form>
+              </Item>
+              <Item>318</Item>
+            </Minus>
+          </Formula>
+        </Height>
         <Width>
           <Object Name="CommentLabel">
             <Property Name="Width" />
