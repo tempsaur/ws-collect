@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Form Name="CollectAboutForm" Title="Что нового" Width="420" Height="420" StartPosition="CenterScreen" FontStyle="TitleFont" ForeColor="Black" BackColor="White" MinimizeBox="False" MaximizeBox="False">
   <Parameters>
-    <Parameter Name="Title">Что там нового появилось</Parameter>
+    <Parameter Name="Title">Тест</Parameter>
   </Parameters>
 
   <Appearance>
